@@ -24,6 +24,58 @@ module.exports = {
       ],
       "/data-structure/": [
         { title: "常见的数据结构和算法", path: "/data-structure/" },
+        { title: "数组", children: [] },
+        { title: "链表", children: [] },
+        {
+          title: "树",
+          sidebarDepth: 4,
+          children: [
+            {
+              title: "二叉树",
+              children: [
+                {
+                  title: "先序遍历",
+                  path: "/data-structure/tree/binaryTree/preOrderVisit",
+                },
+                {
+                  title: "中序遍历",
+                  path: "/data-structure/tree/binaryTree/inOrderVisit",
+                },
+                {
+                  title: "后序遍历",
+                  path: "/data-structure/tree/binaryTree/postOrderVisit",
+                },
+                {
+                  title: "层序遍历",
+                  path: "/data-structure/tree/binaryTree/levelOrderVisit",
+                },
+                {
+                  title: "Morris遍历法",
+                  path: "/data-structure/tree/binaryTree/morrisVisit",
+                },
+              ],
+            },
+            {
+              title: "N叉树",
+              children: [
+                {
+                  title: "深度优先遍历",
+                  path: "/data-structure/tree/N-Tree/dfsVisit",
+                },
+                {
+                  title: "广度优先遍历",
+                  path: "/data-structure/tree/N-Tree/bfsVisit",
+                },
+              ],
+            },
+          ],
+        },
+        { title: "图", children: [] },
+        { title: "队列", children: [] },
+        { title: "栈", children: [] },
+        { title: "哈希表", children: [] },
+        { title: "排序", children: [] },
+        { title: "查找", children: [] },
       ],
       "/design-pattern/": [
         { title: "面向对象设计原则&设计模式", path: "/design-pattern/" },
