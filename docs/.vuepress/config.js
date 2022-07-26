@@ -71,11 +71,27 @@ module.exports = {
           ],
         },
         { title: "图", children: [] },
-        { title: "队列", children: [] },
+        {
+          title: "队列",
+          children: [
+            {
+              title: "介绍",
+              path: "/data-structure/queue/desc",
+            },
+          ],
+        },
         { title: "栈", children: [] },
         { title: "哈希表", children: [] },
         { title: "排序", children: [] },
-        { title: "查找", children: [] },
+        {
+          title: "查找",
+          children: [
+            {
+              title: "二分查找",
+              path: "/data-structure/search/binarySearch",
+            },
+          ],
+        },
       ],
       "/design-pattern/": [
         { title: "面向对象设计原则&设计模式", path: "/design-pattern/" },

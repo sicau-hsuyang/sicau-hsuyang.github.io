@@ -10,6 +10,9 @@
 
 ## 2.实际开发中常见的数据结构
 
-- [数组](./singleton.md)
-- [链表](./factory.md)
-- [树]
+- [数组](./list/array/index.md)
+- [链表](./list/linkedList/index.md)
+- [栈](./stack/index.md)
+- [队列](./queue/index.md)
+- [堆](./heap/index.md)
+- [树](./tree/binaryTree/preOrderVisit.md)
