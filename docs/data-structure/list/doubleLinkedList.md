@@ -27,4 +27,6 @@ interface DoubleLinkedListNode<T> {
 
 实现自动扩容的栈；
 
-`LRF-Cache`等；
+`LRU-Cache`等；
+
+在**任何想频繁的操作前驱节点**时，都应该考虑使用双向链表；

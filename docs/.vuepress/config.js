@@ -24,7 +24,15 @@ module.exports = {
       ],
       "/data-structure/": [
         { title: "常见的数据结构和算法", path: "/data-structure/" },
-        { title: "数组", children: [] },
+        {
+          title: "数组",
+          children: [
+            {
+              title: "数组的介绍",
+              path: "/data-structure/list/array",
+            },
+          ],
+        },
         {
           title: "链表",
           children: [
@@ -35,7 +43,25 @@ module.exports = {
             {
               title: "双向链表的介绍",
               path: "/data-structure/list/doubleLinkedList",
-            }
+            },
+          ],
+        },
+        {
+          title: "队列",
+          children: [
+            {
+              title: "队列的介绍",
+              path: "/data-structure/queue/desc",
+            },
+          ],
+        },
+        {
+          title: "栈",
+          children: [
+            {
+              title: "栈的介绍",
+              path: "/data-structure/stack/desc",
+            },
           ],
         },
         {
@@ -83,24 +109,7 @@ module.exports = {
           ],
         },
         { title: "图", children: [] },
-        {
-          title: "队列",
-          children: [
-            {
-              title: "队列的介绍",
-              path: "/data-structure/queue/desc",
-            },
-          ],
-        },
-        {
-          title: "栈",
-          children: [
-            {
-              title: "栈的介绍",
-              path: "/data-structure/stack/desc",
-            },
-          ],
-        },
+
         { title: "哈希表", children: [] },
         { title: "排序", children: [] },
         {
