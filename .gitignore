@@ -4,7 +4,6 @@ node_modules
 .env.local
 .env.*.local
 npm-debug.log*
-yarn.lock
 yarn-debug.log*
 yarn-error.log*
 .idea
