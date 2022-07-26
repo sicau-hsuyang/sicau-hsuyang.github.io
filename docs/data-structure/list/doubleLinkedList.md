@@ -1,0 +1,30 @@
+## 双向链表
+
+由于单向链表只知道后继节点，当我们需要向前查找的时候，是及其不便的，而双向链表相对于链表来说，多了一个`前驱域`，我们在操作的过程中就可以快速的找到当前节点的前驱节点。
+
+## 双向链表的一般数据结构定义
+
+```TypeScript
+interface DoubleLinkedListNode<T> {
+  /**
+   * 链表的数据域
+   */
+  data: T;
+  /**
+   * 链表的后继节点域
+   */
+  next: DoubleLinkedListNode<T> | null;
+  /**
+   * 链表的前驱节点域
+   */
+  prev: DoubleLinkedListNode<T> | null;
+}
+```
+
+## 应用场景
+
+实现自动扩容队列；
+
+实现自动扩容的栈；
+
+`LRF-Cache`等；
