@@ -80,7 +80,15 @@ module.exports = {
             },
           ],
         },
-        { title: "栈", children: [] },
+        {
+          title: "栈",
+          children: [
+            {
+              title: "介绍",
+              path: "/data-structure/stack/desc",
+            },
+          ],
+        },
         { title: "哈希表", children: [] },
         { title: "排序", children: [] },
         {
