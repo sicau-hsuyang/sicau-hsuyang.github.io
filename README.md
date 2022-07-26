@@ -1,2 +1,0 @@
-# HsuYang
-personal blog
