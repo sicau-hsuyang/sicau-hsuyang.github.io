@@ -1,12 +1,11 @@
-# .gitignore
 .DS_Store
 node_modules
+dist
 .env.local
-docs/.vuepress/dist/*
 .env.*.local
 npm-debug.log*
+yarn.lock
 yarn-debug.log*
-yarn.lock*
 yarn-error.log*
 .idea
 *.suo
@@ -17,4 +16,3 @@ yarn-error.log*
 public/video
 *.zip
 *.7z
-/package-lock.json
