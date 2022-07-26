@@ -2,9 +2,11 @@
 .DS_Store
 node_modules
 .env.local
+docs/.vuepress/dist/*
 .env.*.local
 npm-debug.log*
 yarn-debug.log*
+yarn.lock*
 yarn-error.log*
 .idea
 *.suo

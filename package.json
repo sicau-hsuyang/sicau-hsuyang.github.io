@@ -12,6 +12,5 @@
   "devDependencies": {
     "vuepress": "^1.9.7",
     "vuepress-theme-vt": "^0.5.0"
-  },
-  "dependencies": {}
+  }
 }
