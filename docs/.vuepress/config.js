@@ -44,6 +44,10 @@ module.exports = {
               title: "双向链表的介绍",
               path: "/data-structure/list/doubleLinkedList",
             },
+            {
+              title: "LRUCache",
+              path: "/data-structure/list/lru-cache",
+            }
           ],
         },
         {

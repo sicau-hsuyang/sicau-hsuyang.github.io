@@ -23,10 +23,12 @@ interface DoubleLinkedListNode<T> {
 
 ## 应用场景
 
-实现自动扩容队列；
+[实现自动扩容队列](/data-structure/queue/desc.md)；
 
-实现自动扩容的栈；
+[实现自动扩容的栈](/data-structure/stack/desc.md)；
 
 `LRU-Cache`等；
 
 在**任何想频繁的操作前驱节点**时，都应该考虑使用双向链表；
+
+
