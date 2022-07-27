@@ -17,5 +17,6 @@
 - [队列](./queue/desc.md)
 - [堆](./heap/desc.md)
 - [树](./tree/binaryTree/preOrderVisit.md)
+- [图](./graph/index.md)
 - [排序](./sort/compare.md)
 - [查找](./search/binarySearch.md)
