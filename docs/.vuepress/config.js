@@ -55,11 +55,24 @@ module.exports = {
           ],
         },
         {
+          title: "字符串",
+          children: [
+            {
+              title: "KMP算法",
+              path: "/data-structure/string/KMP",
+            },
+          ],
+        },
+        {
           title: "队列",
           children: [
             {
               title: "队列的介绍",
               path: "/data-structure/queue/desc",
+            },
+            {
+              title: "队列的应用——广度优先遍历",
+              path: "/data-structure/tree/N-Tree/bfsVisit",
             },
           ],
         },
@@ -148,6 +161,15 @@ module.exports = {
                 {
                   title: "广度优先遍历",
                   path: "/data-structure/tree/N-Tree/bfsVisit",
+                },
+              ],
+            },
+            {
+              title: "二叉搜索树",
+              children: [
+                {
+                  title: "二叉搜索树的介绍",
+                  path: "/data-structure/tree/binarySearchTree/desc",
                 },
               ],
             },
