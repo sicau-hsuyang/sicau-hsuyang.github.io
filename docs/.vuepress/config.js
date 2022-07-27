@@ -31,6 +31,10 @@ module.exports = {
               title: "数组的介绍",
               path: "/data-structure/list/array",
             },
+            {
+              title: "合并2（K）个有序数组",
+              path: "/data-structure/list/mergeArray",
+            },
           ],
         },
         {
@@ -47,7 +51,7 @@ module.exports = {
             {
               title: "LRUCache",
               path: "/data-structure/list/lru-cache",
-            }
+            },
           ],
         },
         {
@@ -65,6 +69,18 @@ module.exports = {
             {
               title: "栈的介绍",
               path: "/data-structure/stack/desc",
+            },
+            {
+              title: "栈的应用之逆序",
+              path: "/data-structure/stack/reverse",
+            },
+            {
+              title: "栈的应用之DFS",
+              path: "/data-structure/stack/dfs",
+            },
+            {
+              title: "栈的应用之词法分析",
+              path: "/data-structure/stack/syntaxAnalysis",
             },
           ],
         },
@@ -122,6 +138,10 @@ module.exports = {
             {
               title: "二分查找",
               path: "/data-structure/search/binarySearch",
+            },
+            {
+              title: "跳跃链表",
+              path: "/data-structure/search/skipList",
             },
           ],
         },
