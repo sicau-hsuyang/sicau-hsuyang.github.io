@@ -21,42 +21,41 @@ interface File {
    * 文件类型，比如是文件还是文件夹
    */
   type: number;
-}
 
-/**
- * 将文件列表转为哈希表
- */
-function makeHashMap(files: File[]) {
-  const map = new Map<string, File>();
-  files.forEach((file) => {
-    map.set(file.id, file);
-  });
-  return map;
+  /**
+   * 子文件
+   */
+  children?: File[];
 }
 
 /**
  * 构建文件树
  * @param file 文件信息
- * @param map 文件哈希表
+ * @param file 文件列表信息
  */
-function buildTree(file, map) {
-  const parentFile = map.get(file.id);
-  if (!parentFile) {
-    return file;
-  }
-  
+function buildTree(file: File, files: File[]) {
+  let children = files.filter((file: File) => {
+    return (x) => x.pid === file.id;
+  });
+  file.children =
+    children.length === 0
+      ? undefined
+      : children.map((subFile) => buildTree(subFile, files));
+  return file;
 }
 
 /**
  * 将文件列表转为文件树，并且返回根节点
  * @param files 文件列表
  */
-function build(files) {
-  // 将文件列表转为哈希表，便于后面在构建的时候直接查找，以空间换时间
-  const map = makeHashMap(files);
+function build(files: File[]) {
   // 构建结果
-  const roots = files.map((file) => {
-    return buildTree(file, map);
-  });
+  const roots = files
+    .filter((file) => {
+      return file.pid === null;
+    })
+    .map((file) => {
+      return buildTree(file, files);
+    });
   return roots;
 }

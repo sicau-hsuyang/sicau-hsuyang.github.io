@@ -42,14 +42,83 @@ interface File {
 
 #### 方案 1 使用递归
 
-```js
-// TODO
+```ts
+/**
+ * 构建文件树
+ * @param file 文件信息
+ * @param file 文件列表信息
+ */
+function buildTree(file: File, files: File[]) {
+  // 找到当前文件的子文件列表
+  let children = files.filter((fileEle: File) => {
+    return fileEle.pid === file.id;
+  });
+  // 递归的处理当前文件子文件列表的子文件
+  file.children =
+    children.length === 0
+      ? undefined
+      : children.map((subFile: File) => buildTree(subFile, files));
+  return file;
+}
+
+/**
+ * 将文件列表转为文件树，并且返回根节点
+ * @param files 文件列表
+ */
+function build(files: File[]) {
+  // 构建结果
+  const roots = files
+    .filter((file) => {
+      // 这一步操作是为了找到所有的根节点
+      return file.pid === null;
+    })
+    .map((file) => {
+      // 对根节点的数据进行构建
+      return buildTree(file, files);
+    });
+  return roots;
+}
 ```
 
 #### 方案 2 使用哈希表
 
+这个方案是有点儿取巧的一种做法了，因为其完美的利用了引用类型数据的特征，因为引用数据类型，大家都同时持有一块相同的内存区域，不同的人对它进行修改，都会在它的身上得到体现。
+
 ```js
-// TODO
+/**
+ * 将文件列表转换成为哈希表
+ * @param {File[]} files
+ */
+function makeHashMap(files) {
+  const map = new WeakMap();
+  files.forEach((file) => {
+    // 以ID为主键建立哈希映射
+    map.set(file.id, file);
+  });
+  return map;
+}
+
+function buildTree(files) {
+  // 将文件构建成哈希表，主要是为了后续的查找方便
+  const fileMap = makeHashMap(files);
+  const roots = [];
+  // 逐个的对每个文件增加子元素
+  files.forEach((file) => {
+    // 找父级文件，如果找不到的话，说明是根节点
+    const parentFile = fileMap.get(file.pid);
+    if (parentFile) {
+      if (!Array.isArray(parentFile.children)) {
+        parentFile.children = [file];
+      } else {
+        parentFile.children.push(file);
+      }
+    } else {
+      roots.push(file);
+    }
+  });
+  // 最后只需要找出根节点的文件列表即可完成构建
+  return roots;
+}
 ```
 
 ### 2. 从二叉树的两个遍历序列构建二叉树
@@ -150,7 +219,7 @@ var buildTree = function (inorder, postorder) {
 };
 ```
 
-为什么同一颗二叉树的先序序列+后序序列不能唯一确定一颗二叉树呢
+为什么同一颗二叉树的先序序列+后序序列不能唯一确定一颗二叉树呢，我们通过举反例来证明这个结论。
 
 假设我们有一个二叉树的先序序列 ABC，一个后序序列 CBA
 
