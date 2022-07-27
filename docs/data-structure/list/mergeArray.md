@@ -44,7 +44,11 @@ function merge(arr1, arr2) {
 }
 ```
 
+请记住这个范式，在将来的[归并排序]()中，我们还要用到它。
+
 ## 合并 K 有序个数组
+
+### 描述
 
 给你 K 个不降序数组，合并之后得到的数组仍然保持不降序的性质。
 
@@ -60,9 +64,11 @@ function merge(arr1, arr2) {
 
 ### 算法实现
 
-朴素法就展示代码了，有兴趣的读者可以自行实现。
+#### 建堆法的算法实现：
 
-建堆法的算法实现：
+朴素法效率较低，此处就不展示代码了，有兴趣的读者可以自行实现。
+
+#### 建堆法的算法实现：
 
 ```JavaScript
 /**
@@ -258,6 +264,86 @@ class SimpleMinHeap extends Heap {
  * @param {number[][]} arrs
  */
 function mergeKArray(arrs) {
+  let minHeap = new SimpleMinHeap();
+  let offset = 0;
+  while(offset < arrs.length) {
+    let currentArr = arrs[offset];
+    // 处理一个数组，直至为空
+    while(currentArr.length) {
+      const ele = currentArr.shift();
+      minHeap.insertQueue(ele);
+    }
+    offset++;
+  }
+  let newArr = [];
+  let idx = 0;
+  // 输出堆，得到最终结果
+  while(!minHeap.isEmpty()) {
+    const ele = minHeap.deleteMin();
+    newArr[idx++] = ele;
+  }
+  return newArr;
+}
+```
 
+上述代码看起来比较长，主要是我们实现了一个`堆`（实际开发中，这是一个可以封装进成熟的代码库的操作，并不需要我们自己实现），但是其实大家只需要看关键的函数`mergeKArray`
+
+#### 归并法的算法实现
+
+归并法我们需要把上面合并 2 个有序数组的代码 copy 过来进行一下简单的修改，因为在归并的过程中，有可能剩下的数组只有可能存在一个了。修改点非常简单，只需要在第二个数组上加上默认值即可。
+
+```JavaScript
+/**
+ * 合并2个有序数组
+ * @param {number[]} arr1
+ * @param {number[]} arr2 可选参数，若不传递该参数，则相当于将原数组copy一份
+ */
+function merge(arr1, arr2 = []) {
+  let offset1 = 0;
+  let offset2 = 0;
+  let offset = 0;
+  let newArr = [];
+  // 当两个数组都还没有处理完成的时候
+  while (offset1 < arr1.length && offset2 < arr2.length) {
+    let val1 = arr1[offset1];
+    let val2 = arr2[offset2];
+    if (val1 >= val2) {
+      newArr[offset++] = arr2[offset2++];
+    } else {
+      newArr[offset++] = arr1[offset1++];
+    }
+  }
+  /**
+   * 这两个while不可能同时成立，只有可能成立一个，将数组长度较大的剩余部分拷贝给新数组
+   */
+  while (offset1 < arr1.length) {
+    newArr[offset++] = arr1[offset1++];
+  }
+  while (offset2 < arr2.length) {
+    newArr[offset++] = arr2[offset2++];
+  }
+  return newArr;
+}
+
+/**
+ * 合并K个有序数组
+ * @param {number[][]} arrs
+ */
+function mergeKArray(arrs) {
+  let mergedArr = arrs;
+  // 如果归并结果大于1，则需要继续进行归并
+  while (mergedArr.length > 1) {
+    // 本轮的归并结果
+    const mergePassArr = [];
+    for (let i = 0; i < mergedArr.length; i += 2) {
+      // 得到二路归并的结果
+      const newArr = merge(mergedArr[i], mergedArr[i + 1]);
+      mergePassArr.push(newArr);
+    }
+    // 将本轮的归并结果给最终的合并结果，使之可以继续下一轮归并
+    mergedArr = mergePassArr;
+  }
+  // 如果归并0个数组，则返回空，否则返回正常的归并结果
+  return mergedArr.length ? mergedArr[0] : [];
 }
 ```
