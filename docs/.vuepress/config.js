@@ -82,6 +82,10 @@ module.exports = {
               title: "栈的应用之词法分析",
               path: "/data-structure/stack/syntaxAnalysis",
             },
+            {
+              title: "单调栈与应用",
+              path: "/data-structure/stack/monotonous-stack",
+            },
           ],
         },
         {
@@ -135,7 +139,27 @@ module.exports = {
         { title: "图", children: [] },
 
         { title: "哈希表", children: [] },
-        { title: "排序", children: [] },
+        {
+          title: "排序",
+          children: [
+            {
+              title: "冒泡排序",
+              path: "/data-structure/sort/bubbleSort",
+            },
+            {
+              title: "选择排序",
+              path: "/data-structure/sort/selectionSort",
+            },
+            {
+              title: "插入排序",
+              path: "/data-structure/sort/insertionSort",
+            },
+            {
+              title: "希尔排序",
+              path: "/data-structure/sort/shellSort",
+            },
+          ],
+        },
         {
           title: "查找",
           children: [
