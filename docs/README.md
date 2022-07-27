@@ -4,7 +4,7 @@
 
 目前这个仓库还在不断的更新中。
 
-如果读者对我的能力有认可的话，欢迎帮我内推，目前主要考虑**成都前端**的岗位。
+如果读者对我的能力认可的话，欢迎帮我内推，目前主要考虑**成都前端**的岗位。
 
 更新顺序为数据结构和算法专题->设计模式专题->JavaScript 专题->前端框架专题->杂项专题（主要会涵盖`http`,`webpack`, `typescript`）
 
@@ -13,6 +13,15 @@
 ## 算法和数据结构专题
 
 - [数组](https://sicau-hsuyang.github.io/data-structure/list/array.html)
+- [链表](https://sicau-hsuyang.github.io/data-structure/list/linkedList.html)
+- [字符串](https://sicau-hsuyang.github.io/data-structure/string/KMP.html)
+- [队列](https://sicau-hsuyang.github.io/data-structure/queue/desc.html)
+- [栈](https://sicau-hsuyang.github.io/data-structure/stack/desc.html)
+- [堆](https://sicau-hsuyang.github.io/data-structure/heap/desc.html)
+- [树](https://sicau-hsuyang.github.io/data-structure/tree/binaryTree/preOrderVisit.html)
+- [图]()
+- [排序](https://sicau-hsuyang.github.io/data-structure/sort/compare.html)
+- [查找](https://sicau-hsuyang.github.io/data-structure/search/binarySearch.html)
 
 ## 设计模式专题
 
@@ -23,5 +32,9 @@
 待更新...
 
 ## 前端框架专题
+
+待更新...
+
+## 杂项专题
 
 待更新...
