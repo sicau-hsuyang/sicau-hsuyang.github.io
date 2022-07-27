@@ -6,7 +6,8 @@
 interface NTreeNode<T> {
   left: TreeNode | null;
   right: TreeNode | null;
-  children: T[];
+  children: T[] | undefined;
+  data: T;
 }
 ```
 
@@ -96,3 +97,13 @@ function dfsVisit(treeNodes) {
 ## 复杂度分析
 
 时间复杂度`O(n)`；平均空间复杂度`O(m*h)`，为 `N-叉树`的最大高度,`m`为`N-叉树`的子节点个数;
+
+## 应用场景
+
+电脑中的文件目录；
+
+权限管理中的权限列表；
+
+设备管理中的设备树等；
+
+前端的路由表等；

@@ -111,6 +111,10 @@ module.exports = {
                   title: "Morris遍历法",
                   path: "/data-structure/tree/binaryTree/morrisVisit",
                 },
+                {
+                  title: "二叉树的构建",
+                  path: "/data-structure/tree/binaryTree/construct",
+                },
               ],
             },
             {
