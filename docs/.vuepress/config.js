@@ -143,6 +143,10 @@ module.exports = {
           title: "排序",
           children: [
             {
+              title: "排序算法的比较",
+              path: "/data-structure/sort/compare",
+            },
+            {
               title: "冒泡排序",
               path: "/data-structure/sort/bubbleSort",
             },
@@ -157,6 +161,26 @@ module.exports = {
             {
               title: "希尔排序",
               path: "/data-structure/sort/shellSort",
+            },
+            {
+              title: "快速排序",
+              path: "/data-structure/sort/quickSort",
+            },
+            {
+              title: "归并排序",
+              path: "/data-structure/sort/mergeSort",
+            },
+            {
+              title: "堆排序",
+              path: "/data-structure/sort/heapSort",
+            },
+            {
+              title: "桶排序",
+              path: "/data-structure/sort/bucketSort",
+            },
+            {
+              title: "基数排序",
+              path: "/data-structure/sort/radixSort",
             },
           ],
         },
