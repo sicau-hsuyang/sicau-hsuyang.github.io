@@ -43,8 +43,127 @@ interface File {
 #### 方案 1 使用递归
 
 ```js
+// TODO
 ```
 
 #### 方案 2 使用哈希表
+
 ```js
+// TODO
 ```
+
+### 2. 从二叉树的两个遍历序列构建二叉树
+
+通过无重复值的二叉树遍历中序序列+先序（或后序）序列能**唯一**确定一颗二叉树，但**仅凭先序和后序序列无法唯一确定一颗二叉树**。
+
+先序序列的第一个节点一定是根节点，然后我们就可以通过这个根节点，在中序序列中确定其根节点的位置。一旦确定了中序序列的根节点位置，那就可以得到左子树序列和右子树序列。而同一颗二叉树的左右子树序列长度是相同的，因此，我们可以根据从中序序列获取到的左右子树片段，找出先序序列的左右子树片段。重复这个过程，直到构建完成。
+
+后序序列+中序序列构建思路还先序序列+中序序列构建思路类似。
+
+#### 通过先序序列+中序序列构建二叉树
+
+二叉树结构定义如下：
+
+```ts
+interface TreeNode<T> {
+  left: TreeNode<T> | null;
+  right: TreeNode<T> | null;
+  val: T;
+}
+```
+
+算法实现如下：
+
+```js
+/**
+ * 从二叉树的先序序列+中序序列构建二叉树
+ * @param {number[]} preorder 先序序列
+ * @param {number[]} inorder 中序序列
+ * @return {TreeNode}
+ */
+var buildTree = function (preorder, inorder) {
+  if (
+    !Array.isArray(preorder) ||
+    preorder.length === 0 ||
+    !Array.isArray(inorder) ||
+    inorder.length === 0 ||
+    preorder.length != inorder.length
+  ) {
+    return null;
+  }
+  let rootVal = preorder[0];
+  // 在中序遍历的结果中找到根节点所在的位置，则【0，idx】的是左子树，【idx+1，length】的是右子树
+  let rootNodeIdx = inorder.findIndex((x) => x === rootVal);
+  let inLeftSubtreeNodes = inorder.slice(0, rootNodeIdx);
+  let inRightSubtreeNodes = inorder.slice(rootNodeIdx + 1);
+  // 在先序遍历的结果中提取对应长度的的子集 可以得到对应的左子树结果集合
+  let preLeftSubtreeNodes = preorder.slice(1, inLeftSubtreeNodes.length + 1);
+  // 继续在先序遍历的结果中提取对应长度的子集，可以得到对应右子树结果集合
+  let preRightSubtreeNodes = preorder.slice(1 + inLeftSubtreeNodes.length);
+  return {
+    val: rootVal,
+    left: buildTree(preLeftSubtreeNodes, inLeftSubtreeNodes),
+    right: buildTree(preRightSubtreeNodes, inRightSubtreeNodes),
+  };
+};
+```
+
+#### 通过后序序列+中序序列构建二叉树
+
+算法实现如下：
+
+```js
+/**
+ * 通过后序序列+中序序列构建二叉树
+ * @param {number[]} inorder
+ * @param {number[]} postorder
+ * @return {TreeNode}
+ */
+var buildTree = function (inorder, postorder) {
+  if (
+    !Array.isArray(inorder) ||
+    inorder.length === 0 ||
+    !Array.isArray(postorder) ||
+    postorder.length === 0 ||
+    inorder.length != postorder.length
+  ) {
+    return null;
+  }
+  let len = postorder.length;
+  let rootVal = postorder[len - 1];
+  // 在中序遍历的结果中找到根节点所在的位置，则【0，idx】的是左子树，【idx+1，length】的是右子树
+  let rootNodeIdx = inorder.findIndex((x) => x === rootVal);
+  let inLeftSubtreeNodes = inorder.slice(0, rootNodeIdx);
+  let inRightSubtreeNodes = inorder.slice(rootNodeIdx + 1);
+  // 在后序遍历的结果中提取对应长度的的子集 可以得到对应的左子树结果集合
+  let posLeftSubtreeNodes = postorder.slice(0, inLeftSubtreeNodes.length);
+  // 继续在后序遍历的结果中提取对应长度的子集，可以得到对应右子树结果集合
+  let postRightSubtreeNodes = postorder.slice(
+    posLeftSubtreeNodes.length,
+    postorder.length - 1
+  );
+  return {
+    val: rootVal,
+    left: buildTree(inLeftSubtreeNodes, posLeftSubtreeNodes),
+    right: buildTree(inRightSubtreeNodes, postRightSubtreeNodes),
+  };
+};
+```
+
+为什么同一颗二叉树的先序序列+后序序列不能唯一确定一颗二叉树呢
+
+假设我们有一个二叉树的先序序列 ABC，一个后序序列 CBA
+
+那么，能够得到 ABC 先序序列的可能的二叉树如下：
+
+<div align="center">
+  <img :src="$withBase('/case1.png')"  alt="先序序列的可能构造情况"/>
+</div>
+
+那么，能够得到 CBA 后续序列可能的二叉树如下：
+
+<div align="center">
+  <img :src="$withBase('/case2.png')"  alt="后序序列的可能构造情况"/>
+</div>
+
+可以看到，**同一颗二叉树的先序和后序序列，但是可以构造出不同的二叉树**。

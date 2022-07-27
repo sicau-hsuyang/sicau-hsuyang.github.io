@@ -89,6 +89,23 @@ module.exports = {
           ],
         },
         {
+          title: "堆（优先队列）",
+          children: [
+            {
+              title: "堆的介绍",
+              path: "/data-structure/heap/desc",
+            },
+            {
+              title: "堆的应用——排序",
+              path: "/data-structure/sort/heapSort",
+            },
+            {
+              title: "堆的应用前K个高频元素",
+              path: "/data-structure/heap/topKFrequent",
+            },
+          ],
+        },
+        {
           title: "树",
           sidebarDepth: 4,
           children: [

@@ -1,5 +1,15 @@
 ## 描述
 
+假设我们的树节点的定义如下：
+
+```ts
+interface TreeNode<T> {
+  left: TreeNode | null;
+  right: TreeNode | null;
+  data: T;
+}
+```
+
 总是按每层从左到右的顺序输出二叉树中的节点
 
 ## 二叉树的层序遍历
