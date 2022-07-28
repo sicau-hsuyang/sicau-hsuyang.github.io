@@ -8,7 +8,7 @@
   <img :src="$withBase('/stack.webp')" alt="栈"  />
 </div>
 
-## 栈的通用数组实现（使用 TypeScript ）
+## 栈的通用数组实现
 
 ```TypeScript
 class Stack<T> {
@@ -24,10 +24,10 @@ class Stack<T> {
    */
   push(ele: T) {
     let length = this.data.length;
+    // 让数组长度增加
+    this.data.length++;
     // 将新加入的元素放在最后面
     this.data[length] = ele;
-    // 数组长度+1
-    this.data.length++;
   }
 
   /**

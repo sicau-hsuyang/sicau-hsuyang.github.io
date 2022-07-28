@@ -38,6 +38,8 @@ function visitArray(arr) {
  */
 function insert(arr, insertBefore, val) {
   let targetIdx = -1;
+  let length = arr.length;
+  arr.length++;
   for (let i = 0; i < arr.length; i++) {
     if (arr[targetIdx] === insertBefore) {
       targetIdx = i;
@@ -46,12 +48,12 @@ function insert(arr, insertBefore, val) {
   }
   if (targetIdx === -1) {
     // 直接插在末尾
-    arr[arr.length] = val;
-    arr.length++;
+    arr[length] = val;
+    // 这个地方不需要操作js的length，数组length自己会增加
     return;
   }
   // 必须是从后往前错一位
-  for (let i = arr.length + 1; i > targetIdx; i--) {
+  for (let i = arr.length; i > targetIdx; i--) {
     // 将前面的元素拷贝给后面的元素
     arr[i] = arr[i - 1];
   }

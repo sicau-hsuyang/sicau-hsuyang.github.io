@@ -113,7 +113,7 @@ module.exports = {
               path: "/data-structure/sort/heapSort",
             },
             {
-              title: "堆的应用前K个高频元素",
+              title: "堆的应用——前K个高频元素",
               path: "/data-structure/heap/topKFrequent",
             },
           ],

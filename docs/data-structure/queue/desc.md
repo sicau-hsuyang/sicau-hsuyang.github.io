@@ -6,9 +6,9 @@
 
 `先入先出`。
 
-## 队列的通用数组实现（使用 TypeScript ）
+## 队列的通用数组实现
 
-```TypeScript
+```ts
 /**
  * 队列类
  */
@@ -24,15 +24,19 @@ class Queue<T> {
    * @param ele
    */
   public enqueue(ele: T) {
-    // 为了保证操作的高效性，我们把数组的尾作为队首，数组的头作为队尾
-    this.data.unshift(ele);
+    // 我们把数组的尾作为队首，数组的头作为队尾
+    this.data.length++;
+    for (let i = this.data.length - 1; i >= 1; i--) {
+      this.data[i] = this.data[i - 1];
+    }
+    this.data[0] = ele;
   }
 
   /**
    * 出队一个元素
    */
   public dequeue() {
-    if(this.isEmpty()) {
+    if (this.isEmpty()) {
       throw new Error("can not dequeue from an empty queue");
     }
     let len = this.size;
@@ -53,7 +57,7 @@ class Queue<T> {
 }
 ```
 
-## 队列的通用链表实现（使用 TypeScript ）
+## 队列的通用链表实现
 
 ```TypeScript
 /**
