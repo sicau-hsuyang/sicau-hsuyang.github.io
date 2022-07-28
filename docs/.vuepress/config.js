@@ -177,7 +177,19 @@ module.exports = {
         },
         { title: "图", children: [] },
 
-        { title: "哈希表", children: [] },
+        {
+          title: "哈希表",
+          children: [
+            {
+              title: "哈希表的介绍",
+              path: "/data-structure/hash/desc",
+            },
+            {
+              title: "哈希表的应用——两数之和",
+              path: "/data-structure/hash/sum",
+            },
+          ],
+        },
         {
           title: "排序",
           children: [
