@@ -188,6 +188,22 @@ module.exports = {
               title: "哈希表的应用——两数之和",
               path: "/data-structure/hash/sum",
             },
+            {
+              title: "哈希表的应用——构建树",
+              path: "/data-structure/hash/buildTree",
+            },
+            {
+              title: "哈希表的应用——LRUCache",
+              path: "/data-structure/list/lru-cache",
+            },
+            {
+              title: "哈希表的应用——深克隆",
+              path: "/data-structure/hash/deepClone",
+            },
+            {
+              title: "哈希表的应用——从链表中删去总和值为零的连续节点",
+              path: "/data-structure/hash/removeZero",
+            },
           ],
         },
         {
