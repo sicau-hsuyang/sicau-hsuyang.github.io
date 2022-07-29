@@ -175,7 +175,15 @@ module.exports = {
             },
           ],
         },
-        { title: "图", children: [] },
+        {
+          title: "图",
+          children: [
+            {
+              title: "图的介绍",
+              path: "/data-structure/graph/desc",
+            },
+          ],
+        },
 
         {
           title: "哈希表",
