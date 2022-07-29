@@ -17,9 +17,10 @@
 - [字符串](https://sicau-hsuyang.github.io/data-structure/string/KMP.html)
 - [队列](https://sicau-hsuyang.github.io/data-structure/queue/desc.html)
 - [栈](https://sicau-hsuyang.github.io/data-structure/stack/desc.html)
-- [堆](https://sicau-hsuyang.github.io/data-structure/heap/desc.html)
+- [堆（优先队列）](https://sicau-hsuyang.github.io/data-structure/heap/desc.html)
 - [树](https://sicau-hsuyang.github.io/data-structure/tree/binaryTree/preOrderVisit.html)
 - [图]()
+- [哈希表](https://sicau-hsuyang.github.io/data-structure/hash/desc.html)
 - [排序](https://sicau-hsuyang.github.io/data-structure/sort/compare.html)
 - [查找](https://sicau-hsuyang.github.io/data-structure/search/binarySearch.html)
 
