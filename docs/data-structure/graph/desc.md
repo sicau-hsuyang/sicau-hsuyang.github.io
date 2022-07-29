@@ -263,14 +263,14 @@ urumchi.link(beijing);
 /**
  * 将城市加入到图中
  */
-g.addCity(beijing);
-g.addCity(nanjing);
-g.addCity(guangzhou);
-g.addCity(shenzhen);
-g.addCity(hongkong);
-g.addCity(chengdu);
-g.addCity(xian);
-g.addCity(urumchi);
+g.addVertex(beijing);
+g.addVertex(nanjing);
+g.addVertex(guangzhou);
+g.addVertex(shenzhen);
+g.addVertex(hongkong);
+g.addVertex(chengdu);
+g.addVertex(xian);
+g.addVertex(urumchi);
 ```
 
 上述这种方法是大家在实际开发中最可能用到的。
