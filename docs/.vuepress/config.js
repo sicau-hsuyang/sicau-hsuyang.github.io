@@ -190,6 +190,18 @@ module.exports = {
               title: "广度优先搜索",
               path: "/data-structure/graph/bfs",
             },
+            {
+              title: "最短路径",
+              path: "/data-structure/graph/shortest-path",
+            },
+            {
+              title: "拓扑排序",
+              path: "/data-structure/graph/topology-sort",
+            },
+            {
+              title: "最小生成树",
+              path: "/data-structure/graph/minimum-spanning-tree",
+            },
           ],
         },
 
