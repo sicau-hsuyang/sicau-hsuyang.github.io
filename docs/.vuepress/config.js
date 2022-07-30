@@ -182,6 +182,14 @@ module.exports = {
               title: "图的介绍",
               path: "/data-structure/graph/desc",
             },
+            {
+              title: "深度优先搜索",
+              path: "/data-structure/graph/dfs",
+            },
+            {
+              title: "广度优先搜索",
+              path: "/data-structure/graph/bfs",
+            },
           ],
         },
 
