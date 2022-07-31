@@ -9,7 +9,7 @@ class AVLTree {
   root = null;
 
   /**
-   * 获取树节点的树高
+   * 获取以treeNode为根节点的树高
    * @param {AVLTreeNode<number>} treeNode
    */
   getHeight(treeNode) {
@@ -80,6 +80,20 @@ class AVLTree {
   }
 
   /**
+   * 在AVL树中查找最小值
+   * @param {AVLTreeNode<number>} treeNode
+   * @returns
+   */
+  findMin(treeNode) {
+    let minTreeNode = null;
+    while (treeNode) {
+      minTreeNode = treeNode;
+      treeNode = treeNode.left;
+    }
+    return minTreeNode;
+  }
+
+  /**
    * 插入子节点
    * @param {number} val
    */
@@ -89,25 +103,92 @@ class AVLTree {
 
   /**
    * 删除子节点
+   * @param {number} val
    */
   delete(val) {
     this.root = this._delete(this.root, val);
   }
 
   /**
-   * 删除子节点辅助函数
+   * 辅助函数：删除子节点
    * @param {AVLTreeNode<number>} treeNode
-   * @param {number} val
-   * @returns {AVLTreeNode<number>}
+   * @param {*} delVal
+   * @returns
    */
-  _delete(treeNode, val) {
-    if (treeNode.val === val) {
+  _delete(treeNode, delVal) {
+    if (treeNode === null) {
+      // 空树，无法删除
       return null;
+    } else if (delVal < treeNode.val) {
+      // val 位于左子树，其实就是相当于右子树的插入，所以在调整的时候，执行右旋
+      treeNode.left = this._delete(treeNode.left, delVal);
+      // 更新树高
+      treeNode.height =
+        Math.max(
+          this.getHeight(treeNode.left),
+          this.getHeight(treeNode.right)
+        ) + 1;
+      if (
+        Math.abs(
+          this.getHeight(treeNode.right) - this.getHeight(treeNode.left)
+        ) === 2
+      ) {
+        if (
+          this.getHeight(treeNode.right.right) >=
+          this.getHeight(treeNode.right.left)
+        ) {
+          treeNode = this.singleRightRotation(treeNode);
+        } else {
+          treeNode = this.doubleLeftRightRotation(treeNode);
+        }
+      }
+    } else if (delVal > treeNode.val) {
+      // x 位于右子树删除，其实就是相当于是左子树插入
+      treeNode.right = this._delete(treeNode.right, delVal);
+      // 更新树高
+      treeNode.height =
+        Math.max(
+          this.getHeight(treeNode.left),
+          this.getHeight(treeNode.right)
+        ) + 1;
+      if (
+        Math.abs(
+          this.getHeight(treeNode.left) - this.getHeight(treeNode.right)
+        ) === 2
+      ) {
+        if (
+          this.getHeight(treeNode.left.left) >=
+          this.getHeight(treeNode.left.right)
+        ) {
+          treeNode = this.singleLeftRotation(treeNode);
+        } else {
+          treeNode = this.doubleLeftRightRotation(treeNode);
+        }
+      }
+    } else if (treeNode.left && treeNode.right) {
+      /* 如果待删除节点同时存在左右儿子节点 */
+      // 找到右子树的最小节点
+      let rightSubTreeMinNode = this.findMin(treeNode.right);
+      // 用右子树上的最小节点替换当前值，然后再从当前右子树触发，递归的删除右子树上的最小值。
+      treeNode.val = rightSubTreeMinNode.val;
+      treeNode.right = this._delete(treeNode.right, treeNode.val);
+    } else {
+      /* 如果待删除节点只有左儿子节点，那么把它的左儿子直接赋值给它自己，相当于移除了待删除节点 */
+      if (treeNode.right === null) {
+        treeNode = treeNode.left;
+      } else if (treeNode.left === null) {
+        /* 如果待删除节点只有右儿子节点，那么把它的右儿子直接赋值给它自己，相当于移除了待删除节点 */
+        treeNode = treeNode.right;
+      } else {
+        /* 如果待删除节点没有左右儿子节点，直接赋值为空，相当于移除了待删除节点 */
+        treeNode = null;
+      }
     }
+    return treeNode;
   }
 
   /**
-   * 插入子节点
+   * 辅助函数：插入子节点
    * @param {AVLTreeNode<number>} treeNode
    * @param {number} val
    * @returns {AVLTreeNode<number>}
@@ -127,8 +208,9 @@ class AVLTree {
       treeNode.left = this._insert(treeNode.left, val);
       /* 如果需要左旋 */
       if (
-        this.getHeight(treeNode.left) - this.getHeight(treeNode.right) ===
-        2
+        Math.abs(
+          this.getHeight(treeNode.left) - this.getHeight(treeNode.right)
+        ) === 2
       ) {
         if (val < treeNode.left.val) {
           /* 左单旋 */
@@ -143,8 +225,9 @@ class AVLTree {
       treeNode.right = this._insert(treeNode.right, val);
       /* 如果需要右旋 */
       if (
-        this.getHeight(treeNode.left) - this.getHeight(treeNode.right) ===
-        -2
+        Math.abs(
+          this.getHeight(treeNode.left) - this.getHeight(treeNode.right)
+        ) === 2
       ) {
         if (val > treeNode.right.val) {
           /* 右单旋 */
@@ -172,4 +255,17 @@ avlTree.insert(4);
 avlTree.insert(5);
 avlTree.insert(6);
 
+console.log(avlTree);
+
+avlTree.delete(4);
+console.log(avlTree);
+avlTree.delete(2);
+console.log(avlTree);
+avlTree.delete(1);
+console.log(avlTree);
+avlTree.delete(3);
+console.log(avlTree);
+avlTree.delete(5);
+console.log(avlTree);
+avlTree.delete(6);
 console.log(avlTree);
