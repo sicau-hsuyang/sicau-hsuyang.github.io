@@ -370,6 +370,20 @@ function _insert(treeNode, val) {
 
 ```js
 /**
+ * 在AVL树中查找最小值
+ * @param {AVLTreeNode<number>} treeNode
+ * @returns
+ */
+function findMin(treeNode) {
+  let minTreeNode = null;
+  while (treeNode) {
+    minTreeNode = treeNode;
+    treeNode = treeNode.left;
+  }
+  return minTreeNode;
+}
+
+/**
  * 删除子节点
  * @param {number} val
  */
