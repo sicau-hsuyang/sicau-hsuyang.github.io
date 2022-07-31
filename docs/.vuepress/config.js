@@ -287,6 +287,10 @@ module.exports = {
               path: "/data-structure/search/binarySearch",
             },
             {
+              title: "平衡二叉树（AVL）",
+              path: "/data-structure/search/avlTree",
+            },
+            {
               title: "跳跃链表",
               path: "/data-structure/search/skipList",
             },

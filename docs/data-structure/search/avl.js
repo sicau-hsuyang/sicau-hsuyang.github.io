@@ -1,86 +1,9 @@
-// typedef struct AVLNode *Position;
-// typedef Position AVLTree; /* AVL树类型 */
-// struct AVLNode{
-//     ElementType Data; /* 结点数据 */
-//     AVLTree Left;     /* 指向左子树 */
-//     AVLTree Right;    /* 指向右子树 */
-//     int Height;       /* 树高 */
-// };
-
-// int Max ( int a, int b )
-// {
-//     return a > b ? a : b;
-// }
-
-// AVLTree SingleLeftRotation ( AVLTree A )
-// { /* 注意：A必须有一个左子结点B */
-//   /* 将A与B做左单旋，更新A与B的高度，返回新的根结点B */
-
-//     AVLTree B = A->Left;
-//     A->Left = B->Right;
-//     B->Right = A;
-//     A->Height = Max( GetHeight(A->Left), GetHeight(A->Right) ) + 1;
-//     B->Height = Max( GetHeight(B->Left), A->Height ) + 1;
-
-//     return B;
-// }
-
-// AVLTree DoubleLeftRightRotation ( AVLTree A )
-// { /* 注意：A必须有一个左子结点B，且B必须有一个右子结点C */
-//   /* 将A、B与C做两次单旋，返回新的根结点C */
-
-//     /* 将B与C做右单旋，C被返回 */
-//     A->Left = SingleRightRotation(A->Left);
-//     /* 将A与C做左单旋，C被返回 */
-//     return SingleLeftRotation(A);
-// }
-
-// /*************************************/
-// /* 对称的右单旋与右-左双旋请自己实现 */
-// /*************************************/
-
-// AVLTree Insert( AVLTree T, ElementType X )
-// { /* 将X插入AVL树T中，并且返回调整后的AVL树 */
-//     if ( !T ) { /* 若插入空树，则新建包含一个结点的树 */
-//         T = (AVLTree)malloc(sizeof(struct AVLNode));
-//         T->Data = X;
-//         T->Height = 0;
-//         T->Left = T->Right = NULL;
-//     } /* if (插入空树) 结束 */
-
-//     else if ( X < T->Data ) {
-//         /* 插入T的左子树 */
-//         T->Left = Insert( T->Left, X);
-//         /* 如果需要左旋 */
-//         if ( GetHeight(T->Left)-GetHeight(T->Right) == 2 )
-//             if ( X < T->Left->Data )
-//                T = SingleLeftRotation(T);      /* 左单旋 */
-//             else
-//                T = DoubleLeftRightRotation(T); /* 左-右双旋 */
-//     } /* else if (插入左子树) 结束 */
-
-//     else if ( X > T->Data ) {
-//         /* 插入T的右子树 */
-//         T->Right = Insert( T->Right, X );
-//         /* 如果需要右旋 */
-//         if ( GetHeight(T->Left)-GetHeight(T->Right) == -2 )
-//             if ( X > T->Right->Data )
-//                T = SingleRightRotation(T);     /* 右单旋 */
-//             else
-//                T = DoubleRightLeftRotation(T); /* 右-左双旋 */
-//     } /* else if (插入右子树) 结束 */
-
-//     /* else X == T->Data，无须插入 */
-
-//     /* 别忘了更新树高 */
-//     T->Height = Max( GetHeight(T->Left), GetHeight(T->Right) ) + 1;
-
-//     return T;
-// }
-
+/**
+ * 平衡二叉树的实现
+ */
 class AVLTree {
   /**
-   * 跟节点
+   * 根节点
    * @type {AVLTreeNode<number> | null}
    */
   root = null;
@@ -103,6 +26,7 @@ class AVLTree {
     /* 将A与B做左单旋，更新A与B的高度，返回新的根结点B */
     // 当前树节点的左子树
     let B = A.left;
+    // 注意： 一定要先把B的右子树挂在A的左边
     A.left = B.right;
     B.right = A;
     A.height = Math.max(this.getHeight(A.left), this.getHeight(A.right)) + 1;
@@ -115,11 +39,13 @@ class AVLTree {
    * @param {AVLTreeNode<number>} A
    */
   singleRightRotation(A) {
-    // A的右子树，即
+    /* 注意：A必须有一个左子结点B */
+    /* 将A与B做左单旋，更新A与B的高度，返回新的根结点B */
     let B = A.right;
+    // 注意： 一定要先把B的左子树挂在A的右边
+    A.right = B.left;
     // A的右子树的左子树
     B.left = A;
-    A.right = B.left;
     A.height = Math.max(this.getHeight(A.left), this.getHeight(A.right)) + 1;
     B.height = Math.max(this.getHeight(B.right), this.getHeight(A)) + 1;
     return B;
@@ -145,18 +71,39 @@ class AVLTree {
    * @returns {AVLTreeNode<number>}
    */
   doubleRightLeftRotation(A) {
+    /* 注意：A必须有一个右子结点B，且B必须有一个左子结点C */
+    /* 将A、B与C做两次单旋，返回新的根结点C */
+    /* 将B与C做左单旋，C被返回 */
     A.right = this.singleLeftRotation(A.right);
+    /* 将A与C做右单旋，C被返回 */
     return this.singleRightRotation(A);
   }
 
   /**
    * 插入子节点
+   * @param {number} val
+   */
+  insert(val) {
+    this.root = this._insert(this.root, val);
+  }
+
+  /**
+   * 删除子节点
+   */
+  delete(val) {
+    this.root = this._delete(this.root, val);
+  }
+
+  /**
+   * 删除子节点辅助函数
    * @param {AVLTreeNode<number>} treeNode
    * @param {number} val
    * @returns {AVLTreeNode<number>}
    */
-  insert(val) {
-    this.root = this._insert(this.root, val);
+  _delete(treeNode, val) {
+    if (treeNode.val === val) {
+      return null;
+    }
   }
 
   /**
@@ -170,17 +117,20 @@ class AVLTree {
     if (!treeNode) {
       /* 若插入空树，则新建包含一个结点的树 */
       treeNode = {
-        data: val,
+        val: val,
         height: 0,
         left: null,
         right: null,
       };
-    } else if (val < treeNode.data) {
+    } else if (val < treeNode.val) {
       /* 插入treeNode的左子树 */
       treeNode.left = this._insert(treeNode.left, val);
       /* 如果需要左旋 */
-      if (this.getHeight(treeNode.left) - this.getHeight(treeNode.right) == 2) {
-        if (val < treeNode.left.data) {
+      if (
+        this.getHeight(treeNode.left) - this.getHeight(treeNode.right) ===
+        2
+      ) {
+        if (val < treeNode.left.val) {
           /* 左单旋 */
           treeNode = this.singleLeftRotation(treeNode);
         } else {
@@ -188,15 +138,15 @@ class AVLTree {
           treeNode = this.doubleLeftRightRotation(treeNode);
         }
       }
-    } else if (val > treeNode.data) {
+    } else if (val > treeNode.val) {
       /* 插入treeNode的右子树 */
       treeNode.right = this._insert(treeNode.right, val);
       /* 如果需要右旋 */
       if (
-        this.getHeight(treeNode.left) - this.getHeight(treeNode.right) ==
+        this.getHeight(treeNode.left) - this.getHeight(treeNode.right) ===
         -2
       ) {
-        if (val > treeNode.right.data) {
+        if (val > treeNode.right.val) {
           /* 右单旋 */
           treeNode = this.singleRightRotation(treeNode);
         } else {

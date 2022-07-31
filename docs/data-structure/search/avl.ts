@@ -2,7 +2,7 @@ interface AVLTreeNode<T> {
   /**
    * 节点数据
    */
-  data: T;
+  val: T;
   /**
    * 左子树节点
    */
