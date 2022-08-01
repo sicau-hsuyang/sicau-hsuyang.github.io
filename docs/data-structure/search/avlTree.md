@@ -573,6 +573,36 @@ class AVLTree {
   }
 
   /**
+   * 查找指定值是否在二叉搜索树中存在
+   * @param {number} val
+   * @returns {AVLTreeNode<number>}
+   */
+  find(val) {
+    return this._find(val, this.root);
+  }
+
+  /**
+   * 查找辅助函数
+   * @param {number} val
+   * @param {AVLTreeNode<number>} treeNode
+   */
+  _find(val, treeNode) {
+    let node = treeNode;
+    while (node) {
+      if (node.val == val) {
+        break;
+      } else if (node.val > val) {
+        // 沿着左子树查找
+        node = node.left;
+      } else if (node.val < val) {
+        // 沿着右子树查找
+        node = node.right;
+      }
+    }
+    return node;
+  }
+
+  /**
    * 在AVL树中查找最小值
    * @param {AVLTreeNode<number>} treeNode
    * @returns
