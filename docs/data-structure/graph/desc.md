@@ -205,35 +205,58 @@ interface Vertex {
 首先定义图和顶点
 
 ```ts
+class Edge {
+  constructor(name) {
+    this.name = name;
+  }
+  /**
+   * 边的编号
+   */
+  name;
+  /**
+   * 起始点
+   * @type {Vertex}
+   */
+  from;
+  /**
+   * 终止点
+   * @type {Vertex}
+   */
+  to;
+}
+
 class Vertex {
   /**
    * 城市名称
    */
-  public cityName: string;
-
+  cityName;
   /**
    * 邻接点
    */
-  public siblings: Vertex[] = [];
-
-  /**
-   * 追加邻接点
-   */
-  link(v: Vertex) {
-    this.siblings.push(v);
-    v.link(this);
-  }
-
-  constructor(cityName: string) {
+  siblings = [];
+  constructor(cityName) {
     this.cityName = cityName;
   }
 }
 
 class Graph {
-  public vertexList: Vertex[] = [];
-
-  addVertex(v: Vertex) {
+  vertexList = [];
+  edgeList = [];
+  addVertex(v) {
     this.vertexList.push(v);
+  }
+
+  /**
+   * 增加边
+   * @param {Vertex} from
+   * @param {Vertex} to
+   */
+  addEdge(from, to) {
+    const name = `${from.cityName}至${to.cityName}`;
+    const edge = new Edge(name);
+    this.edgeList.push(edge);
+    from.siblings.push(to);
+    to.siblings.push(from);
   }
 }
 ```
@@ -252,19 +275,6 @@ const xian = new Vertex("西安");
 const urumchi = new Vertex("乌鲁木齐");
 
 /**
- * 建立连接关系
- */
-beijing.link(nanjing);
-nanjing.link(guangzhou);
-guangzhou.link(shenzhen);
-guangzhou.link(hongkong);
-hongkong.link(shenzhen);
-chengdu.link(guangzhou);
-chengdu.link(xian);
-urumchi.link(xian);
-urumchi.link(beijing);
-
-/**
  * 将城市加入到图中
  */
 g.addVertex(beijing);
@@ -275,6 +285,19 @@ g.addVertex(hongkong);
 g.addVertex(chengdu);
 g.addVertex(xian);
 g.addVertex(urumchi);
+/**
+ * 建立连接关系
+ */
+g.addEdge(beijing, nanjing);
+g.addEdge(beijing, xian);
+g.addEdge(nanjing, guangzhou);
+g.addEdge(guangzhou, shenzhen);
+g.addEdge(guangzhou, hongkong);
+g.addEdge(hongkong, shenzhen);
+g.addEdge(chengdu, guangzhou);
+g.addEdge(chengdu, xian);
+g.addEdge(urumchi, xian);
+g.addEdge(urumchi, beijing);
 ```
 
-上述这种方法是大家在实际开发中最可能用到的。
+上述这种方法是大家在实际开发中最可能用到的。后面，一些图的算法，我们还会基于这个例子阐述。
