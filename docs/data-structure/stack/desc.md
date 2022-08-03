@@ -18,6 +18,11 @@ class Stack<T> {
     return this.data.length;
   }
 
+  /* 获取栈顶元素 */
+  get top(): T | null {
+    return this.isEmpty() ? null : this.data[this.size-1];
+  }
+
   /**
    * 压栈
    * @param ele
@@ -79,6 +84,10 @@ class Stack<T> {
 
   public get size() {
     return this.length;
+  }
+  /* 获取栈顶元素 */
+  public get top(): T | null {
+    return this.isEmpty() ? null : this.head.data;
   }
 
   /**
