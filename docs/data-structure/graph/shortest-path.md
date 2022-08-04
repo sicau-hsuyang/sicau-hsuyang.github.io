@@ -250,3 +250,119 @@ const { path, distance } = unweightedShortestPath(chengdu, beijing);
 因为我们在求解过程中把经过的路径已经计算出来了，类同于链表的原理，我们可以从终点倒推到起点，便可以求得经过的节点，因为这个是一个逆序的结果，所以我们需要使用栈再次将其逆序，即可求得最终的结果。
 
 **不管是有向还是无向图，我们都可以使用上述算法求得从某个指定的开始节点到所有节点的最短路径。**
+
+### 带权图单源最短路径算法
+
+对于这个问题，我们还是基于上面我们使用的那个城市相对位置的例子来阐述，不过，需要引入权重。
+
+<div align="center">
+  <img :src="$withBase('/graph/graph-with-weight.png')" alt="带权图" />
+</div>
+
+因为，增加了权重，上面的表示方法也有一定的调整：
+
+```js {20-23,49-61}
+class Edge {
+  constructor(name, cost) {
+    this.name = name;
+    this.cost = cost;
+  }
+  /**
+   * 边的编号
+   */
+  name;
+  /**
+   * 起始点
+   * @type {Vertex}
+   */
+  from;
+  /**
+   * 终止点
+   * @type {Vertex}
+   */
+  to;
+  /**
+   * @type {number}
+   */
+  cost;
+}
+
+class Vertex {
+  constructor(cityName) {
+    this.cityName = cityName;
+  }
+  /**
+   * 城市名称
+   */
+  cityName;
+  /**
+   * 邻接边
+   */
+  edges = [];
+}
+
+class Graph {
+  /**
+   * 顶点列表
+   */
+  vertexList = [];
+
+  addVertex(v) {
+    this.vertexList.push(v);
+  }
+  /**
+   * 增加边
+   * @param {Vertex} from
+   * @param {Vertex} to
+   * @param {number} cost
+   */
+  addEdge(from, to, cost) {
+    const into = new Edge(`${from.cityName}至${to.cityName}`, cost);
+    const outside = new Edge(`${to.cityName}至${from.cityName}`, cost);
+    // 建立两个城市的指向关系
+    from.edges.push(outside);
+    to.edges.push(into);
+  }
+}
+```
+
+然后，初始化数据：
+
+```js {25-34}
+const g = new Graph();
+const beijing = new Vertex("北京");
+const nanjing = new Vertex("南京");
+const guangzhou = new Vertex("广州");
+const shenzhen = new Vertex("深圳");
+const hongkong = new Vertex("香港");
+const chengdu = new Vertex("成都");
+const xian = new Vertex("西安");
+const urumchi = new Vertex("乌鲁木齐");
+
+/**
+ * 将城市加入到图中
+ */
+g.addVertex(beijing);
+g.addVertex(nanjing);
+g.addVertex(guangzhou);
+g.addVertex(shenzhen);
+g.addVertex(hongkong);
+g.addVertex(chengdu);
+g.addVertex(xian);
+g.addVertex(urumchi);
+/**
+ * 建立连接关系
+ */
+g.addEdge(beijing, nanjing, 35);
+g.addEdge(beijing, xian, 1000);
+g.addEdge(nanjing, guangzhou, 15);
+g.addEdge(guangzhou, shenzhen, 10);
+g.addEdge(guangzhou, hongkong, 10);
+g.addEdge(hongkong, shenzhen, 10);
+g.addEdge(chengdu, guangzhou, 50);
+g.addEdge(chengdu, xian, 120);
+g.addEdge(urumchi, xian, 100);
+g.addEdge(urumchi, beijing, 1000);
+```
+
+未完待续...
