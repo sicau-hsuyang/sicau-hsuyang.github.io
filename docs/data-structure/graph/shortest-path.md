@@ -365,4 +365,168 @@ g.addEdge(urumchi, xian, 100);
 g.addEdge(urumchi, beijing, 1000);
 ```
 
-未完待续...
+接下来是根据上面图的表示方法所对应的求解的核心代码，也就是大名鼎鼎的`迪杰斯特拉算法`：
+
+```js
+/**
+ * 在图中返回未被收录顶点中dist最小者
+ * @param {Graph} graph
+ * @param {Map<number, number>} distance
+ * @param {Map<Vertex, boolean>} collected
+ * @returns {Vertex | null}
+ */
+function findMinDist(graph, distance, collected) {
+  /* 返回未被收录顶点中dist最小顶点 */
+  let minVertex;
+  let minDist = Infinity;
+  for (let i = 0; i < graph.vertexList.length; i++) {
+    const curVertex = graph.vertexList[i];
+    /* 若curVertex未被收录，且dist.get(curVertex)更小 */
+    if (!collected.get(curVertex) && distance.get(curVertex) < minDist) {
+      /* 更新最小距离 */
+      minDist = distance.get(curVertex);
+      /* 更新对应顶点 */
+      minVertex = curVertex;
+    }
+  }
+  // 如果能够找到这样的顶点，则返回最小的距离，否则，这样的距离不存在
+  return minDist < Infinity ? minVertex : null;
+}
+
+/**
+ * 迪杰斯特拉算法求解最短路径
+ * @param {Graph} graph
+ * @param {Vertex} start
+ * @returns
+ */
+function dijkstra(graph, start) {
+  let collected = new Map();
+  let distance = new Map();
+  let path = new Map();
+  /* 先将起点收入集合 */
+  distance.set(start, 0);
+  collected.set(start, true);
+  graph.vertexList.forEach((vertex) => {
+    if (vertex === start) {
+      // 对start节点本身除外
+      return;
+    }
+    // 找到start节点的邻接点，如果当前节点存在出度指向起点，则证明当前节点是开始节点的邻接点
+    const neighborEdge = vertex.edges.find((v) => v.to === start);
+    // 若存在连接的话，则按权重初试化，否则初始化为无穷大
+    if (neighborEdge) {
+      distance.set(vertex, neighborEdge.cost);
+      path.set(vertex, start);
+    } else {
+      distance.set(vertex, Infinity);
+    }
+  });
+  while (true) {
+    /* vertex为未被收录顶点中distance最小者 */
+    let vertex = findMinDist(graph, distance, collected);
+    /* 若这样的vertex不存在，流程结束 */
+    if (!vertex) {
+      break;
+    }
+    /* 收录vertex */
+    collected.set(vertex, true);
+    /* 遍历图中的每个顶点 */
+    for (let i = 0; i < graph.vertexList.length; i++) {
+      let curVertex = graph.vertexList[i];
+      /* 若curVertex是vertex的邻接点并且未被收录 */
+      const linkEdge = curVertex.edges.find((edge) => edge.to === vertex);
+      if (!collected.get(curVertex) && linkEdge) {
+        /* 若有负边 */
+        if (linkEdge < 0) {
+          /* 不能正确解决，返回错误标记 */
+          return { distance: null, path: null };
+        }
+        /* 若收录vertex使得distance变小 */
+        if (distance.get(vertex) + linkEdge.cost < distance.get(curVertex)) {
+          /* 更新dist */
+          distance.set(curVertex, distance.get(vertex) + linkEdge.cost);
+          /* 更新start到curVertex的路径 */
+          path.set(curVertex, vertex);
+        }
+      }
+    }
+  }
+  return { distance, path };
+}
+
+/**
+ * 根据迪杰斯特拉算法求解结果求最终的结果
+ * @param {Map<Vertex, number>} distance
+ * @param {Map<Vertex, Vertex>} path
+ * @param {Vertex} destination
+ */
+function getShortestPath(path, distance, destination) {
+  if (path === null || distance === null) {
+    return { cost: -1, path: null };
+  }
+  const stack = [destination];
+  let preVertex = path.get(destination);
+  while (preVertex) {
+    stack.push(preVertex);
+    preVertex = path.get(preVertex);
+  }
+  let via = "";
+  let cost = distance.get(destination);
+  while (stack.length) {
+    via += "->" + stack.pop().cityName;
+  }
+  return { path: via.replace(/(^->)|(->$)/g, ""), cost };
+}
+```
+
+我们来分析一下迪杰斯特拉算法的求解过程：
+
+首先，将起始节点收录，然后找到它的所有邻接点，如果找的到邻接点的话，初始化该邻接点到起点的距离，并且将该邻接点更新在起始节点的路径上，`西安`和`广州`是`成都`的邻接点，因此可以得到如下图：
+
+<div align="center">
+  <img :src="$withBase('/graph/example/chengdu.png')" alt="成都" />
+</div>
+
+接着，我们找到未收录节点中的最小的节点，经过查找，找到的是`广州`，因为发现`成都`到`南京`，`香港`，`深圳`的距离由原来的无穷大变成经过`广州`再到对应的城市，因此可以更新距离和路径，可以得到如下图：
+
+<div align="center">
+  <img :src="$withBase('/graph/example/guangzhou.png')" alt="广州" />
+</div>
+
+// 步骤更新中，请耐心等待...
+
+因此，我们可以写出`迪杰斯特拉算法`的伪代码，如下：
+
+```js
+/* 单源有权最短路径算法 */
+function dijkstra(vertex) {
+  collected[vertex] = true;
+  for(图中所有顶点 V) {
+    if(当前 V 是 vertex的邻接点) {
+      distance[V] = vertex到V的权重
+      把 V 更新在 vertex的路径上
+    } else {
+      distance[V] = 无穷大
+    }
+  }
+  while(true) {
+    minVertex = 找出未收录顶点的最小者；
+    if(找不到这样的minVertex) {
+      break;
+    }
+    collected[minVertex] = true;
+    for(minVertex 的每个邻接点 neighborVertex) {
+      if(!collected[neighborVertex]) {
+        if(存在负值圈) {
+          return false;
+        }
+        if(distance[minVertex] + minVertex到neighborVertex的权重 < distance[neighborVertex]) {
+          distance[neighborVertex] = distance[neighborVertex] + minVertex到neighborVertex的权重
+          path[neighborVertex] = minVertex
+        }
+      }
+    }
+  }
+  return true;
+}
+```

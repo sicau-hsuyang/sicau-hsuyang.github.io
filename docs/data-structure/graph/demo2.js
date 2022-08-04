@@ -103,20 +103,20 @@ g.addEdge(urumchi, beijing, 1000);
 /**
  * 在图中返回未被收录顶点中dist最小者
  * @param {Graph} graph
- * @param {Map<number, number>} dist
+ * @param {Map<number, number>} distance
  * @param {Map<Vertex, boolean>} collected
  * @returns {Vertex | null}
  */
-function findMinDist(graph, dist, collected) {
+function findMinDist(graph, distance, collected) {
   /* 返回未被收录顶点中dist最小顶点 */
   let minVertex;
   let minDist = Infinity;
   for (let i = 0; i < graph.vertexList.length; i++) {
     const curVertex = graph.vertexList[i];
     /* 若curVertex未被收录，且dist.get(curVertex)更小 */
-    if (!collected.get(curVertex) && dist.get(curVertex) < minDist) {
+    if (!collected.get(curVertex) && distance.get(curVertex) < minDist) {
       /* 更新最小距离 */
-      minDist = dist.get(curVertex);
+      minDist = distance.get(curVertex);
       /* 更新对应顶点 */
       minVertex = curVertex;
     }
@@ -126,27 +126,37 @@ function findMinDist(graph, dist, collected) {
 }
 
 /**
- * 迪杰斯特拉算法
+ * 迪杰斯特拉算法求解最短路径
  * @param {Graph} graph
  * @param {Vertex} start
- * @param {Map<Vertex, number>} dist
- * @param {Map<Vertex, Vertex>} path
  * @returns
  */
-function dijkstra(graph, start, dist = new Map(), path = new Map()) {
+function dijkstra(graph, start) {
   let collected = new Map();
-  let vertex;
+  let distance = new Map();
+  let path = new Map();
   /* 先将起点收入集合 */
-  dist.set(start, 0);
+  distance.set(start, 0);
   collected.set(start, true);
-  start.edges.forEach((edge) => {
-    let nextVertex = edge.to;
-    dist.set(nextVertex, edge.cost);
+  graph.vertexList.forEach((vertex) => {
+    if (vertex === start) {
+      // 对start节点本身除外
+      return;
+    }
+    // 找到start节点的邻接点，如果当前节点存在出度指向起点，则证明当前节点是开始节点的邻接点
+    const neighborEdge = vertex.edges.find((v) => v.to === start);
+    // 若存在连接的话，则按权重初试化，否则初始化为无穷大
+    if (neighborEdge) {
+      distance.set(vertex, neighborEdge.cost);
+      path.set(vertex, start);
+    } else {
+      distance.set(vertex, Infinity);
+    }
   });
   while (true) {
-    /* vertex为未被收录顶点中dist最小者 */
-    vertex = findMinDist(graph, dist, collected);
-    /* 若这样的vertex不存在 */
+    /* vertex为未被收录顶点中distance最小者 */
+    let vertex = findMinDist(graph, distance, collected);
+    /* 若这样的vertex不存在，流程结束 */
     if (!vertex) {
       break;
     }
@@ -161,19 +171,47 @@ function dijkstra(graph, start, dist = new Map(), path = new Map()) {
         /* 若有负边 */
         if (linkEdge < 0) {
           /* 不能正确解决，返回错误标记 */
-          return false;
+          return { distance: null, path: null };
         }
-        /* 若收录vertex使得dist变小 */
-        if (dist.get(vertex) + linkEdge.cost < dist.get(curVertex)) {
+        /* 若收录vertex使得distance变小 */
+        if (distance.get(vertex) + linkEdge.cost < distance.get(curVertex)) {
           /* 更新dist */
-          dist.set(curVertex, dist.get(vertex) + linkEdge.cost);
+          distance.set(curVertex, distance.get(vertex) + linkEdge.cost);
           /* 更新start到curVertex的路径 */
-          path.set(i, vertex);
+          path.set(curVertex, vertex);
         }
       }
     }
   }
-  return true;
+  return { distance, path };
 }
 
-dijkstra(g, chengdu);
+/**
+ * 根据迪杰斯特拉算法求解结果求最终的结果
+ * @param {Map<Vertex, number>} distance
+ * @param {Map<Vertex, Vertex>} path
+ * @param {Vertex} destination
+ */
+function getShortestPath(path, distance, destination) {
+  if (path === null || distance === null) {
+    return { cost: -1, path: null };
+  }
+  const stack = [destination];
+  let preVertex = path.get(destination);
+  while (preVertex) {
+    stack.push(preVertex);
+    preVertex = path.get(preVertex);
+  }
+  let via = "";
+  let cost = distance.get(destination);
+  while (stack.length) {
+    via += "->" + stack.pop().cityName;
+  }
+  return { path: via.replace(/(^->)|(->$)/g, ""), cost };
+}
+
+const { path, distance } = dijkstra(g, chengdu);
+
+const { path: via, cost } = getShortestPath(path, distance, beijing);
+
+console.log(via, cost);
