@@ -11,7 +11,7 @@
 对于这颗二叉树：
 
 <div align="center">
-  <img src="/tree/morris/binary-tree.png" width='400' alt="二叉树" />
+  <img :src="$withBase('/tree/morris/binary-tree.png')" width='400' alt="二叉树" />
 </div>
 
 不管怎么样，3 节点永远会比 2 节点和 4 节点先访问到，只不过，我们在某些场合，不是遇到 3 节点就立刻将其输出。因为有栈的关系，当我们处理到最叶节点的时候，能够根据栈内容清楚的知道回溯的准确位置。

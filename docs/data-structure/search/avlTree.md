@@ -35,7 +35,7 @@ interface AVLTreeNode<T> {
 ### AVL 树的旋转
 
 <div align="center">
-  <img src="/avl/balance-state.png" alt="平衡状态" width='400' />
+  <img :src="$withBase('/avl/balance-state.png')" alt="平衡状态" width='400' />
 </div>
 
 在上文我们提到在`AVL树`中，**任何节点的两个子树的高度最大差为 1**，那么，其实除开左子树或右子树上多出来的那个节点（后文我们就把它称之为`孤儿节点`，上图中值为 1 的节点，或值为 5 的节点），别的部分也是平衡的；
@@ -43,7 +43,7 @@ interface AVLTreeNode<T> {
 如红框里圈出来的：
 
 <div align="center">
-  <img src="/avl/except-a-node.png" alt="剩余部分" width='400' />
+  <img :src="$withBase('/avl/except-a-node.png')" alt="剩余部分" width='400' />
 </div>
 
 对于节点 3，左子树高度 1，右子树高度 2，平衡因子 -1；
@@ -59,13 +59,13 @@ interface AVLTreeNode<T> {
 孤儿节点为左子结点：
 
 <div align="center">
-  <img src="/avl/abstract-case1.png" alt="抽象状态1" width='400' />
+  <img :src="$withBase('/avl/abstract-case1.png')" alt="抽象状态1" width='400' />
 </div>
 
 孤儿节点为右子结点：
 
 <div align="center">
-  <img src="/avl/abstract-case2.png" alt="抽象状态2" width='400' />
+  <img :src="$withBase('/avl/abstract-case2.png')" alt="抽象状态2" width='400' />
 </div>
 
 #### LL 旋转
@@ -73,7 +73,7 @@ interface AVLTreeNode<T> {
 若孤儿节点为左子节点（`L`），在其左子结点(`L`)上插入 `C`子树（还是因为**任何节点的两个子树的高度最大差为 1**的特征，`C`是可以有子节点的，后续不再赘述）：
 
 <div align="center">
-  <img src="/avl/ll-rotation.png" alt="左左旋转" width='400' />
+  <img :src="$withBase('/avl/ll-rotation.png')" alt="左左旋转" width='400' />
 </div>
 
 对于节点`A`，左子树的高度为 2，右子树高度为 0，平衡因子为-2，节点`B`的左子树高度 1，右子树 0，平衡因子-1；节点`C`的左右子树都是 0，平衡因子 0。
@@ -81,7 +81,7 @@ interface AVLTreeNode<T> {
 那么，我们只需要把它调整为`CBA`的顺序即可。即：
 
 <div align="center">
-  <img src="/avl/after-ll-rotation.png" alt="左左旋转后的结果" width='400' />
+  <img :src="$withBase('/avl/after-ll-rotation.png')" alt="左左旋转后的结果" width='400' />
 </div>
 
 这就是`LL旋转`。因为节点`A`也可能有右子树，`B`节点也可能有右子树。那么，`B`节点的右子树是要比`A`节点的右子树小的，所以`A`节点的右子树保持不动，将`B`的右子树挂在`A`节点的左子树上，若 `C`有左右子节点，则保持不动即可。
@@ -89,7 +89,7 @@ interface AVLTreeNode<T> {
 即：
 
 <div align="center">
-  <img src="/avl/LL.png" alt="左左旋转后最终的结果" width='400' />
+  <img :src="$withBase('/avl/LL.png')" alt="左左旋转后最终的结果" width='400' />
 </div>
 
 #### RR 旋转：
@@ -97,7 +97,7 @@ interface AVLTreeNode<T> {
 若孤儿节点为右子节点（`R`），在其右子结点(`R`)上插入 `C`子树：
 
 <div align="center">
-  <img src="/avl/rr-rotation.png" alt="右右旋转" width='400' />
+  <img :src="$withBase('/avl/rr-rotation.png')" alt="右右旋转" width='400' />
 </div>
 
 对于节点`A`，左子树的高度为 0，右子树高度为 2，平衡因子为 2，节点`B`的左子树高度 0，右子树 1，平衡因子 1；节点`C`的左右子树都是 0，平衡因子 0。
@@ -105,7 +105,7 @@ interface AVLTreeNode<T> {
 那么，我们只需要把它调整为`ABC`的顺序即可。即：
 
 <div align="center">
-  <img src="/avl/after-rr-rotation.png" alt="右右旋转后的结果" width='400' />
+  <img :src="$withBase('/avl/after-rr-rotation.png')" alt="右右旋转后的结果" width='400' />
 </div>
 
 这就是`RR旋转`。因为节点`A`也可能有左子树，`B`节点也可能有左子树。那么，`B`节点的左子树是要比`A`节点的左子树大的，所以`A`节点的左子树保持不动，将`B`的左子树挂在`A`节点的右子树上，若`C`有左右子树，则保持不动即可。
@@ -113,7 +113,7 @@ interface AVLTreeNode<T> {
 即：
 
 <div align="center">
-  <img src="/avl/RR.png" alt="右右旋转后最终的结果" width='400' />
+  <img :src="$withBase('/avl/RR.png')" alt="右右旋转后最终的结果" width='400' />
 </div>
 
 #### LR 旋转
@@ -121,7 +121,7 @@ interface AVLTreeNode<T> {
 若孤儿节点为左子节点（`L`），在其右子结点(`R`)上插入 `C`子树：
 
 <div align="center">
-  <img src="/avl/lr-rotation.png" alt="左右旋转" width='400' />
+  <img :src="$withBase('/avl/lr-rotation.png')" alt="左右旋转" width='400' />
 </div>
 
 对于节点`A`，左子树的高度为 2，右子树高度为 0，平衡因子为-2，节点`B`的左子树高度 0，右子树 1，平衡因子 1；节点`C`的左右子树都是 0，平衡因子 0。
@@ -131,19 +131,19 @@ interface AVLTreeNode<T> {
 那么，首先得把`C`提节点上去，即：
 
 <div align="center">
-  <img src="/avl/lr-rotation-r.png" alt="左右旋转先右旋" width='400' />
+  <img :src="$withBase('/avl/lr-rotation-r.png')" alt="左右旋转先右旋" width='400' />
 </div>
 
 接着，我们把`C`再次向上提，把`A`往右下压，即：
 
 <div align="center">
-  <img src="/avl/lr-rotation-l.png" alt="左右旋转再左旋" width='400' />
+  <img :src="$withBase('/avl/lr-rotation-l.png')" alt="左右旋转再左旋" width='400' />
 </div>
 
 同理，上述情况节点`A`可能有右子树，节点`B`可能有左子树，其实是保持不变的，但若`C`有左右子树，可以确定的是`C`的左右子树都是小于`A`的，`C` 的左右子树都是大于`B`的，那么`C`的左子树可以放在`B`的右子树上，`C`的右子树可以放在`A`的左子树上，即：
 
 <div align="center">
-  <img src="/avl/LR.png" alt="左右旋转" width='400' />
+  <img :src="$withBase('/avl/LR.png')" alt="左右旋转" width='400' />
 </div>
 
 可以看到，`LR旋转`，是先对`节点 B `进行了一次`RR旋转`，再对 A 进行一次`LL旋转`。
@@ -153,7 +153,7 @@ interface AVLTreeNode<T> {
 若孤儿节点为右子节点（`R`），在其左子结点(`L`)上插入 `C`子树：
 
 <div align="center">
-  <img src="/avl/rl-rotation.png" alt="右左旋转" width='400' />
+  <img :src="$withBase('/avl/rl-rotation.png')" alt="右左旋转" width='400' />
 </div>
 
 对于节点`A`，右子树的高度为 2，左子树高度为 0，平衡因子为 2，节点`B`的左子树高度 1，右子树 0，平衡因子 -1；节点`C`的左右子树都是 0，平衡因子 0。
@@ -163,19 +163,19 @@ interface AVLTreeNode<T> {
 那么，首先得把`C`提上去，即：
 
 <div align="center">
-  <img src="/avl/rl-rotation-l.png" alt="右左旋转先左旋" width='400' />
+  <img :src="$withBase('/avl/rl-rotation-l.png')" alt="右左旋转先左旋" width='400' />
 </div>
 
 接着，我们把`C`再次向上提，把`A`往左下压，即：
 
 <div align="center">
-  <img src="/avl/rl-rotation-r.png" alt="右左旋转再右旋" width='400' />
+  <img :src="$withBase('/avl/rl-rotation-r.png')" alt="右左旋转再右旋" width='400' />
 </div>
 
 同理，上述情况节点`A`可能有左子树，节点`B`可能有右子树，其实是保持不变的，但若`C`有左右子树，可以确定的是`C`的左右子树都是大于`A`的，但`C`的左子树一定是小于`B`的，那么`C`的左子树可以放在`B`的左子树上，`C`的右子树可以放在`A`的右子树上，即：
 
 <div align="center">
-  <img src="/avl/RL.png" alt="右左旋转" width='400' />
+  <img :src="$withBase('/avl/RL.png')" alt="右左旋转" width='400' />
 </div>
 
 可以看到，`RL旋转`，是先对`节点 B `进行了一次`LL旋转`，再对 A 进行一次`RR旋转`。
@@ -367,13 +367,13 @@ function _insert(treeNode, val) {
 下图表示的是删除`A`的右子节点之后，其中`B`的左子树树高大于等于`B`的左子树的树高（取得等于的时候是`B`的右子树存在时），这种情况下进行的是`LL旋转`。
 
 <div align="center">
-  <img src="/avl/delete-right-ll.png" alt="删除右子节点" width="400" />
+  <img :src="$withBase('/avl/delete-right-ll.png')" alt="删除右子节点" width="400" />
 </div>
 
 下图表示的是删除`A`的右子节点之后，其中`B`的右子树树高，大于`B`的左子树的树高，这种情况下进行的是`LR旋转`。
 
 <div align="center">
-  <img src="/avl/delete-right-lr.png" alt="删除右子节点" width="400" />
+  <img :src="$withBase('/avl/delete-right-lr.png')" alt="删除右子节点" width="400" />
 </div>
 
 当删除节点是某个节点的左叶子节点的情况时上面两种情况差不多，就不再赘述。

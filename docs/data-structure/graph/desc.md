@@ -37,7 +37,7 @@
 对于下面这个图，我们分别尝试用邻接矩阵和邻接表来表示它。
 
 <div align="center">
-  <img src="/graph/graph.png" alt="图"/>
+  <img :src="$withBase('/graph/graph.png')" alt="图"/>
 </div>
 
 我们对这些城市分别编个号

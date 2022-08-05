@@ -5,7 +5,7 @@
 下图生动形象的为我们展示了`BFS`的处理流程。
 
 <div align="center">
-  <img src="/graph/bfs.gif" alt="bfs" />
+  <img :src="$withBase('/graph/bfs.gif')" alt="bfs" />
 </div>
 
 它总是一圈一圈的从内往外处理，每次都是一滴不漏的处理完每个角落，才会开始下一圈的处理。
