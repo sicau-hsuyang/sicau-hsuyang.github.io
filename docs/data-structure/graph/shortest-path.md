@@ -362,7 +362,7 @@ g.addEdge(hongkong, shenzhen, 10);
 g.addEdge(chengdu, guangzhou, 50);
 g.addEdge(chengdu, xian, 120);
 g.addEdge(urumchi, xian, 100);
-g.addEdge(urumchi, beijing, 1000);
+g.addEdge(urumchi, beijing, 300);
 ```
 
 接下来是根据上面图的表示方法给出的对应求解的核心代码，也就是大名鼎鼎的`迪杰斯特拉算法`：
@@ -579,4 +579,125 @@ function dijkstra(vertex) {
 
 `迪杰斯特拉算法`解决的是单源最短路径的问题，如何求多源最短路径呢，有的朋友会说，那直接把`迪杰斯特拉算法`对每个顶点都进行一次求解就可以了啊，这个确实是可以的，但是，还可以有更高明的算法，这就是接下来要阐述的`弗洛伊德算法`。
 
-未完待续...
+但是，不幸的消息又来了，`弗洛伊德算法`是基于`动态规划`思想的，在前文我们阐述[KMP](/data-structure/string/KMP.md)的时候提到过`next数组`的求解过程也是基于`动态规划`的，这是一个老大难问题，这方面比较小白的朋友，可以尝试学习[这门课程](https://www.icourse163.org/course/PKU-1001894005?tid=1001994002)，然后再回过来看这边博客较好。
+
+既然是基于`动态规划`，那么就一定是存在递推关系的，接下来就看一看这个递推关系是怎么建立的。
+
+令：Dp<sup>k</sup>[i][j] = 路径 {i->{l<=k}->j}的最小长度，和`迪杰斯特拉算法`一样，这儿只是表示已经收进到集合中的当前编号小于等于`k`的顶点从`i`到`j`的最短路径。
+
+那么，Dp<sup>0</sup>[i][j]，Dp<sup>1</sup>[i][j]，... Dp<sup>size-1</sup>[i][j]给出了`i`到`j`真正的最短距离，`size`为图中的顶点个数。
+
+当 Dp<sup>k-1</sup>[i][j]已经完成，递推到 Dp<sup>k</sup>[i][j]时，存在下面两种情况：
+
+如果 k∉ 最短路径{i->{l<=k}->j}，则 Dp<sup>k-1</sup>[i][j] = Dp<sup>k</sup>[i][j]
+
+如果 k∈ 最短路径{i->{l<=k}->j}，则该路径必定由两段最短路径组成，即： Dp<sup>k</sup>[i][j] = Dp<sup>k-1</sup>[i][k] + Dp<sup>k-1</sup>[k][i]
+
+如果使用邻接矩阵表示`图`的话，`弗洛伊德算法`代码看起来会比较简洁，但是我们依然使用上面的那种表示方法，那么实现就如下：
+
+```js
+/**
+ * 弗洛伊德算法
+ * @param {Graph} graph
+ */
+function floyd(graph) {
+  // 根据图中最大的顶点数初始化dp数组
+  let size = graph.vertexList.length;
+  // 初始化无穷大，为了在日后的计算中将最短距离缩小
+  const dp = Array.from({
+    length: size,
+  }).map(() => {
+    return Array.from({
+      length: size,
+    }).fill(Infinity);
+  });
+  // 初始化为-1，代表两点之间不存在中间节点
+  const path = Array.from({
+    length: size,
+  }).map(() => {
+    return Array.from({
+      length: size,
+    }).fill(-1);
+  });
+  /**
+   * 定义一个求两点之间最短路径的函数
+   * @param {Vertex} start
+   * @param {Vertex} end
+   * @returns
+   */
+  const getShortestPath = (start, end) => {
+    const shortestPath = (i, j) => {
+      let k = path[i][j];
+      // 如果两点之间不存在中间节点
+      if (k < 0) {
+        return (
+          graph.vertexList[i].cityName + "->" + graph.vertexList[j].cityName
+        );
+      }
+      // 从i到k的路径
+      const leftVia = shortestPath(i, k);
+      // 从k到j的路径
+      const rightVia = shortestPath(k, j);
+      // 因为计算途径路径的时候，多算了一个k节点，因此，需要给它替换掉
+      const via = leftVia + "->" + rightVia.replace(/^[\u4e00-\u9fa5]+->/, "");
+      return via;
+    };
+    const i = graph.vertexList.findIndex((v) => v === start);
+    const j = graph.vertexList.findIndex((v) => v === end);
+    if (i < 0 || j < 0) {
+      return "";
+    }
+    return shortestPath(i, j);
+  };
+  /**
+   * 定义一个求两点之间最小化肥的函数
+   * @param {Vertex} start
+   * @param {Vertex} end
+   */
+  const getShortestDistance = (start, end) => {
+    const i = graph.vertexList.findIndex((v) => v === start);
+    const j = graph.vertexList.findIndex((v) => v === end);
+    return i >= 0 && j >= 0 ? dp[i][j] : null;
+  };
+  // 初始化dp的值，若两点之间存在边，则初始化为权重，若不存在边，则初始为无穷大
+  for (let i = 0; i < size; i++) {
+    // 将对角线初始化为0，因为不允许自回路
+    dp[i][i] = 0;
+    const v1 = graph.vertexList[i];
+    // 将存在邻接点的点初始化为两点之间的权重，若不存在则初始化为无穷大
+    v1.edges.forEach((edge) => {
+      const j = graph.vertexList.findIndex((x) => x === edge.to);
+      dp[i][j] = edge.cost;
+    });
+  }
+  for (k = 0; k < size; k++) {
+    for (i = 0; i < size; i++) {
+      for (j = 0; j < size; j++) {
+        // 如果从i到k的距离和k到j的距离比当前的小，则更新最短距离
+        if (dp[i][k] + dp[k][j] < dp[i][j]) {
+          dp[i][j] = dp[i][k] + dp[k][j];
+          if (i == j && dp[i][j] < 0) {
+            /* 若发现负值圈，不能正确解决，返回错误标记 */
+            return {
+              distance: () => {
+                throw new Error("存在负值圈，无法计算");
+              },
+              path: () => {
+                throw new Error("存在负值圈，无法计算");
+              },
+            };
+          }
+          // 将k更新在i和j之间，表示从i到j必须要途径k节点
+          path[i][j] = k;
+        }
+      }
+    }
+  }
+  return {
+    distance: getShortestDistance,
+    path: getShortestPath,
+  };
+}
+```
+
+可以看到，我们一直都在不断地去找顶点的序号，因此，使用邻接矩阵表示的话，这个过程是可以省略的，所以代码会更简洁一些。
