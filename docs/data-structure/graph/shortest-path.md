@@ -591,7 +591,7 @@ function dijkstra(vertex) {
 
 如果 k∉ 最短路径{i->{l<=k}->j}，则 Dp<sup>k-1</sup>[i][j] = Dp<sup>k</sup>[i][j]
 
-如果 k∈ 最短路径{i->{l<=k}->j}，则该路径必定由两段最短路径组成，即： Dp<sup>k</sup>[i][j] = Dp<sup>k-1</sup>[i][k] + Dp<sup>k-1</sup>[k][i]
+如果 k∈ 最短路径{i->{l<=k}->j}，则该路径必定由两段最短路径组成，即： Dp<sup>k</sup>[i][j] = Dp<sup>k-1</sup>[i][k] + Dp<sup>k-1</sup>[k][i]\(最外层循环控制序列，内两层循环控制两点，所以在求 Dp<sup>k</sup>[i][j]时，一定已经求出了 Dp<sup>k-1</sup>[i][k] 和 Dp<sup>k-1</sup>[k][i]\)
 
 如果使用邻接矩阵表示`图`的话，`弗洛伊德算法`代码看起来会比较简洁，但是我们依然使用上面的那种表示方法，那么实现就如下：
 
