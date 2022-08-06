@@ -54,13 +54,13 @@
 这一系列的过程，大概如下图所示：
 
 首先准备删除
-<img :src="$withBase('/ready-del.png')" />
+<img :src="$withBase('/heap/ready-del.png')" />
 然后将节点值拷贝到根节点，然后把已经拷贝好值的节点拿掉；
-<img :src="$withBase('/del-and-copy.png')" />
+<img :src="$withBase('/heap/del-and-copy.png')" />
 因为子节点比跟节点的值大，所以，将子节点向上提，parent 指针指向被影响的儿子节点的位置
-<img :src="$withBase('/influence-child.png')"/>
+<img :src="$withBase('/heap/influence-child.png')"/>
 重复这个过程，直到把这个影响传递到叶节点，则完成调整。
-<img :src="$withBase('/finish-adjust.png')"/>
+<img :src="$withBase('/heap/finish-adjust.png')"/>
 
 ### 构建
 

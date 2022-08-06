@@ -5,7 +5,7 @@
 因此，栈具备一个重要的性质：`后入先出`。
 
 <div align="center">
-  <img :src="$withBase('/stack.webp')" alt="栈"  />
+  <img :src="$withBase('/stack/stack.webp')" alt="栈"  />
 </div>
 
 ## 栈的通用数组实现

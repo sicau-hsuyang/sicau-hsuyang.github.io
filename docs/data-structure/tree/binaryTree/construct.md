@@ -226,13 +226,13 @@ var buildTree = function (inorder, postorder) {
 那么，能够得到 ABC 先序序列的可能的二叉树如下：
 
 <div align="center">
-  <img :src="$withBase('/case1.png')"  alt="先序序列的可能构造情况"/>
+  <img :src="$withBase('/tree/binary-tree/case1.png')"  alt="先序序列的可能构造情况"/>
 </div>
 
 那么，能够得到 CBA 后续序列可能的二叉树如下：
 
 <div align="center">
-  <img :src="$withBase('/case2.png')"  alt="后序序列的可能构造情况"/>
+  <img :src="$withBase('/tree/binary-tree/case2.png')"  alt="后序序列的可能构造情况"/>
 </div>
 
 可以看到，**同一颗二叉树的先序和后序序列，但是可以构造出不同的二叉树**。
