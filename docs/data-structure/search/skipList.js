@@ -1,115 +1,150 @@
-const MAX_LEVEL = 32;
-const P_FACTOR = 0.25;
+class ListNode {
+  /**
+   * @type {number}
+   */
+  val = -1;
+  /**
+   * @type {ListNode[]}
+   */
+  next = [];
+  /**
+   * @param {number} val
+   * @param {number} level
+   */
+  constructor(val, level) {
+    this.val = val;
+    // 初始化指定高度的数组
+    this.next = Array.from({
+      length: level,
+    }).fill(null);
+  }
+}
 
 class SkipList {
+  /**
+   * 最大层数
+   * @type {number}
+   */
+  level = 8;
+  /**
+   * 头结点
+   * @type {ListNode | null}
+   */
+  head = null;
+
   constructor() {
-    this.head = new SkipListNode(-1, MAX_LEVEL);
-    this.level = 0;
+    this.head = new ListNode(-1, this.level);
+  }
+  /**
+   * 查找辅助函数，记录从上至下查找路径
+   * @param {number} target
+   */
+  find(target) {
+    let path = Array.from({
+      length: this.level,
+    }).fill(null);
+    // 从头节点开始遍历每一层
+    let p = this.head;
+    for (let i = this.level - 1; i >= 0; i--) {
+      // 从上层往下层找
+      while (p.next[i] && p.next[i].val < target) {
+        // 如果当前层 i 的 next 不为空，且它的值小于 target，则 p 往后走指向这一层 p 的 next
+        p = p.next[i];
+      }
+      // 退出 while 时说明找到了第 i 层小于 target 的最大节点就是 p
+      path[i] = p;
+    }
+    return path;
   }
 
+  /**
+   * 查找元素
+   * @param {number} target
+   * @returns
+   */
   search(target) {
-    let curr = this.head;
-    for (let i = this.level - 1; i >= 0; i--) {
-      /* 找到第 i 层小于且最接近 target 的元素*/
-      while (curr.forward[i] && curr.forward[i].val < target) {
-        curr = curr.forward[i];
-      }
-    }
-    curr = curr.forward[0];
-    /* 检测当前元素的值是否等于 target */
-    return curr && curr.val === target;
+    // 先找到每一层 i 小于目标值 target 的最大节点 path[i]
+    let path = this.find(target);
+    // 因为最下层【0】的节点是全的，所以只需要判断 target 是否在第 0 层即可，而 path[0] 正好就是小于 target 的最大节点，如果 path[0]->next[0] 的值不是 target 说明没有这个元素
+    let p = path[0].next[0];
+    return p != null && p.val == target;
   }
 
-  insert(num) {
-    const update = new Array(MAX_LEVEL).fill(this.head);
-    let curr = this.head;
-    for (let i = this.level - 1; i >= 0; i--) {
-      /* 找到第 i 层小于且最接近 num 的元素*/
-      while (curr.forward[i] && curr.forward[i].val < num) {
-        curr = curr.forward[i];
-      }
-      update[i] = curr;
-    }
-    const lv = randomLevel();
-    this.level = Math.max(this.level, lv);
-    const newNode = new SkipListNode(num, lv);
-    for (let i = 0; i < lv; i++) {
-      /* 对第 i 层的状态进行更新，将当前元素的 forward 指向新的节点 */
-      newNode.forward[i] = update[i].forward[i];
-      update[i].forward[i] = newNode;
-    }
-  }
-
-  erase(num) {
-    const update = new Array(MAX_LEVEL).fill(0);
-    let curr = this.head;
-    for (let i = this.level - 1; i >= 0; i--) {
-      /* 找到第 i 层小于且最接近 num 的元素*/
-      while (curr.forward[i] && curr.forward[i].val < num) {
-        curr = curr.forward[i];
-      }
-      update[i] = curr;
-    }
-    curr = curr.forward[0];
-    /* 如果值不在存则返回 false */
-    if (!curr || curr.val !== num) {
-      return false;
-    }
+  /**
+   * 插入元素
+   * @param {number} num
+   */
+  add(num) {
+    // 先找到每一层 i 小于目标值 target 的最大节点 pre[i]
+    let path = this.find(num);
+    // 创建要插入的新节点
+    let p = new ListNode(num, this.level);
     for (let i = 0; i < this.level; i++) {
-      if (update[i].forward[i] !== curr) {
+      // 遍历每一层，从下往上插入新节点
+      // 这两步就是单链表的插入
+      p.next[i] = path[i].next[i];
+      path[i].next[i] = p;
+      // 每一层有 50% 的概率不插入新节点
+      if (Math.random() > 0.5) {
         break;
       }
-      /* 对第 i 层的状态进行更新，将 forward 指向被删除节点的下一跳 */
-      update[i].forward[i] = curr.forward[i];
     }
-    /* 更新当前的 level */
-    while (this.level > 1 && !this.head.forward[this.level - 1]) {
-      this.level--;
+  }
+  /**
+   * 删除元素
+   * @param {number} num
+   * @returns
+   */
+  remove(num) {
+    // 先找到每一层 i 小于目标值 target 的最大节点 pre[i]
+    let pre = this.find(num);
+    // 先判断 num 是否存在，不存在直接返回 false
+    // 第 0 层存储的是全部节点，所以只需要判断 pre[0]->next[0]（第 0 层小于 num 的最大节点的在第 0 层的 next） 是不是 num 即可
+    let p = pre[0].next[0];
+    if (!p || p.val != num) {
+      console.warn("要删除的值不存在!");
+      return false;
     }
+    // 否则删除每一层的 num，如果 pre[i]->next[i] == p 说明第 i 层存在 p
+    for (let i = 0; i < this.level && pre[i].next[i] == p; i++) {
+      // 单链表删除
+      pre[i].next[i] = p.next[i];
+    }
+    p = null; // 删除节点 p，防止内存泄漏
     return true;
   }
 }
 
-/* 随机生成 level */
-function randomLevel() {
-  let level = 1;
-  while (Math.random() < P_FACTOR && level < MAX_LEVEL) {
-    level++;
+const opt = [
+  "add",
+  "add",
+  "add",
+  "search",
+  "add",
+  "search",
+  "add",
+  "search",
+  "search",
+];
+
+const val = [[1], [2], [3], [0], [4], [1], [5], [3], [6]];
+const list = new SkipList();
+
+opt.forEach((op, idx) => {
+  if (op === "add") {
+    list.add(val[idx][0]);
+  } else if (op === "search") {
+    const flag = list.search(val[idx][0]);
+    console.log(flag);
   }
-  return level;
-}
+});
 
-class SkipListNode {
-  constructor(val, maxLevel) {
-    this.val = val;
-    this.forward = new Array(maxLevel).fill(0);
-  }
-}
+// list.add(1);
 
-const skipList = new SkipList();
+// list.add(2);
 
-skipList.insert(1);
+// list.add(3);
 
-skipList.insert(10);
+// list.add(4);
 
-skipList.insert(2);
-
-skipList.insert(9);
-
-skipList.insert(3);
-
-skipList.insert(7);
-
-skipList.insert(4);
-
-skipList.insert(6);
-
-skipList.insert(5);
-
-skipList.insert(8);
-
-debugger;
-
-const flag = skipList.search(8);
-
-console.log(skipList, flag);
+// list.add(5);
