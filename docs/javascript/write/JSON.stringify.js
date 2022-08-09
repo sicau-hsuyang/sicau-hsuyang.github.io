@@ -5,7 +5,7 @@ typeof JSON.stringify !== "function" && (JSON.stringify = function () {});
  * @param {number} num
  */
 function stringifyNumber(num) {
-  return Number.isNaN(num) ? "0" : String(num);
+  return Number.isNaN(num) || !Number.isFinite(num) ? "null" : String(num);
 }
 
 /**
@@ -18,17 +18,18 @@ function stringifyDate(d) {
 
 /**
  * 序列化正则表达式
- * @param {RegExp} regExp
+ * @param {new RegExp} regExp
  */
-function stringifyRegexp(regExp) {}
+function stringifyRegexp(regExp) {
+  return regExp.toString();
+}
 
 /**
  * 序列化string
  * @param {string} str
  */
 function stringifyString(str) {
-  // TODO:
-  return String(string);
+  return `${str}`.replace(/\\/g, "\\\\").replace(/"/g, '"');
 }
 
 /**
