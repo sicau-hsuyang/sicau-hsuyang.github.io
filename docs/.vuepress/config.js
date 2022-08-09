@@ -19,7 +19,19 @@ module.exports = {
         { title: "继承", path: "/javascript/extend" },
         { title: "闭包", path: "/javascript/closure" },
         { title: "Ajax", path: "/javascript/ajax" },
-        { title: "手写", children: [] },
+        {
+          title: "手写",
+          children: [
+            {
+              title: "深浅克隆",
+              path: "/javascript/write/clone",
+            },
+            // {
+            //   title: "JSON.parse与JSON.stringify",
+            //   path: "/javascript/write/JSON",
+            // },
+          ],
+        },
         { title: "es6", children: [] },
       ],
       "/data-structure/": [
