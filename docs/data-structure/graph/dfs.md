@@ -8,7 +8,11 @@
   <img src="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/fd0588205915427d9bf12d2cc31b239b~tplv-k3u1fbpfcp-zoom-in-crop-mark:3024:0:0:0.awebp?" />
 </div>
 
-对于图的遍历来说，不管采用[`DFS`还是**BFS(Breadth First Search，简称 BFS)**](./bfs.md)，都是可以的，需要注意一点的是，必须在某些特定的情况下，比较`BFS`还是`DFS`两者的遍历效果才有意义。
+对于图的遍历来说，不管采用[`DFS`还是**BFS(Breadth First Search，简称 BFS)**](./bfs.md)，都是可以的。
+
+:::danger 注意事项
+必须在某些特定的情况下，比较`BFS`还是`DFS`两者的遍历效果才有意义。
+:::
 
 ### DFS 的标准范式
 
