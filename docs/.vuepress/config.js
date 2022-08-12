@@ -64,6 +64,10 @@ module.exports = {
               title: "LRUCache",
               path: "/data-structure/list/lru-cache",
             },
+            {
+              title: "LFUCache",
+              path: "/data-structure/list/lfu-cache",
+            },
           ],
         },
         {
