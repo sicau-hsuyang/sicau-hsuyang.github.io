@@ -64,7 +64,6 @@ class Stack<T> {
 ## 栈的通用链表实现（使用 TypeScript ）
 
 ```TypeScript
-
 /**
  * 栈的节点元素定义，必须使用双向链表，便于我们查找前驱和后继元素
  */
@@ -87,7 +86,7 @@ class Stack<T> {
   }
   /* 获取栈顶元素 */
   public get top(): T | null {
-    return this.isEmpty() ? null : this.head.data;
+    return this.isEmpty() ? null : this.head!.data;
   }
 
   /**
@@ -106,10 +105,8 @@ class Stack<T> {
     if (this.head === null) {
       this.head = newNode;
     } else {
-      // 如果存在多个元素，让头指针指向新来的节点
-      this.head!.next = newNode;
-      // 新来的节点指向头指针
-      newNode.prev = this.head;
+      newNode.next = this.head;
+      this.head.prev = newNode;
       // 让原本的头指针指向新来的节点
       this.head = newNode;
     }
@@ -126,12 +123,16 @@ class Stack<T> {
     let head = this.head!.next;
     // 栈中的元素
     let ele = this.head!.data;
-    // 解开第一个节点的后继节点
-    this.head!.next = null;
-    // 解开第一个节点的后继节点的前驱节点
-    head!.prev = null;
-    // 让栈首元素指向新的栈首元素
-    this.head = head;
+    if (head) {
+      // 解开第一个节点的后继节点
+      this.head!.next = null;
+      // 解开第一个节点的后继节点的前驱节点
+      head.prev = null;
+      // 让栈首元素指向新的栈首元素
+      this.head = head;
+    } else {
+      this.head = null;
+    }
     // 栈长度递减
     this.length--;
     return ele;
@@ -145,6 +146,7 @@ class Stack<T> {
     return this.length === 0;
   }
 }
+
 
 ```
 
