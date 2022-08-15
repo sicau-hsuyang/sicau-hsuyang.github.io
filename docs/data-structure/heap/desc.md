@@ -494,3 +494,10 @@ maxHeap.setCompare((compareStudent, currentStudent) => {
   return compareStudent.score - currentStudent.score >= 0;
 });
 ```
+
+## 应用场景
+
+堆的应用场景比较模糊，但是我根据自己的实际体验和与朋友们的交流大致总结了 2 个场景：
+
+- 想让序列保持有序，但是又不想直接使用排序算法。
+- 动态的数据，无法每次数据改变都进行排序，但是最终却需要有序的序列。
