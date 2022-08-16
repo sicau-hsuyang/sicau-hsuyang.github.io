@@ -85,7 +85,7 @@ function bubbleSort(arr) {
 - [栈](./stack/desc.md)
 - [堆（优先队列）](./heap/desc.md)
 - [树](./tree/binaryTree/preOrderVisit.md)
-- [图](./graph/index.md)
+- [图](./graph/desc.md)
 - [哈希表](./hash/desc.md)
 - [排序](./sort/compare.md)
 - [查找](./search/binarySearch.md)
