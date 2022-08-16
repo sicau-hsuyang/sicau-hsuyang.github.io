@@ -50,25 +50,31 @@ class MyCircularQueue<T> {
   /**
    * 队列的最大长度限制
    */
-  limit: number = Infinity;
+  private limit: number = Infinity;
   /**
    * 队列当前已存储的长度
    */
-  size: number = 0;
+  private size: number = 0;
   /**
    * 链表表头
    */
-  head: null | CircularQueueNode<T> = null;
+  private head: null | CircularQueueNode<T> = null;
   /**
    * 链表表尾
    */
-  tail: null | CircularQueueNode<T> = null;
+  private tail: null | CircularQueueNode<T> = null;
+  /**
+   * 暴露给外界的当前队列的长度，不允许修改
+   */
+  public get count(): number {
+    return this.size;
+  }
   /**
    * 入队
    * @param value
    * @returns
    */
-  enQueue(value: T): void {
+  public enQueue(value: T): void {
     if (this.isFull()) {
       console.warn("can not enqueue an full queue");
       return;
@@ -92,7 +98,7 @@ class MyCircularQueue<T> {
    * 出队
    * @returns
    */
-  deQueue(): null | T {
+  public deQueue(): null | T {
     if (this.isEmpty()) {
       console.warn("can not dequeue from an empty queue");
       return null;
@@ -113,25 +119,25 @@ class MyCircularQueue<T> {
    * 获取队首的元素
    * @returns
    */
-  Front(): null | T {
+  public Front(): null | T {
     return !this.isEmpty() ? this.head!.data : null;
   }
   /**
    * 获取队尾元素
    */
-  Rear(): null | T {
+  public Rear(): null | T {
     return !this.isEmpty() ? this.tail!.data : null;
   }
   /**
    * 队列是否为空
    */
-  isEmpty(): boolean {
+  public isEmpty(): boolean {
     return this.size === 0;
   }
   /**
    * 队列是否满
    */
-  isFull(): boolean {
+  public isFull(): boolean {
     return this.size === this.limit;
   }
 }
