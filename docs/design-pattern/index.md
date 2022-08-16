@@ -69,6 +69,9 @@ class MyCircularQueue<T> {
   public get count(): number {
     return this.size;
   }
+  constructor(k: number) {
+    this.limit = k;
+  }
   /**
    * 入队
    * @param value
