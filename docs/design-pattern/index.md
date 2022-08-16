@@ -12,81 +12,131 @@
 
 下面是一个封装的例子：
 
+<div align="center">
+  <img :src="$withBase('/seal/queue.png')" alt="封装-循环队列"/>
+</div>
+
+正常的思维，借助一个数组实现，然后会牵涉到对于数组的调整，因为有可能对数据进行拷贝，若每个数组项拷贝时间不可忽略的话，这个效率是比较低的。此外数组调整的逻辑也并不简单，还容易犯错。
+
+但只要满足上述的`API`定义的要求就可以了，至于队列内部怎么实现，与外界无关。
+
+因此可以自由发挥了，完全没有必要采用数组实现，链表的插入和删除都是`O(1)`，只要限制队列的最大长度，外界完全感觉不到队列的内容调整。
+
+由此，采用双向链表实现这个循环队列，逻辑简单且程序高效，具体实现如下：
+
 ```ts
-class Stack<T> {
+/**
+ * 队列节点定义
+ */
+interface CircularQueueNode<T> {
   /**
-   * 链表的头结点
+   * 前驱节点
    */
-  private head: LinkedListNode<T> | null = null;
-
-  private length = 0;
-
-  public get size() {
-    return this.length;
-  }
-  /* 获取栈顶元素 */
-  public get top(): T | null {
-    return this.isEmpty() ? null : this.head.data;
-  }
-
+  prev: CircularQueueNode<T> | null;
   /**
-   * 压栈
-   * @param ele
+   * 后继节点
    */
-  public push(ele: T) {
-    const newNode: LinkedListNode<T> = {
-      next: null,
-      prev: null,
-      data: ele,
-    };
-    // 栈长度增加
-    this.length++;
-    // 如果一个元素都没有，直接让head指向这个节点
-    if (this.head === null) {
-      this.head = newNode;
-    } else {
-      // 如果存在多个元素，让头指针指向新来的节点
-      this.head!.next = newNode;
-      // 新来的节点指向头指针
-      newNode.prev = this.head;
-      // 让原本的头指针指向新来的节点
-      this.head = newNode;
-    }
-  }
-
+  next: CircularQueueNode<T> | null;
   /**
-   * 退栈
+   * 数据域
    */
-  public pop() {
-    if (this.isEmpty()) {
-      throw new Error("can not pop from an empty stack");
-    }
-    // 获取到头节点的后继节点
-    let head = this.head!.next;
-    // 栈中的元素
-    let ele = this.head!.data;
-    // 解开第一个节点的后继节点
-    this.head!.next = null;
-    // 解开第一个节点的后继节点的前驱节点
-    head!.prev = null;
-    // 让栈首元素指向新的栈首元素
-    this.head = head;
-    // 栈长度递减
-    this.length--;
-    return ele;
-  }
-
+  data: T;
+}
+/**
+ * 循环双端队列
+ */
+class MyCircularQueue<T> {
   /**
-   * 栈是否为空
+   * 队列的最大限制
+   */
+  limit: number;
+  /**
+   *
+   */
+  size: number;
+  /**
+   *
+   */
+  head: null | CircularQueueNode<T>;
+  /**
+   *
+   */
+  tail: null | CircularQueueNode<T>;
+  /**
+   * 入队
+   * @param value
    * @returns
    */
-  public isEmpty() {
-    return this.length === 0;
+  enQueue(value: T): void {
+    if (this.isFull()) {
+      console.warn("can not enqueue an full queue");
+      return;
+    }
+    let newNode: CircularQueueNode<T> = {
+      prev: null,
+      next: null,
+      data: value,
+    };
+    /* 入队：使用头插法 */
+    if (this.head === null && this.tail === null) {
+      this.head = this.tail = newNode;
+    } else {
+      this.tail!.next = newNode;
+      newNode.prev = this.tail;
+      this.tail = newNode;
+    }
+    this.size++;
+  }
+  /**
+   * 出队
+   * @returns
+   */
+  deQueue(): null | T {
+    if (this.isEmpty()) {
+      console.warn("can not dequeue from an empty queue");
+      return null;
+    }
+    let node = this.head!;
+    /* 出队：删除尾节点，将尾节点的前驱节点变成尾节点 */
+    if (this.head === this.tail) {
+      this.head = this.tail = null;
+    } else {
+      let nextNode = node.next;
+      nextNode!.prev = null;
+      this.head = nextNode;
+    }
+    this.size--;
+    return node.data;
+  }
+  /**
+   * 获取队首的元素
+   * @returns
+   */
+  Front(): null | T {
+    return !this.isEmpty() ? this.head!.data : null;
+  }
+  /**
+   * 获取队尾元素
+   */
+  Rear(): null | T {
+    return !this.isEmpty() ? this.tail!.data : null;
+  }
+  /**
+   * 队列是否为空
+   */
+  isEmpty(): boolean {
+    return this.size === 0;
+  }
+  /**
+   * 队列是否满
+   */
+  isFull(): boolean {
+    return this.size === this.limit;
   }
 }
 ```
 
-外界看不到内部任何的技术实现细节，只需要按照`Stack`提供的接口进行调用即可，这样可以使得我们的`Stack`在不修改代码的前提下适应绝大部分的业务场景。
+外界看不到内部任何的技术实现细节，只需要按照`Queue`提供的接口进行调用即可，这样可以使得我们的`Queue`在不修改代码的前提下适应绝大部分的业务场景，由此例完全体现了封装的优势。
 
 ### 继承
 
@@ -287,4 +337,3 @@ class HTML5History extends History {
 - [策略模式](./strategy.md)
 - [享元模式](./fly-weight.md)
 - [中介者模式](./mediator.md)
-
