@@ -13,16 +13,17 @@
 下面是一个封装的例子：
 
 <div align="center">
-  <img :src="$withBase('/seal/queue.png')" alt="封装-循环队列"/>
+  <a href="https://leetcode.cn/problems/design-circular-queue/" target="_blank" title="LeetCode原文">
+    <img :src="$withBase('/seal/queue.png')" alt="封装-循环队列"/>
+  </a>
 </div>
 
-正常的思维，借助一个数组实现，然后会牵涉到对于数组的调整，因为有可能对数据进行拷贝，若每个数组项拷贝时间不可忽略的话，这个效率是比较低的。此外数组调整的逻辑也并不简单，还容易犯错。
+正常的思维，借助一个数组实现，然后会牵涉到对于数组的调整（有杠精会说 `JS` 不是有数组的`shift`和`push`吗？题目已经要求了不要使用内置的`Queue`，如果这样使用就违背了题目要求），因为有可能对数据进行拷贝，若每个数组项拷贝时间不可忽略的话，这个效率是比较低的。此外数组调整的逻辑也并不简单，还容易犯错。
 
-但只要满足上述的`API`定义的要求就可以了，至于队列内部怎么实现，与外界无关。
-
+但题目只要求不使用内置`Queue`即可，只要满足上述的`API`定义的要求就可以了，至于队列内部怎么实现，与外界无关。
 因此可以自由发挥了，完全没有必要采用数组实现，链表的插入和删除都是`O(1)`，只要限制队列的最大长度，外界完全感觉不到队列的内容调整。
 
-由此，采用双向链表实现这个循环队列，逻辑简单且程序高效，具体实现如下：
+由此，采用双向链表实现这个循环队列，逻辑简单且高效，具体实现如下：
 
 ```ts
 /**
@@ -47,21 +48,21 @@ interface CircularQueueNode<T> {
  */
 class MyCircularQueue<T> {
   /**
-   * 队列的最大限制
+   * 队列的最大长度限制
    */
-  limit: number;
+  limit: number = Infinity;
   /**
-   *
+   * 队列当前已存储的长度
    */
-  size: number;
+  size: number = 0;
   /**
-   *
+   * 链表表头
    */
-  head: null | CircularQueueNode<T>;
+  head: null | CircularQueueNode<T> = null;
   /**
-   *
+   * 链表表尾
    */
-  tail: null | CircularQueueNode<T>;
+  tail: null | CircularQueueNode<T> = null;
   /**
    * 入队
    * @param value
@@ -136,7 +137,7 @@ class MyCircularQueue<T> {
 }
 ```
 
-外界看不到内部任何的技术实现细节，只需要按照`Queue`提供的接口进行调用即可，这样可以使得我们的`Queue`在不修改代码的前提下适应绝大部分的业务场景，由此例完全体现了封装的优势。
+外界看不到内部任何的技术实现细节，只需要按照`Queue`提供的接口进行调用即可，这样可以使得我们的`Queue`在不修改代码的前提下又能适应绝大部分的业务场景，由此例完全体现了封装的优势。
 
 ### 继承
 
