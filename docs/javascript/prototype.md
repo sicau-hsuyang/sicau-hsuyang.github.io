@@ -1,10 +1,3 @@
-<!--
- * @Autor: Zhang Yingying
- * @Date: 2022-08-09 13:53:04
- * @LastEditors: Do not edit
- * @LastEditTime: 2022-08-17 16:44:53
--->
-
 ## 原型及原型链
 
 `JS`是一门基于原型继承的语言，并不是传统的`Java`，`C#`基于类继承的语言，这是`JS`较为重要的一个特征之一。
@@ -65,9 +58,30 @@ Object.prototype.constructor === Object; // true
 
 `Object.setPrototypeOf`和`Object.getPrototypeOf`
 
-### 构造器
+### 函数与构造器
 
-刚才我们阐述原型对象的过程中有一个非常关键的概念没有说，那就是`constructor`，通过上一节的分析，它跟原型对象，存在一定的关系，但是肯定不是一个东西，（最开始我们只阐述了`3`个没有原型对象的类型），那它指向的是谁呢？答案是函数原型对象(`Function.prototype`)。
+#### 函数
+
+上一节中，我们强调了在`JS`中万物皆对象，函数也是一类特殊的对象。
+
+我们定义一个函数，就生成了一个函数的实例，如：
+
+```JS
+function Person() {}
+```
+
+根据上文阐述的内容得知，函数的实例指向的是函数的原型对象，即：
+
+```js
+Person.__proto__ === Function.prototype; // true
+Person.prototype.constructor === Person; // true
+```
+
+`JS`的函数除了普通的调用方式以外，还可以通过`new`调用以生成对象，但是通过`new`调用是有条件的，这个函数必须拥有`prototype`属性（从逻辑上讲，这样用当前函数创建对象之后才能知道是哪个工厂生产的呀），有`prototype`才会有`constructor`，而这个构造器又指向的是它自己，所以有无`prototype`就成为了这个函数是否能通过`new`调用的先决条件了。
+
+#### 构造器
+
+刚才我们阐述原型对象的过程中有一个非常关键的概念还没有详细阐述，那就是`constructor`(基于上文所述，此处阐述的构造器譬如`Object.prototype.constructor`，简化描述为`Object`)，通过第一节的分析，它跟原型对象，存在一定的关系，但是肯定不是一个东西，（最开始我们只阐述了`3`个没有原型对象的类型），那它指向的是谁呢？答案是函数原型对象(`Function.prototype`)。
 
 任意一个构造器都是函数原型对象的实例，即：
 
@@ -97,7 +111,7 @@ Function.__proto__ === Function.prototype; // true
   <img :src="$withBase('/prototype/reference_complex.png')" alt="综合原型及原型链指向关系"/>
 </div>
 
-再来个更复杂一点儿的，加一个自定义的构造器试试：
+再来个更复杂一点儿的，加一个自定义的函数试试：
 
 ```js
 function Person() {}
@@ -114,6 +128,12 @@ let p = new Person();
 <div align="center">
   <img :src="$withBase('/prototype/custom_constructor.png')" alt="自定义构造器的原型及原型链指向关系"/>
 </div>
+
+:::danger
+箭头函数是一类特殊的函数，其没有`prototype`，导致其不存在`constructor`，因此不能通过`new`调用。
+:::
+
+打个比方，箭头函数就好像是一只做了绝育手术的猫。
 
 ### `ES6`类继承中的原型链指向关系
 
