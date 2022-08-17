@@ -315,6 +315,88 @@ class HTML5History extends History {
 
 ### 开闭原则
 
+开闭原则（Open-Closed Principle，`OCP`）是指一个软件实体（如类、模块和函数）应该对扩展开放，对修改关闭。
+
+所谓的开闭，也正是对扩展和修改两个行为的一个原则。它强调的是用抽象构建框架，用实现扩展细节，可以提高软件系统的可复用性及可维护性。
+
+开闭原则的核心思想就是面向抽象编程。
+
+对于前端，我们经常接触到的一个业务，导入导出，就拿导出举例，前端的导出五花八门，可以是`xlsx`，可以是`xml`，也可以是`json`，还可以是普通的`text`等。
+
+对于导出的业务来说，它不应该预设一些`if-else`语句去判断系统需要支持导出什么样的文件类型，因为这个关系的维持是脆弱的，设想现在要导出一个`yml`格式的文件，恭喜你，你的`if-else`语句就必须要增加分支了，显然已经违背`开闭原则`。
+
+我们可以设想，这些行为其实都是具有共性的，它们都是向服务器拉取数据，然后向浏览器写文件，回到上文提到的面向抽象编程。
+
+所以导出接口的定义就比较明确了，如下：
+
+```ts
+/**
+ * 定义一个导出接口
+ */
+interface IExporter {
+  /**
+   * 获取导出数据
+   */
+  fetchData(): any[];
+  /**
+   * 导出文件
+   */
+  generateFile(filename: string): void;
+}
+
+/**
+ * 定义一个导出Excel文件的实现类
+ */
+class XlsxExporter implements IExporter {
+  fetchData(): any[] {
+    return [];
+  }
+
+  generateFile(filename: string): void {
+    console.log("Generating file..., please wait a moment");
+  }
+}
+```
+
+对于我们的业务，比如点击一个按钮实现导出：
+
+```tsx
+import React, { Component } from "react";
+import { Factory } from "./utils";
+export class MyComponent extends Component {
+  onExport = (filename: string) => {
+    const exportInstance: IExport = Factory.getInstance();
+    exportInstance.onExport("爱我中华");
+  };
+
+  render() {
+    return <Button onClick={this.onExport}>导出文件</Button>;
+  }
+}
+```
+
+如果产品经理现在来找你说，小杨啊，我导出`Excel`的时候，发现有很多残缺数据，用户导出这些数据其实没有多大的意义的，能不能前端做一些判断呀？
+
+辛辛苦苦写好的导出，一句话又给加了一个需求，做肯定是要做的，关键是怎么做呢？
+
+上文已经提到了面向对象编程的`多态`，此刻我们也不需要改动多少代码，大致修改如下：
+
+```ts
+class AdvanceXlsxExporter extends XlsxExporter {
+  fetchData(): any[] {
+    const data = super.fetchData();
+    // TODO: 对数据进行一些处理
+    return data;
+  }
+}
+```
+
+有的朋友可能不太明白为什么要这样做，觉得这样设计有点儿无病呻吟之嫌，现实场景中产品经理的这个需求其实也是很脆弱的，如果此时产品总监说，不行，我们的系统就需要向用户呈现真实的数据性便于用户进行统计分析，那刚才的需求其实就废了，这样又需要改动`XlsxExporter`这个类的实现，这类业务场景本来工厂函数就是极易改动的地方，因此把修改动作这种脏活累活交给工厂方法做的话，要好过直接修改`XlsxExporter`类，所以通过`继承`+`重写`较为妥当。
+
+:::tip
+如果系统现在需要新增导出的文件类型，直接编写一个新的导出类实现相应的业务逻辑即可，无需对业务代码进行修改。
+:::
+
 ### 里氏代换原则
 
 ### 接口隔离原则
@@ -323,7 +405,7 @@ class HTML5History extends History {
 
 ### 单一职责原则
 
-单一职责原则(`SRP`)的职责被定义为“引起变化的原因”。如果我们有两个动机去改写一个方法，那么这个方法就具有两个职责。每个职责都是变化的一个轴线，如果一个方法承担了过多的职责，那么在需求的变迁过程中，需要改写这个方法的可能性就越大。
+单一职责原则(Single Responsibility Principle，`SRP`)的职责被定义为“引起变化的原因”。如果我们有两个动机去改写一个方法，那么这个方法就具有两个职责。每个职责都是变化的一个轴线，如果一个方法承担了过多的职责，那么在需求的变迁过程中，需要改写这个方法的可能性就越大。
 
 此时，这个方法通常是一个不稳定的方法，修改代码总是一件危险的事情，特别是当两个职责耦合在一起的时候，一个职责发生变化可能会影响到其他职责的实现，造成意想不到的破坏，这种耦合性得到的是低内聚和脆弱的设计。
 
