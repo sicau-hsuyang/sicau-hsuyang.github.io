@@ -15,7 +15,7 @@ module.exports = {
       "/javascript/": [
         { title: "JavaScript专题", path: "/javascript/" },
         { title: "函数上下文this", path: "/javascript/this" },
-        { title: "原型", path: "/javascript/prototype" },
+        { title: "原型及原型链", path: "/javascript/prototype" },
         { title: "继承", path: "/javascript/extend" },
         { title: "闭包", path: "/javascript/closure" },
         { title: "Ajax", path: "/javascript/ajax" },

@@ -9,7 +9,7 @@ features:
   - title: 设计模式专题
     details: 常见的设计模式基于 JavaScript 的实现。
   - title: JavaScript API 专题
-    details: 常见 JavaScript API 的手写实现等。
+    details: JavaScript常见的一些核心概念以及部分API的手写实现。
   - title: 杂项专题
     details: 常见的前端八股文等。
 ---
