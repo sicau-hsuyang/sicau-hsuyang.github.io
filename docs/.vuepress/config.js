@@ -178,6 +178,10 @@ module.exports = {
                   title: "广度优先遍历",
                   path: "/data-structure/tree/N-Tree/bfsVisit",
                 },
+                {
+                  title: "字典树",
+                  path: "/data-structure/tree/N-Tree/Trie",
+                },
               ],
             },
             {
