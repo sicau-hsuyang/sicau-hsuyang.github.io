@@ -258,6 +258,124 @@ function isExist(matrix, x, y) {
 
 使用`BFS`查找迷宫的出路有个问题，虽然我们在找路的时候比较方便，但是怎么把这个路径记录下来却是个问题。
 
-因此，我在搜索过程中把对应已经走过的 `path` 一并加入到了队列中，在取出节点进行判断的时候，可以很方便的知道之前走过的路径是怎么样的，但是问题就是这样**会占用大量的内存空间**，所以对于这个问题，我实现的`BFS`是不如`DFS`的，如果读者有更好的解法，欢迎提出，大家一起交流，把它完善的更美好，以传递更好的知识。
+因此，我在上述搜索过程中把对应已经走过的 `path` 一并加入到了队列中，在取出节点进行判断的时候，可以很方便的知道之前走过的路径是怎么样的，但是问题就是这样**会占用大量的内存空间**，~~所以对于这个问题，我实现的`BFS`是不如`DFS`的，如果读者有更好的解法，欢迎提出，大家一起交流，把它完善的更美好，以传递更好的知识。~~
+
+在后来，我学习并理解了最短路径算法之后，发现可以有一个比较优雅的解法，其做法和无权图的最短路径求解手段类似，在求解过程中把经过的父节点利用哈希表记录下来，从终点倒退到起点，再反序输出即可得到正序的路径。
+
+下面的实现相对于上面的实现占用的内存空间占用会小的多。
+
+```js
+/**
+ * 以BFS的形式找迷宫的出口
+ * @param {number[]} matrix
+ */
+function findPath(matrix) {
+  const height = matrix.length;
+  const width = matrix[0].length;
+  /* 定义一个哈希表，用于记住经过的路径 */
+  const pathMap = new Map();
+  // 定义一个队列
+  const queue = [];
+  // 定义一个标记数组
+  const maker = Array.from({
+    length: height,
+  }).map(() => {
+    return Array.from({
+      length: width,
+    }).fill(0);
+  });
+  // 先将开始节点加入到队列中去
+  queue.push({
+    node: { x: 0, y: 0 },
+    /* 入口的父节点为空 */
+    parent: null,
+  });
+  // 将起始节点标记为已处理
+  maker[0][0] = true;
+  let distNode = null;
+  while (queue.length) {
+    const { node, parent } = queue.shift();
+    /* 将当前节点记录在到终点的路径上 */
+    pathMap.set(node, parent);
+    const { x, y } = node;
+    if (x === width - 1 && y === height - 1) {
+      distNode = node;
+      break;
+    }
+    // 上边的点，存在且没有被访问过，并且不是障碍物
+    const topPoint =
+      isExist(matrix, x, y - 1) && !maker[y - 1][x] && matrix[y - 1][x] !== 1
+        ? { x, y: y - 1 }
+        : null;
+    if (topPoint) {
+      queue.push({
+        node: topPoint,
+        parent: node,
+      });
+      maker[y - 1][x] = true;
+    }
+    // 右边的点，存在且没有被访问过，并且不是障碍物
+    const rightPoint =
+      isExist(matrix, x + 1, y) && !maker[y][x + 1] && matrix[y][x + 1] !== 1
+        ? { x: x + 1, y }
+        : null;
+    if (rightPoint) {
+      queue.push({
+        node: rightPoint,
+        parent: node,
+      });
+      maker[y][x + 1] = true;
+    }
+    // 下边的点，存在且没有被访问过，并且不是障碍物
+    const bottomPoint =
+      isExist(matrix, x, y + 1) && !maker[y + 1][x] && matrix[y + 1][x] !== 1
+        ? { x, y: y + 1 }
+        : null;
+    if (bottomPoint) {
+      queue.push({
+        node: bottomPoint,
+        parent: node,
+      });
+      maker[y + 1][x] = true;
+    }
+    // 左边的点 存在且没有被访问过，并且不是障碍物
+    const leftPoint =
+      isExist(matrix, x - 1, y) && !maker[y][x - 1] && matrix[y][x - 1] !== 1
+        ? { x: x - 1, y }
+        : null;
+    if (leftPoint) {
+      queue.push({
+        node: leftPoint,
+        parent: node,
+      });
+      maker[y][x - 1] = true;
+    }
+  }
+  /* 本来正常的做法是需要使用栈记录逆序的路径，但是我们直接利用JS的方法反向插入最终得到的即可是一个正序的路径，可以少一个循环 */
+  /* 注意不要把distNode记录掉了 */
+  const path = [distNode];
+  let parent = pathMap.get(distNode);
+  /* 直到找到入口节点，循环终止 */
+  while (parent) {
+    path.unshift(parent);
+    distNode = parent;
+    parent = pathMap.get(distNode);
+  }
+
+  return path.map((node) => {
+    return [node.x, node.y];
+  });
+}
+
+/**
+ * 判断当前元素是否存在于迷宫中
+ * @param {number[][]} matrix
+ * @param {number} x
+ * @param {number} y
+ */
+function isExist(matrix, x, y) {
+  return Array.isArray(matrix[y]) && typeof matrix[y][x] !== "undefined";
+}
+```
 
 关于 `BFS` 还有很多有趣的问题，我暂时就先为大家介绍这几种常见的用法，欢迎大家补充。
