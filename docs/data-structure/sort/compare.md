@@ -42,17 +42,17 @@ function insertionSort(arr) {
 
 ### 复杂度、稳定性与额外占用空间比较
 
-| 排序算法名称                                   | 平均算法复杂度 | 是否稳定 | 是否额外空间复杂度 |
-| ---------------------------------------------- | -------------- | -------- | ------------------ |
-| [冒泡排序](/data-structure/sort/bubbleSort)    | O(N²)          | 是       | 否                 |
-| [选择排序](/data-structure/sort/selectionSort) | O(N²)          | 是       | 否                 |
-| [插入排序](/data-structure/sort/insertionSort) | O(N²)          | 是       | 否                 |
-| [希尔排序](/data-structure/sort/shellSort)     | O(N\*logN)     | 否       | 否                 |
-| [快速排序](/data-structure/sort/quickSort)     | O(N\*logN)     | 否       | 否                 |
-| [归并排序](/data-structure/sort/mergeSort)     | O(N\*logN)     | 是       | 是，O(N)           |
-| [堆排序](/data-structure/sort/heapSort)        | O(N\*logN)     | 否       | 否                 |
-| [基数排序](/data-structure/sort/radixSort)     | TODO           | TODO     | TODO               |
-| [桶排序 ](/data-structure/sort/bucketSort)     | TODO           | TODO     | TODO               |
+| 排序算法名称                                   | 平均算法复杂度                | 是否稳定 | 是否额外空间复杂度                           |
+| ---------------------------------------------- | ----------------------------- | -------- | -------------------------------------------- |
+| [冒泡排序](/data-structure/sort/bubbleSort)    | O(N²)                         | 是       | 否                                           |
+| [选择排序](/data-structure/sort/selectionSort) | O(N²)                         | 是       | 否                                           |
+| [插入排序](/data-structure/sort/insertionSort) | O(N²)                         | 是       | 否                                           |
+| [希尔排序](/data-structure/sort/shellSort)     | O(N\*logN)                    | 否       | 否                                           |
+| [快速排序](/data-structure/sort/quickSort)     | O(N\*logN)                    | 否       | 否                                           |
+| [归并排序](/data-structure/sort/mergeSort)     | O(N\*logN)                    | 是       | 是，O(N)                                     |
+| [堆排序](/data-structure/sort/heapSort)        | O(N\*logN)                    | 否       | 否                                           |
+| [桶排序 ](/data-structure/sort/bucketSort)     | O(N+C)，其中 C=N\*(logN-logM) | 是       | 是，O(N+M)，N 为数据的数量级，M 为桶的数量级 |
+| [基数排序](/data-structure/sort/radixSort)     | TODO                          | TODO     | TODO                                         |
 
 ### 时间比较
 
@@ -71,8 +71,8 @@ function insertionSort(arr) {
 | 归并排序（递归版）             | 620 ms   | 48.71%                   | 54.2 MB  | 49.68%                   | 是       |
 | 归并排序（非递归版）           | 120 ms   | 83.46%                   | 51.6 MB  | 63.65%                   | 是       |
 | 堆排序                         | 108 ms   | 95.09%                   | 50.5 MB  | 93.77%                   | 否       |
+| 桶排序（采用了 10 个桶，每个桶采用直接插入排序）       | 4140 ms  | 17.98%                   | 61.4MB   | 11.93%                   | 是       |
 | 基数排序                       | TODO     | TODO                     | TODO     | TODO                     | TODO     |
-| 桶排序                         | TODO     | TODO                     | TODO     | TODO                     | TODO     |
 | 程序内置排序函数（以 JS 为例） | 108 ms   | 95.09%                   | 50.6 MB  | 92.65%                   | 不讨论   |
 
 最后通过这个表格验证了我们的结论，因为语言底层的排序算法通过对不同对数据环境下的数据采用了符合场景的排序算法，速度是最快的。（在 LeetCode 上提交各种排序算法的我，那个小丑竟然是我自己）。有的同学可能会说我学排序算法学了个寂寞，不如直接就用语言提供的排序算法就好啊，其实我们学习是为了掌握理论，为的知道其底层原理，便于解决各种生产中的 bug，是对能力的一种培养。再者，面试官再问你各种排序算法，你心里面也有个谱了吧。
