@@ -90,7 +90,7 @@ function build(files: File[]) {
  * @param {File[]} files
  */
 function makeHashMap(files) {
-  const map = new WeakMap();
+  const map = new Map();
   files.forEach((file) => {
     // 以ID为主键建立哈希映射
     map.set(file.id, file);
