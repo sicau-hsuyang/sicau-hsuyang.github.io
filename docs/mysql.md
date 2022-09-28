@@ -298,6 +298,62 @@ select count(*), department_id from employees group by department_id having coun
 
 #### 连接查询
 
+笛卡尔积的错误情况：
+
+```sql
+# 假设输出12行
+select count(*) from boys;
+# 假设输出4行
+select count(*) from beauty;
+# 最终结果 4*12行
+select `name`, `boyName` from beauty, boys;
+```
+
+笛卡尔积的现象：表 1 有 m 行，表 2 有 n 行，结果 m\*n 行，是因为没有有效的连接；
+
+<pre>
+分类:
+  内连接
+    等值连接
+    非等值连接
+    自连接
+  外连接
+    左外连接
+    右外连接
+    完全链接
+  交叉连接
+</pre>
+
+**等值连接：**
+
+```sql
+# 两个表的顺序可以交换
+select `name`, `boyName` from beauty, boys where beauty.boyfriend_id = boys.id;
+```
+
+等值连接加上筛选，使用`and`连接。
+
+```sql
+select last_name, department_name from employees e, departments d where e.department_id = d.department_id and e.commission_pct is not null;
+# 查询所有女朋友的个数大于2的男生
+select boy.boyName, count(*) as stat from boys as boy, beauty as girl where girl.boyfriend_id = boy.id group by boy.boyName having stat > 2 order by stat desc;
+```
+
+多表等值连接连接的结果为多表的交集部分，多表连接的顺序没有要求，一般需要为表起别名。
+
+**非等值连接：** 即不用等号的连接查询。
+
+```sql
+select e.salary, j.grade_level from employees as e, job_grades as j where e.salary between j.lowest_sal and j.highest_sal;
+```
+
+**自连接：**
+
+```sql
+# 查询员工和领导的名称
+select e.employee_id,e.last_name,m.employee_id as parent_id,m.last_name as parent_last_name from employees as e, employees as m where e.manager_id = m.employee_id;
+```
+
 ## DML 语言
 
 ## DDL 语言
