@@ -354,6 +354,59 @@ select e.salary, j.grade_level from employees as e, job_grades as j where e.sala
 select e.employee_id,e.last_name,m.employee_id as parent_id,m.last_name as parent_last_name from employees as e, employees as m where e.manager_id = m.employee_id;
 ```
 
+**(inner) join：** （查找两个表的并集）
+
+```sql
+select 查询列表 from 表1 inner join 表2 on 连接条件 [where 字句] [group by字句] [having字句] [order by 字句] [limit 字句]
+# 查询部门人数大于10的部门名称并且按人数降序排列
+SELECT d.department_name, COUNT(*) as 部门人数 from employees as e INNER JOIN departments as d on e.department_id = d.department_id GROUP BY d.department_name HAVING	部门人数 >10 ORDER BY 部门人数 DESC;
+# 非等值连接
+select salary,grade_level from employees as e inner join job_grades as g on e.salary between g.lowest_sal and g.highest_sal;
+# 自连接
+select e.last_name, m.last_name from employees as e inner join employees as m on e.employee_id = m.manager_id;
+```
+
+**outer join:**
+
+应用场景一般用于查找一个表中有，另外一个表中没有的情况，外连接的查询结果为主表中的所有记录，如果从表中有和它匹配的记录，则填充，否则填充`NULL`。
+外连接查询结果=内连接结果+主表中有但从表中没有的记录。
+_全外连接=内连接的结果+表 1 中有但表 2 中没有的结果+表 2 中有的结果但表 1 中没有的结果（即求两表的并集）_
+
+**left outer join:** 左边的是主表，右边的是从表
+**right outer join:** 左边的是从表，右边的主表
+
+左外连接和右外连接交换两个表的顺序，可以实现同样的效果。
+
+```sql
+# 查找没有男朋友的女生列表
+# 最好选从表中的主键列作为筛选，因为主键列一般都是非空字段
+select girl.name, girl.borndate from beauty as girl left outer join boys as boy on girl.boyfriend_id = boy.id where boy.id is null;
+```
+
+**交叉链接：** 即笛卡尔乘积
+
+```sql
+select b.*, g.* from beauty as g cross join boys as b;
+# 等价于
+select g.*, b.* from beauty as g, boys as b;
+```
+
+#### 子查询
+
+出现在其它语句中的 select 语句。
+子查询先于主查询。
+
+```sql
+# 查询工资比`Abel`高的人
+select * from employees where salary > (
+  select salary from employees where last_name = 'Abel'
+);
+# 子查询中使用分组函数
+select last_name, job_id, salary from employees where salary = (select min(salary) from employees);
+# 和`having`字句一起使用 查询最低工资大于50号部门最低工资的部门id和其最低工资
+select department_id, min(salary) from employees group by department_id having min(salary) > (select min(salary) from employees where department_id = 50);
+```
+
 ## DML 语言
 
 ## DDL 语言
