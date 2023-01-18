@@ -67,7 +67,7 @@ select 2/100 'test';
 select distinct * from employees;
 
 # + 只存在数值相加的功能，但是如果是字符串和数字相加，则判断能否转化成数字型，能转就转，不能转就相当于是0
-# NULL和任何内容连接都是NULL
+# `NULL`和任何内容连接都是`NULL`
 
 ```
 
@@ -132,7 +132,7 @@ select * from employees where commission_pct is null;
 `is null` 或者 `is not null` 可以判断`NULL`，但是，`=`，`!=`，`<>`不能判断`NULL`;
 
 ```sql
-select * from employees whe commission_pct <=> 12000;
+select * from employees where commission_pct <=> 12000;
 ```
 
 安全等于: `<=>`，既可以判断`NULL`，又可以判断普通数值。
@@ -405,8 +405,68 @@ select * from employees where salary > (
 select last_name, job_id, salary from employees where salary = (select min(salary) from employees);
 # 和`having`字句一起使用 查询最低工资大于50号部门最低工资的部门id和其最低工资
 select department_id, min(salary) from employees group by department_id having min(salary) > (select min(salary) from employees where department_id = 50);
+# 使用IN
+select last_name from employees where department_id in (
+   select distinct department_id from departments where location_id in (1400, 1700)
+);
+# 使用any或者some
+# 查询其它部门中比job_id为`IT_PROG`部门任一低工资的员工的员工号、姓名、job_id以及salary
+select  last_name, employee_id, job_id, salary from employees where salary < any(
+  select distinct salary from employees where job_id='IT_PROG'
+) and job_id <> 'IT_PROG';
+# 使用all
+# 查询其它部门中比job_id为`IT_PROG`部门任一低工资的员工的员工号、姓名、job_id以及salary
+select  last_name, employee_id, job_id, salary from employees where salary < all(
+  select distinct salary from employees where job_id='IT_PROG'
+) and job_id <> 'IT_PROG';
+# 不常用的行子查询
+# 查询员工编号最小并且工资最高的员工信息
+select * from employees where job_id = (
+  select min(job_id) from employees
+)
+and salary = (
+  select max(salary) from employees
+);
+# 或者
+select * from employees where (job_id,salary) = (
+  select min(job_id), max(salary) from employees
+);
+# 查询每个部门的员工个数
+select (
+  select count(*) from employees as e where e.department_id = d.department_id
+) as 员工个数 from departments as d having 员工个数 > 0 order by 员工个数 desc;
 ```
 
+`from`后面字句，把一个查询结果当做表来使用
+
+```sql
+# 查询各个部门的平均工资对应的工资等级
+select ag_dep.*, g.grade_level from (
+  select AVG(salary) as ag, department_id from employees group by department_id
+) as ag_dep inner join job_grades as g on ag_dep.ag between lowest_sal and highest_sal;
+```
+
+相关子查询(`exists`)
+
+语法： `exists`(完整的查询语句)，返回`1`或者`0`
+
+```sql
+# 查询有员工的部门名
+select department_name from departments as d where exists (
+  select * from employees as e where d.department_id = e.department_id
+);
+# 等价转换
+select department_name from departments as d inner join employees as e on d.department_id = e.department_id group by d.department_id having count(*) > 0;
+# 查询没有女朋友的男生信息
+# 使用in
+select boy.* from boys as boy where boy.id not in (
+  select boyfriend_id from beauty
+);
+# 使用exists
+select boy.* from boys as boy where not exists(
+  select boyfriend_id from beauty as girl where boy.id = girl.boyfriend_id
+);
+```
 ## DML 语言
 
 ## DDL 语言
