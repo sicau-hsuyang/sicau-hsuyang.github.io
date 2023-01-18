@@ -6,22 +6,27 @@ set -e
 # 删除文件
 rm -rf node_modules
 # 安装文件
-yarn
+# yarn
 # 生成静态文件
 npm run docs:build
 
 # 进入生成的文件夹
-cd docs/.vuepress/dist
+cd docs/.vuepress
 
-# 如果是发布到自定义域名
-# echo 'www.example.com' > CNAME
+rm -rf /Users/yangjohn/Desktop/dist
 
-git init
-git add -A
-git commit -m 'deploy'
+mv dist /Users/yangjohn/Desktop
 
-# 如果发布到 https://<USERNAME>.github.io
-git push -f git@github.com:sicau-hsuyang/sicau-hsuyang.github.io.git master
+cd -
 
+git checkout master -f
+
+cp -r /Users/yangjohn/Desktop/dist/. .
+
+git add .
+
+git commit -m "更新"
+
+git push && git checkout main
 
 cd -
