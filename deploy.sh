@@ -13,15 +13,15 @@ npm run docs:build
 # 进入生成的文件夹
 cd docs/.vuepress
 
-rm -rf /usr/local/dist
+rm -rf /Users/yangjohn/Desktop/dist
 
-mv dist /usr/local/dist
+mv dist /Users/yangjohn/Desktop/dist
 
 cd -
 
 git checkout master
 
-cp -r /usr/local/dist/. .
+cp -r /Users/yangjohn/Desktop/dist/. .
 
 git add .
 
