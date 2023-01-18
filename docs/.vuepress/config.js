@@ -32,7 +32,15 @@ module.exports = {
             // },
           ],
         },
-        { title: "es6", children: [] },
+        {
+          title: "es6",
+          children: [
+            {
+              title: "Class",
+              path: "/javascript/es6/class",
+            },
+          ],
+        },
       ],
       "/data-structure/": [
         { title: "常见的数据结构和算法", path: "/data-structure/" },
