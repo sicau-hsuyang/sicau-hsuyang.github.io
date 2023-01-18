@@ -6,7 +6,7 @@ set -e
 # 删除文件
 rm -rf node_modules
 # 安装文件
-# yarn
+yarn
 # 生成静态文件
 npm run docs:build
 
