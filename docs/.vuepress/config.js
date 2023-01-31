@@ -10,6 +10,7 @@ module.exports = {
       { text: "设计模式", link: "/design-pattern/" },
       { text: "JavaScript", link: "/javascript/" },
       { text: "前端框架", link: "/frameworks/" },
+      // { text: "其他", link: "/others/" },
     ],
     sidebar: {
       "/javascript/": [
@@ -26,6 +27,10 @@ module.exports = {
               title: "深浅克隆",
               path: "/javascript/write/clone",
             },
+            {
+              title: "apply、call、bind",
+              path: "/javascript/write/call&bind&apply",
+            }
             // {
             //   title: "JSON.parse与JSON.stringify",
             //   path: "/javascript/write/JSON",
@@ -339,6 +344,13 @@ module.exports = {
         { title: "享元模式", path: "/design-pattern/flyweight" },
         { title: "中介者模式", path: "/design-pattern/mediator" },
       ],
+      // "/others": [
+      //   { title: "杂项专题", path: "/others/" },
+      //   {
+      //     title: "常见面试题",
+      //     path: "/others/interview",
+      //   },
+      // ],
     },
     codeSwitcher: {
       groups: {

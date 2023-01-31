@@ -33,6 +33,8 @@ function bbb() {
 
 bbb();
 
+bbb.call()
+
 /**
  * 柯里化函数
  * @param {Function} fn

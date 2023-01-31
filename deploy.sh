@@ -23,6 +23,8 @@ git checkout master
 
 cp -r /Users/yangjohn/Desktop/dist/. .
 
+rm -rf /Users/yangjohn/Desktop/dist
+
 git add .
 
 git commit -m "更新"
