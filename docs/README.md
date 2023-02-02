@@ -32,8 +32,14 @@
 
 ## JavaScript 专题
 
-待更新...
+- [函数上下文this](https://sicau-hsuyang.github.io/javascript/this.html)
+- [原型及原型链](https://sicau-hsuyang.github.io/javascript/prototype.html)
+- [继承](https://sicau-hsuyang.github.io/javascript/extend.html)
+- [闭包](https://sicau-hsuyang.github.io/javascript/closure.html)
+- [手写JS常见的API](https://sicau-hsuyang.github.io/javascript/write/clone.html)
+- [ES6](https://sicau-hsuyang.github.io/javascript/es6/class.html)
 
+更新中...
 ## 前端框架专题
 
 待更新...
