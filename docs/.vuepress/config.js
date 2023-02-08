@@ -30,7 +30,7 @@ module.exports = {
             {
               title: "apply、call、bind",
               path: "/javascript/write/call&bind&apply",
-            }
+            },
             // {
             //   title: "JSON.parse与JSON.stringify",
             //   path: "/javascript/write/JSON",
@@ -43,6 +43,19 @@ module.exports = {
             {
               title: "Class",
               path: "/javascript/es6/class",
+            },
+            {
+              title: "Generator",
+              path: "/javascript/es6/generator",
+            },
+          ],
+        },
+        {
+          title: "实用代码片段",
+          children: [
+            {
+              title: "可重试的请求方法",
+              path: "/javascript/snippets/repeatable-request.md",
             },
           ],
         },
