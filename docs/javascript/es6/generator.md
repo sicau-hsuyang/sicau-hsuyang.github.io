@@ -1,6 +1,6 @@
 ## Generator
 
-对于绝大多数前端来说，对于`Generator`可能都是一个比较陌生的概念。在实际开发中，由于我们都直接编写基于`async-await`的代码，所以基本上不怎么用它，但是`Generator`却又是一个值得掌握的语法，`async-await`底层也是基于`generator`，大名鼎鼎的`redux-saga`就是使用的`generator`的语法，明白它的运行原理，能够帮住我们快速的在实际开发中定位`bug`。
+对于绝大多数前端来说，对于`Generator`可能都是一个比较陌生的概念。在实际开发中，由于我们都直接编写基于`async-await`的代码，所以基本上不怎么用它，但是`Generator`却又是一个值得掌握的语法，`async-await`底层也是基于`generator`，大名鼎鼎的`redux-saga`就是使用的`generator`的语法，明白它的运行原理，能够帮住我们快速的在实际开发中定位`bug`，并且可以帮助我们掌握`async-await函数`的原理。
 
 在阅读本文之前，请确保你已经掌握`ES6`的`Iterator`的应用。
 
@@ -105,7 +105,162 @@ setTimeout(function () {
 
 ### next 函数
 
-`next`函数的入参决定了`yield`表达式的返回值，第一次调用`next`传递参数是无效的。
+`next`函数的入参决定了上一次`yield`表达式的返回值，第一次调用`next`传递参数是无效的（因为第一次调用`next`的上一次没有`yield`表达式）
+
+```js
+function* func(b) {
+  const next = yield b;
+  const next2 = yield next + 3;
+  return next2 + 10;
+}
+
+const ge = func(22);
+// 第一次调用next无法传递参数，因此此刻得到{ value: 22, done: false }
+ge.next();
+// next得到上一次yield表达式的返回值，因此此刻得到{value: 36, done: false}
+ge.next(33);
+// next2得到上一次yield表达式的返回值，因此此刻得到的{value: 340, done: true}
+ge.next(330);
+```
+
+### for-of 循环
+
+`for-of`可以遍历`Iterator`，那么`Generator`的执行结果为一个`Iterator`的实例，那当然就可以用`for-of`遍历了。
+需要注意的是，`for-of`一旦**遇到 `{ value: xxx, done: true }` 就停止了，并且不包括这个值**。
+
+```js
+const arr = [1, 2, 3, 4, 5];
+const ite = arr[Symbol.iterator]();
+// {value: 1, done: false}
+ite.next();
+// {value: 2, done: false}
+ite.next();
+// {value: 3, done: false}
+ite.next();
+// {value: 4, done: false}
+ite.next();
+// {value: 5, done: false}
+ite.next();
+// {value: undefined, done: true}
+ite.next();
+```
+
+因此，对于下面的代码，并不会输出`return`表达式的值
+
+```js
+function* foo() {
+  yield 1;
+  yield 2;
+  yield 3;
+  yield 4;
+  yield 5;
+  return 6;
+}
+
+for (let v of foo()) {
+  // 1,2,3,4,5
+  console.log(v);
+}
+```
+
+### yeild\*表达式
+
+如果在`Generator`函数内部，调用另一个`Generator`函数。需要在前者的函数体内部，自己手动完成遍历。
+
+`ES6` 提供了`yield*`表达式，作为解决办法，用来在一个`Generator`函数里面执行另一个`Generator`函数。
+
+```js
+function* foo() {
+  yield "a";
+  yield "b";
+  return 1000;
+}
+
+function* bar() {
+  yield "x";
+  // 手动遍历 foo()
+  for (let i of foo()) {
+    console.log(i);
+  }
+  yield "y";
+}
+
+// 等价于
+function* bar() {
+  yield "x";
+  // 手动遍历 foo()
+  const b = yield* foo();
+  console.log(b);
+  yield "y";
+}
+// 等价于
+function* bar() {
+  yield "x";
+  yield "a";
+  yield "b";
+  yield "y";
+}
+```
+
+需要注意的是，由于`for-of`循环不会包含`Generator`函数的`return`值，所以实际上相当于在这期间又插入了`N`个`yield`表达式，需要注意的是，`yield*`表达式跟我们传递的`next`方法的入参没有任何关系，而是上一个函数的返回值，上述代码中`yield* foo()`的值为`1000`，这个结论怎么来的呢，我们看一下上述代码经过`babel`转码的结果。
+
+以下代码需要注意的是` b = _context2.t0;`，这是从当前 Generator 的上下文读取内部`Generator`设置的返回值。
+
+```js
+var _marked = /*#__PURE__*/ _regeneratorRuntime().mark(foo),
+  _marked2 = /*#__PURE__*/ _regeneratorRuntime().mark(bar);
+
+function foo() {
+  return _regeneratorRuntime().wrap(function foo$(_context) {
+    while (1) {
+      switch ((_context.prev = _context.next)) {
+        case 0:
+          _context.next = 2;
+          return "a";
+
+        case 2:
+          _context.next = 4;
+          return "b";
+
+        case 4:
+          return _context.abrupt("return", 1000);
+
+        case 5:
+        case "end":
+          return _context.stop();
+      }
+    }
+  }, _marked);
+} // 等价于
+
+function bar() {
+  var b;
+  return _regeneratorRuntime().wrap(function bar$(_context2) {
+    while (1) {
+      switch ((_context2.prev = _context2.next)) {
+        case 0:
+          _context2.next = 2;
+          return "x";
+
+        case 2:
+          return _context2.delegateYield(foo(), "t0", 3);
+
+        case 3:
+          b = _context2.t0;
+          console.log(b);
+          _context2.next = 7;
+          return "y";
+
+        case 7:
+        case "end":
+          return _context2.stop();
+      }
+    }
+  }, _marked2);
+}
+```
+
+源码在**384**行将内部`Generator`的返回值，设置到外层`Generator`的`Context`上，然后做了一些清理工作，然后将流程流转到下一个过程，所以在`Context`就可以拿到内部`Generator`的返回值了。如果觉得不太清楚的同学可以尝试断点看一下程序的执行过程即可。
 
 ## Generator 运行原理分析
 
@@ -332,6 +487,6 @@ function makeInvokeMethod(innerFn, self, context) {
 
 在源文件的第**299**行，就是在执行`wrap`的第一个参数`innerFn`，在`tryCatch`执行的时候，形参`arg`就是`Context`的实例。
 
-在上述方法中可以看到，如果 Generator 生成的迭代器已经迭代完成，将会永远返回`{value: undefined, done: true }`，在调用`next`方法的时候，如果用户有传递参数，可以将其保存在`context`对象上，下次流转的时候首先获取这个值，这就是`next`方法传递的参数能够作为`yield`语句的返回值的实现，因此当我们调用或者触发`Generator`的`next`或者`throw`或者`return`的时候，是一直在把`Generator`内部的`Iterator`向后迭代，并切换状态，这样下一次调用`next`方法的时候就知道了需要流转的逻辑。
+在上述方法中可以看到，如果 Generator 生成的迭代器已经迭代完成，将会永远返回`{value: undefined, done: true }`，在调用`next`方法的时候，如果用户有传递参数，可以将其保存在`context`对象上，下次流转的时候首先获取这个值，这就是`next`方法传递的参数能够作为`yield`语句的返回值的实现，因此当我们调用或者触发`Generator`的`next`或者`throw`或者`return`的时候，是一直在把`Generator`内部的`Iterator`向后迭代，并切换状态，这样下一次调用`next`方法的时候就知道了需要流转的逻辑。另外，虽然看到`babel`编译的结果是套在`while`循环的，但是这并不会造成死循环，因为`return`语句可以将其打断，而这样实现的理由是为了让`Generator`反复不断的流转（可以无限的调用`next`方法）
 
 可以看到，`generator-runtime`的实现是典型的状态模式应用场景。
