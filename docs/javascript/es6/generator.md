@@ -392,13 +392,14 @@ function wrap(innerFn, outerFn, self, tryLocsList) {
 
 那首先，我们分析`Context`类吧。
 
-`Context`的声明在 452 行，关键的定义在 529 行。这里面我们需要知道的是`Context`用于流程控制，其中很大一部分代码跟`Generator`函数中的`try-catch`语句有关，本文不详细分析。通读其源码，可以知道`Context`用于控制函数运行流程的流转。
+`Context`的声明在**452**行，关键的定义在**529**行。这里面我们需要知道的是`Context`用于流程控制，其中很大一部分代码跟`Generator`函数中的`try-catch`语句有关，y 也有一部分跟`Generator`函数的嵌套执行有关，不理解他们并不妨碍我们理解其运行原理，因此本文不详细分析。通读其源码，可以知道`Context`用于控制函数运行流程的流转（里面有个重要的变量`ContinueSentinel`）。
 
 在`babel`编译之后的`wrap`方法里面，`_context`就是`Context`类的实例，从接下来要讨论的`makeInvokeMethod`方法就可以看出来。
 
 在第**249**行是`makeInvokeMethod`的定义
 
 ```js
+/* 这部分代码是为了方便读者理解，将其贴到此处 */
 // fn就是wrap方法的innerFn，执行它得到结果，返回给调用者
 function tryCatch(fn, obj, arg) {
   try {
@@ -430,6 +431,7 @@ function makeInvokeMethod(innerFn, self, context) {
     context.arg = arg;
 
     while (true) {
+      // 与Generator函数内嵌yield*表达式相关的逻辑，可以不用具体关注
       var delegate = context.delegate;
       if (delegate) {
         var delegateResult = maybeInvokeDelegate(delegate, context);
@@ -463,7 +465,7 @@ function makeInvokeMethod(innerFn, self, context) {
         // If an exception is thrown from innerFn, we leave state ===
         // GenStateExecuting and loop back for another invocation.
         state = context.done ? GenStateCompleted : GenStateSuspendedYield;
-
+        // 如果遇到了哨兵对象，流转Generator的状态
         if (record.arg === ContinueSentinel) {
           continue;
         }
@@ -487,6 +489,69 @@ function makeInvokeMethod(innerFn, self, context) {
 
 在源文件的第**299**行，就是在执行`wrap`的第一个参数`innerFn`，在`tryCatch`执行的时候，形参`arg`就是`Context`的实例。
 
-在上述方法中可以看到，如果 Generator 生成的迭代器已经迭代完成，将会永远返回`{value: undefined, done: true }`，在调用`next`方法的时候，如果用户有传递参数，可以将其保存在`context`对象上，下次流转的时候首先获取这个值，这就是`next`方法传递的参数能够作为`yield`语句的返回值的实现，因此当我们调用或者触发`Generator`的`next`或者`throw`或者`return`的时候，是一直在把`Generator`内部的`Iterator`向后迭代，并切换状态，这样下一次调用`next`方法的时候就知道了需要流转的逻辑。另外，虽然看到`babel`编译的结果是套在`while`循环的，但是这并不会造成死循环，因为`return`语句可以将其打断，而这样实现的理由是为了让`Generator`反复不断的流转（可以无限的调用`next`方法）
+在上述方法中可以看到，如果`Generator`生成的迭代器已经迭代完成，将会永远返回`{value: undefined, done: true }`，怎么证明这个结论呢？来源于源码的**257**行，`Generator`在`return`的时候就已经被设置成完成状态了，因此永远返回`{value: undefined, done: true }`;
 
-可以看到，`generator-runtime`的实现是典型的状态模式应用场景。
+在调用`next`方法的时候，如果用户有传递参数，可以将其保存在`context`对象上，下次流转的时候首先获取这个值，这就是`next`方法传递的参数能够作为`yield`语句的返回值的实现，因此当我们调用或者触发`Generator`的`next`或者`throw`或者`return`的时候，是一直在把`Generator`内部的`Iterator`向后迭代，并切换状态，这样下一次调用`next`方法的时候就知道了需要流转的逻辑。
+
+另外，虽然看到`babel`编译的结果是套在`while`循环的，但是这并不会造成死循环，因为`return`语句可以将其打断，而这样实现的理由是为了让`Generator`反复不断的流转（可以无限的调用`next`方法），其次，我们`yield`表达式的结果并不一定存在于`wrap`函数的`switch-case`语句中，而是取决于`makeInvokeMethod`的返回值，因此，如果实际开发中我们的业务代码遇到问题，需要关注的代码并不一定是`wrap`函数的内容了。
+
+在理解了`Generator`之后，我们还有一个非常重要的知识点需要积累，像`Generator`这种语法在使用`babel`编译的时候，它并不是元语法（我个人发明的词汇，即这个语法不能再被`babel`转换为其它语法），所以在使用`Tree-shaking`的时候，它并不能按我们预期的想法工作，比如如下代码：
+
+```js
+function* func() {
+  yield 1;
+  yield 2;
+  yield 3;
+  if (process.env.NODE_ENV !== "production") {
+    yield 1000;
+  }
+  yield 4;
+  return 5;
+}
+```
+
+转换之后：
+
+```js
+function func() {
+  return _regeneratorRuntime().wrap(function func$(_context) {
+    while (1) {
+      switch ((_context.prev = _context.next)) {
+        case 0:
+          _context.next = 2;
+          return 1;
+
+        case 2:
+          _context.next = 4;
+          return 2;
+
+        case 4:
+          _context.next = 6;
+          return 3;
+
+        case 6:
+          if (!(process.env.NODE_ENV !== "production")) {
+            _context.next = 9;
+            break;
+          }
+
+          _context.next = 9;
+          return 1000;
+
+        case 9:
+          _context.next = 11;
+          return 4;
+
+        case 11:
+          return _context.abrupt("return", 5);
+
+        case 12:
+        case "end":
+          return _context.stop();
+      }
+    }
+  }, _marked);
+}
+```
+
+结语：可以看到，`generator-runtime`的实现是典型的**状态模式**应用场景。
