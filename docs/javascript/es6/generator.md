@@ -103,7 +103,7 @@ setTimeout(function () {
 
 `yield`关键字必须出现在`Generator`函数体内，否则会报错。
 
-### next 函数
+### 3、next 函数
 
 `next`函数的入参决定了上一次`yield`表达式的返回值，第一次调用`next`传递参数是无效的（因为第一次调用`next`的上一次没有`yield`表达式）
 
@@ -123,7 +123,7 @@ ge.next(33);
 ge.next(330);
 ```
 
-### for-of 循环
+### 4、for-of 循环
 
 `for-of`可以遍历`Iterator`，那么`Generator`的执行结果为一个`Iterator`的实例，那当然就可以用`for-of`遍历了。
 需要注意的是，`for-of`一旦**遇到 `{ value: xxx, done: true }` 就停止了，并且不包括这个值**。
@@ -163,7 +163,7 @@ for (let v of foo()) {
 }
 ```
 
-### yeild\*表达式
+### 5、yeild\*表达式
 
 如果在`Generator`函数内部，调用另一个`Generator`函数。需要在前者的函数体内部，自己手动完成遍历。
 
@@ -262,7 +262,7 @@ function bar() {
 
 源码在**384**行将内部`Generator`的返回值，设置到外层`Generator`的`Context`上，然后做了一些清理工作，然后将流程流转到下一个过程，所以在`Context`就可以拿到内部`Generator`的返回值了。如果觉得不太清楚的同学可以尝试断点看一下程序的执行过程即可。
 
-## Generator 运行原理分析
+### 6、Generator 运行原理分析
 
 `Generator`通过`babel`编译之后，底层引入的是一个名叫`generator-runtime`的库，这个库来源于`Facebook`。
 
