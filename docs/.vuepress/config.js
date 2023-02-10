@@ -48,6 +48,10 @@ module.exports = {
               title: "Generator",
               path: "/javascript/es6/generator",
             },
+            {
+              title: "Async函数",
+              path: "/javascript/es6/async",
+            },
           ],
         },
         {

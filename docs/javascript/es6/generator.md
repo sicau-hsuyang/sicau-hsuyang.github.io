@@ -48,6 +48,14 @@ const obj2 = {
 
 `Generator`执行结果会得到一个`Iterator`的实例，我们通过不断的调用这个迭代器的`next`方法，内部指针就从函数头部或上一次停下来的地方开始执行，直到遇到下一个`yield`表达式（或`return`语句）为止。换言之，`Generator`函数是分段执行的，`yield`表达式是暂停执行的标记，而`next`方法可以恢复执行。
 
+如何判断一个函数是`Generator`还是普通函数呢？
+
+```js
+const isGenerator = (func) => {
+  return func && func[Symbol.toStringTag] === "GeneratorFunction";
+};
+```
+
 ### 2、yield 表达式
 
 由于`Generator`函数返回的遍历器对象，只有调用`next`方法才会遍历下一个内部状态，所以其实提供了一种可以暂停执行的函数。`yield`表达式就是暂停标志。
