@@ -338,7 +338,7 @@ gen.next();
 
 其中，上述代码引用的`_regeneratorRuntime`函数就是引入的`generator-runtime`库的实例对象。（`babel`是将其打到了编译的结果中，为了篇幅，上述代码进行了删减）
 
-`generator-runtime`在`github`的[地址](https://github1s.com/facebook/regenerator/blob/main/packages/runtime/runtime.js)，读源代码要方便一些。（后文提到的代码行数均以这个源码文件为准）
+`generator-runtime`在`github`的[地址](https://github1s.com/facebook/regenerator/blob/main/packages/runtime/runtime.js)，（后文提到的代码行数均以这个源码文件为准）读源代码要方便一些，在阅读本文的时候，如果您一边打开源码一边阅读理解起来会更加方便。
 
 上述代码，我们用到了其提供的两个方法，一个是`wrap`，一个是`mark`。
 
@@ -357,7 +357,7 @@ exports.mark = function (genFun) {
 };
 ```
 
-在读源码的时候，我们就不要考虑那么多`polyfill`的操作了，直接假设当前环境有`Object.setPrototypeOf`方法（后续也将按着这个思路分析），所以`mark`函数仅仅做了一个很简单的事儿，把我们写的普通函数变成`Generator`的实例，能够识别与普通函数的区别。
+在读源码的时候，我们就不要考虑那么多`polyfill`的操作了，直接假设当前环境有`Object.setPrototypeOf`方法（后续也将按着这种方式分析），所以`mark`函数仅仅做了一个很简单的事儿，把我们写的普通函数变成`Generator`的实例，能够识别与普通函数的区别。
 
 在**121**行定义了一个`defineIteratorMethods`方法，这个方法使得所有的`Generator`实例都拥有`next`，`return`，`throw`方法。
 
@@ -374,7 +374,7 @@ function defineIteratorMethods(prototype) {
 // 在225行将Generator挂载上述方法集。
 ```
 
-`wrap`函数在**38**行开始，这个方法是`Generator`的核心，比较复杂，我们根据其调用的函数分析。
+`wrap`函数在**38**行开始，这个方法是`Generator`的主流程，我们根据其调用的函数分析。
 
 ```js
 function wrap(innerFn, outerFn, self, tryLocsList) {
@@ -396,15 +396,13 @@ function wrap(innerFn, outerFn, self, tryLocsList) {
 
 在我们编写的函数调用`wrap`函数时，明显的看的出来`outerFn`是`Generator`的实例，就是为了保证原型必须是`Generator`。这里面引入了一个`Context`类，然后在`Generator`的实例上挂载了一个叫做`_invoke`的方法，返回了这个`Generator`的实例。
 
-难点就是`Context`和`makeInvokeMethod`。
+难点就是`Context`和`makeInvokeMethod`。(在源码中还有一个`maybeInvokeDelegate`函数占有较大的篇幅，它会在使用`yield*`表达式的时候用到，因次我们仅分析主流程的话这个方法就可以省略了)
 
-那首先，我们分析`Context`类吧。
+首先分析`Context`类，`Context`的声明在**452**行，关键的定义在**529**行。这里面我们需要知道的是`Context`用于流程控制（源码里面有个重要的变量`ContinueSentinel`，凡是在循环里遇到它的都重新进行下一次循环了，读者可以留意一下），其中很大一部分代码跟`Generator`函数中的`try-catch`语句有关（取决于`babel`编译的结果，可读性交差），也有一部分跟`Generator`函数的嵌套执行有关（`yield *`），不理解它们并不妨碍我们理解其运行原理，因此本文也不详细分析。
 
-`Context`的声明在**452**行，关键的定义在**529**行。这里面我们需要知道的是`Context`用于流程控制，其中很大一部分代码跟`Generator`函数中的`try-catch`语句有关，y 也有一部分跟`Generator`函数的嵌套执行有关，不理解他们并不妨碍我们理解其运行原理，因此本文不详细分析。通读其源码，可以知道`Context`用于控制函数运行流程的流转（里面有个重要的变量`ContinueSentinel`）。
+在`babel`编译之后的`wrap`方法里面，`_context`就是`Context`类的实例，从接下来要讨论的`makeInvokeMethod`方法就可以看出来，另外`babel`编译结果的`wrap`函数的参数就是下述代码`tryCatch`所执行`fn`。
 
-在`babel`编译之后的`wrap`方法里面，`_context`就是`Context`类的实例，从接下来要讨论的`makeInvokeMethod`方法就可以看出来。
-
-在第**249**行是`makeInvokeMethod`的定义
+在第**249**行是`makeInvokeMethod`的定义，这是整个`Generator`的核心
 
 ```js
 /* 这部分代码是为了方便读者理解，将其贴到此处 */
@@ -459,10 +457,10 @@ function makeInvokeMethod(innerFn, self, context) {
           state = GenStateCompleted;
           throw context.arg;
         }
-        // 否则，交给context去处理异常
+        // 否则，交给context去处理异常，dispatchException会根据用户有没有try-catch执行一些逻辑，如果没有则抛出全局的错误，后续的流程就终止了
         context.dispatchException(context.arg);
       } else if (context.method === "return") {
-        // 迭代器执行完成，并且返回执行结果
+        // 迭代器执行完成，将Context的流转状态设置为end，然后将值设置在COntext上，返回哨兵对象，流转执行
         context.abrupt("return", context.arg);
       }
       // 将Generator的状态变成执行中
@@ -497,13 +495,15 @@ function makeInvokeMethod(innerFn, self, context) {
 
 在源文件的第**299**行，就是在执行`wrap`的第一个参数`innerFn`，在`tryCatch`执行的时候，形参`arg`就是`Context`的实例。
 
-在上述方法中可以看到，如果`Generator`生成的迭代器已经迭代完成，将会永远返回`{value: undefined, done: true }`，怎么证明这个结论呢？来源于源码的**257**行，`Generator`在`return`的时候就已经被设置成完成状态了，因此永远返回`{value: undefined, done: true }`;
+在上述方法中可以看到，如果`Generator`生成的迭代器已经迭代完成，将会永远返回`{value: undefined, done: true }`，怎么证明这个结论呢？来源于源码的**257**行，`Generator`在`return`的时候就已经被设置成完成状态了，因此永远返回`{value: undefined, done: true }`，完成状态又在哪儿设置的呢？是在`abrupt("return")`里面，调用`complete`函数，`complete`将一些数据挂载在`Context`，并且标记下一步的走向是`end`，然后返回`ContinueSentinel`，继续下轮循环，下轮循环就可以将`Generator`的状态处理成已结束;
 
 在调用`next`方法的时候，如果用户有传递参数，可以将其保存在`context`对象上，下次流转的时候首先获取这个值，这就是`next`方法传递的参数能够作为`yield`语句的返回值的实现，因此当我们调用或者触发`Generator`的`next`或者`throw`或者`return`的时候，是一直在把`Generator`内部的`Iterator`向后迭代，并切换状态，这样下一次调用`next`方法的时候就知道了需要流转的逻辑。
 
 另外，虽然看到`babel`编译的结果是套在`while`循环的，但是这并不会造成死循环，因为`return`语句可以将其打断，而这样实现的理由是为了让`Generator`反复不断的流转（可以无限的调用`next`方法），其次，我们`yield`表达式的结果并不一定存在于`wrap`函数的`switch-case`语句中，而是取决于`makeInvokeMethod`的返回值，因此，如果实际开发中我们的业务代码遇到问题，需要关注的代码并不一定是`wrap`函数的内容了。
 
-在理解了`Generator`之后，我们还有一个非常重要的知识点需要积累，像`Generator`这种语法在使用`babel`编译的时候，它并不是元语法（我个人发明的词汇，即这个语法不能再被`babel`转换为其它语法），所以在使用`Tree-shaking`的时候，它并不能按我们预期的想法工作，比如如下代码：
+所以，再回过头来看的话，我们仅仅只需要把`Context`看成一个状态机，而它决定了`Generator`的处理逻辑，而`Generator`就像很多条线段组成的线段，每个`yield`就像是一根子线段，这内部的代码就是我们写的业务逻辑代码，而我们通过调用`next`不断的把进度往前推，如果遇到未捕获的异常就直接结束了，这还是没有脱离`JS`是一门`单线程`语言的设定。（看了这些代码之后也没有一些论坛上说的那么玄乎了，还是比较朴实无华的，只不过流程真的很复杂而已）
+
+在理解了`Generator`之后，我们还有一个非常重要的知识点需要积累，像`Generator`这种语法在使用`babel`编译的时候，它并不是`元语法`（我个人发明的词汇，即这个语法不能再被`babel`转换为其它语法），所以在使用`Tree-shaking`的时候，它并不能按我们预期的想法工作，比如如下代码：
 
 ```js
 function* func() {

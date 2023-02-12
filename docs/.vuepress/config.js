@@ -40,6 +40,10 @@ module.exports = {
         {
           title: "es6",
           children: [
+            // {
+            //   title: 'Iterator和for-of循环',
+            //   path: "/javascript/es6/iterator",
+            // },
             {
               title: "Class",
               path: "/javascript/es6/class",
