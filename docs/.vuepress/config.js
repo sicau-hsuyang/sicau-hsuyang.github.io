@@ -65,6 +65,10 @@ module.exports = {
               title: "可重试的请求方法",
               path: "/javascript/snippets/repeatable-request.md",
             },
+            {
+              title: "复制内容到剪贴板",
+              path: "/javascript/snippets/copy-into-clipborad.md",
+            }
           ],
         },
       ],
