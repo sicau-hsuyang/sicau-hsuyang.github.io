@@ -68,6 +68,10 @@ module.exports = {
             {
               title: "复制内容到剪贴板",
               path: "/javascript/snippets/copy-into-clipborad.md",
+            },
+            {
+              title: "安全的取值和赋值方法",
+              path: "/javascript/snippets/safety-getandset.md",
             }
           ],
         },
