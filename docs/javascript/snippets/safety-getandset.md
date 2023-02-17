@@ -51,7 +51,7 @@ o === null || o === void 0
  */
 export function safetyGetProperty(o, p) {
   // 非引用类型直接报错
-  if (Object.prototype.toString.call(o) !== "[object Object]") {
+  if (!isRef(o)) {
     throw new Error("o must be a reference type");
   }
   p = String(p);
@@ -89,7 +89,7 @@ export function safetySetProperty(
   }
 ) {
   // 非引用类型直接报错
-  if (Object.prototype.toString.call(o) !== "[object Object]") {
+  if (!isRef(o)) {
     throw new Error("o must be a reference type");
   }
   p = String(p);
@@ -112,6 +112,17 @@ export function safetySetProperty(
   Object.defineProperty(target, prop, {
     ...propDesc,
     value: v,
+  });
+}
+
+/**
+ * 判断是否是引用类型
+ * @param {Array | Object} o
+ * @returns
+ */
+function isRef(o) {
+  return ["Object", "Array"].some((key) => {
+    return Object.prototype.toString.call(o, key) === `[object ${key}]`;
   });
 }
 
