@@ -40,6 +40,10 @@ module.exports = {
         {
           title: "es6",
           children: [
+            {
+              title: "扩展运算符",
+              path: "/javascript/es6/spread-symbol",
+            },
             // {
             //   title: 'Iterator和for-of循环',
             //   path: "/javascript/es6/iterator",
@@ -67,12 +71,12 @@ module.exports = {
             },
             {
               title: "复制内容到剪贴板",
-              path: "/javascript/snippets/copy-into-clipborad.md",
+              path: "/javascript/snippets/copy-into-clipboard.md",
             },
             {
               title: "安全的取值和赋值方法",
               path: "/javascript/snippets/safety-getandset.md",
-            }
+            },
           ],
         },
       ],

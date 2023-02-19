@@ -8,3 +8,5 @@
 - [继承](./extend.md)
 - [闭包](./closure.md)
 - [Ajax](./ajax.md)
+- [ES6](./es6/class.md)
+- [实用代码片段](./snippets/copy-into-clipboard.md)
