@@ -31,6 +31,10 @@ module.exports = {
               title: "apply、call、bind",
               path: "/javascript/write/call&bind&apply",
             },
+            {
+              title: "EventEmitter",
+              path: "/javascript/write/event-emitter",
+            },
             // {
             //   title: "JSON.parse与JSON.stringify",
             //   path: "/javascript/write/JSON",
