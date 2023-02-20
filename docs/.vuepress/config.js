@@ -35,6 +35,10 @@ module.exports = {
               title: "EventEmitter",
               path: "/javascript/write/event-emitter",
             },
+            {
+              title: "Flatten",
+              path: "/javascript/write/flatten",
+            },
             // {
             //   title: "JSON.parse与JSON.stringify",
             //   path: "/javascript/write/JSON",
