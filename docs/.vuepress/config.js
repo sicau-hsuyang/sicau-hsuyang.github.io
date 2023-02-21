@@ -43,6 +43,10 @@ module.exports = {
               title: "instanceof",
               path: "/javascript/write/instanceof",
             },
+            {
+              title: "new",
+              path: "/javascript/write/new",
+            },
             // {
             //   title: "JSON.parse与JSON.stringify",
             //   path: "/javascript/write/JSON",
