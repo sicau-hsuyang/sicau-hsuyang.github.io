@@ -39,6 +39,10 @@ module.exports = {
               title: "Flatten",
               path: "/javascript/write/flatten",
             },
+            {
+              title: "instanceof",
+              path: "/javascript/write/instanceof",
+            },
             // {
             //   title: "JSON.parse与JSON.stringify",
             //   path: "/javascript/write/JSON",

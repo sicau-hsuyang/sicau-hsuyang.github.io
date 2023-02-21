@@ -43,31 +43,53 @@ function flatten3(arr, maxDeep) {
  */
 function flatten4(arr, maxDeep) {
   const result = [];
-  const ref = new Map();
-  createRef(arr);
+  const refs = arrToLinkedList(arr);
   const stack = [];
-  let parent = null;
-  let node = arr[0];
+  let node = refs;
   while (stack.length || node) {
-    while (Array.isArray(node)) {
-      parent = node;
-      node = node[0];
+    while (node) {
+      stack.push(node);
+      node = node.child;
+    }
+    if (stack.length) {
+      result.push(node.val);
+      node = stack.pop();
+      node = node.next;
     }
   }
+  return result;
 }
 
 /**
  *
  * @param {number[]} arr
- * @param {Map<number | number[] | string | string[], number | number[] | string | string[]>} ref
  */
-function createRef(arr, ref) {
+function arrToLinkedList(arr, mapDepth) {
+  let startNode = null;
   for (let i = 0; i < arr.length; i++) {
-    ref.set(arr[i], i === arr.length - 1 ? null : arr[i + 1]);
-    if (Array.isArray(arr[i])) {
-      createRef(arr[i], ref);
+    const curNode = {
+      val: arr[i],
+      next: null,
+    };
+    let nextNode =
+      i === arr.length - 1
+        ? null
+        : {
+            val: arr[i + 1],
+            next: null,
+          };
+    if (i === 0) {
+      startNode = nextNode;
+    }
+    curNode.next = nextNode;
+    if (Array.isArray(curNode.val)) {
+      curNode.child = arrToLinkedList(curNode.val);
+    }
+    if (nextNode && Array.isArray(nextNode.val)) {
+      nextNode.child = arrToLinkedList(nextNode.val);
     }
   }
+  return startNode;
 }
 
 function tree(root) {
