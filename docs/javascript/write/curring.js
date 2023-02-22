@@ -56,3 +56,22 @@ const add = currying(_add);
 const res = add(1)(2)(3)(4); // 10
 
 console.log(res);
+
+/**
+ * 通用柯里化函数
+ * @param {Function} fn
+ * @param  {any[]} outerArgs
+ * @returns
+ */
+function currying(fn, ...outerArgs) {
+  return function (...innerArgs) {
+    const args = [...outerArgs, ...innerArgs];
+    // 如果参数已经确定完毕了，则执行传入的函数
+    if (args.length === fn.length) {
+      return fn.apply(this, args);
+    } else {
+      // 否则，将已经确定的参数绑定，递归调用currying
+      return currying(fn, ...args);
+    }
+  };
+}
