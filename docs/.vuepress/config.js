@@ -47,6 +47,10 @@ module.exports = {
               title: "new",
               path: "/javascript/write/new",
             },
+            {
+              title: "柯里化",
+              path: "/javascript/write/currying",
+            },
             // {
             //   title: "JSON.parse与JSON.stringify",
             //   path: "/javascript/write/JSON",

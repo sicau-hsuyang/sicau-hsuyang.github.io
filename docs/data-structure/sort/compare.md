@@ -48,7 +48,7 @@ function insertionSort(arr) {
 | [选择排序](/data-structure/sort/selectionSort) | O(N²)                         | 是       | 否                                           |
 | [插入排序](/data-structure/sort/insertionSort) | O(N²)                         | 是       | 否                                           |
 | [希尔排序](/data-structure/sort/shellSort)     | O(N\*logN)                    | 否       | 否                                           |
-| [快速排序](/data-structure/sort/quickSort)     | O(N\*logN)                    | 否       | 否                                           |
+| [快速排序](/data-structure/sort/quickSort)     | O(N\*logN)                    | 否       | 是，平均 O(logN)，最坏 O(N)                  |
 | [归并排序](/data-structure/sort/mergeSort)     | O(N\*logN)                    | 是       | 是，O(N)                                     |
 | [堆排序](/data-structure/sort/heapSort)        | O(N\*logN)                    | 否       | 否                                           |
 | [桶排序 ](/data-structure/sort/bucketSort)     | O(N+C)，其中 C=N\*(logN-logM) | 是       | 是，O(N+M)，N 为数据的数量级，M 为桶的数量级 |
