@@ -51,6 +51,10 @@ module.exports = {
               title: "柯里化",
               path: "/javascript/write/currying",
             },
+            {
+              title: "数组去重",
+              path: "/javascript/write/remove-duplicate",
+            },
             // {
             //   title: "JSON.parse与JSON.stringify",
             //   path: "/javascript/write/JSON",
