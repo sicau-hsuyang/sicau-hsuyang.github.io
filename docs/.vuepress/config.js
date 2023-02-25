@@ -55,6 +55,10 @@ module.exports = {
               title: "数组去重",
               path: "/javascript/write/remove-duplicate",
             },
+            {
+              title: "进制转换",
+              path: "/javascript/write/conversion-of-number-systems",
+            },
             // {
             //   title: "JSON.parse与JSON.stringify",
             //   path: "/javascript/write/JSON",

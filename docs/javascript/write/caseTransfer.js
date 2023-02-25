@@ -54,3 +54,6 @@ function _curring(fn, length, ...args) {
     }
   };
 }
+
+
+Array.prototype.map
