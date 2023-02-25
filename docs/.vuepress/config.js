@@ -24,6 +24,10 @@ module.exports = {
           title: "手写",
           children: [
             {
+              title: "Promise",
+              path: "/javascript/write/promise",
+            },
+            {
               title: "深浅克隆",
               path: "/javascript/write/clone",
             },
