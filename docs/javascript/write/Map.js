@@ -2,7 +2,7 @@ const SentinelKey = {};
 
 const SentinelArray = [];
 
-const SentinelSelector = (key, value) => {
+const render = (key, value) => {
   return {
     key,
     value,
@@ -16,7 +16,7 @@ class MyMapIterator {
 
   _values = SentinelArray;
 
-  _selector = SentinelSelector;
+  _selector = render;
 
   [Symbol.iterator]() {
     return this;
@@ -26,9 +26,7 @@ class MyMapIterator {
     this._keys = keys;
     this._values = values;
     this._index = 0;
-    if (typeof selector === "function") {
-      this._selector = selector;
-    }
+    this._selector = selector || render;
   }
 
   next() {
@@ -66,7 +64,7 @@ class MyMapIterator {
     this._index = -1;
     this._keys = SentinelArray;
     this._values = SentinelArray;
-    this._selector = SentinelSelector;
+    this._selector = render;
   }
 }
 
@@ -75,8 +73,9 @@ class MyMap {
 
   cachedKeyIdx = -1;
 
+  // 存储keys
   storageKeys = [];
-
+  // 存储值
   storageContents = [];
 
   [Symbol.iterator]() {
@@ -153,11 +152,7 @@ class MyMap {
    * @param {any} key
    */
   has(key) {
-    // 为什么要加this.cachedKeyIdx > -1判断条件呢，
-    // get(key)返回undefined这个结果并不是完全可信的，有可能用户手动指定某个值为undefined
-    // 但是如果找到了的话，一定可以拿的到cacheKeyIdx的
-    this.get(key);
-    return this.cachedKeyIdx > -1;
+    return this._find(key) > -1;
   }
 
   /**
@@ -179,9 +174,6 @@ class MyMap {
     if (idx > -1) {
       this.cachedKey = key;
       this.cachedKeyIdx = idx;
-    } else {
-      this.cachedKey = SentinelKey;
-      this.cachedKeyIdx = -1;
     }
     return val;
   }
@@ -255,20 +247,32 @@ map.set("1", 1);
 
 map.set(null, 2);
 
+map.set(NaN, 222);
+
 map.set(Symbol(1), null);
 
 // TODO: 考虑一下Symbol？？？
 
 map.set(undefined, 100);
 
+const s = Symbol(2);
+
+map.set(s, Symbol(222));
+
+console.log(map.get(s));
+
+console.log(map.has(NaN));
+
 map.get(undefined);
+
+console.log(map.get(NaN));
 
 map.delete(undefined);
 
-const e = [...map.entries()]
+const e = [...map.entries()];
 console.log(e);
 
-const val = [...map.keys()]
+const val = [...map.keys()];
 console.log(val);
 
 console.log([...map.values()]);
