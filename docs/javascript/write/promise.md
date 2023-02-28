@@ -576,7 +576,7 @@ MyPromise.all = function (iterator) {
   arr = [...iterator];
   // 如果传入的参数是空，快速响应
   if (arr.length === 0) {
-    return MyPromise.resolve();
+    return MyPromise.resolve([]);
   }
   return new MyPromise((resolve, reject) => {
     // 记录最终的结果
