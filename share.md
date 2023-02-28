@@ -633,7 +633,7 @@ function doSomething() {
 }
 ```
 
-`resolve` 和 `reject`其实是`Promise`内部两个触发器的实际参数，因此，可以用它来做一些化腐朽为神奇的事。
+`resolve` 和 `reject`即`executor`的实际参数，其实是`Promise`内部两个触发器，因此，可以把它记下来，然后做一些化腐朽为神奇的事。
 
 比如`axios`的`CancellationTokenSource`
 
@@ -1026,9 +1026,15 @@ function func() {
 
 因为`Generator`函数会被`babel`转码成状态机的执行形式，所以，想要在这里面处理`Tree-shaking`是达不到你的预期的。
 
+### `Generator`的异步应用
+
+其实很简单，对`yield`表达式的返回值强制要求返回`Promise`即可，这样在迭代的过程中，就可以部署出一个`Promise链`，待每个节点上的`Promise`状态改变，其后面的流程节点就能继续处理。
+
 ## `Async`函数
 
-如果你不明白`Generator`函数，其实是不大影响你理解`Async`函数的，但是前提你要清楚的明白，`Generator`函数是一个状态机，并且里面的内容完全可以使用`ES5`进行·polyfill`。
+如果你不明白`Generator`函数，其实是不大影响你理解`Async`函数的，但是前提你要清楚的明白，`Generator`函数是一个状态机，并且里面的内容完全可以使用`ES5`进行`polyfill`。
+
+`Async`函数的`await`就等价于`Generator`函数`yield`表达式返回`Promise`
 
 ### 如何判断一个函数是否是`Async`函数?
 
@@ -1042,7 +1048,9 @@ const isAsyncFunction = (o) => {
 
 在`Generator`节中，我们已经看到了，`Generator`函数可以将其划分成不同阶段的子任务去执行。但是如果我们直接去写`next`调度的话，那肯定太累了，流程也繁琐，而且也要求大家必须熟练的掌握`Generator`，这对于开发的要求太高了。
 
-所以问题回归到怎么实现`Async`函数的自动执行呢？在最开头的时候我们讲过的，利用`Promise链`来实现。
+所以问题回归到怎么实现`Async`函数的自动执行呢？在最开头的时候我们讲过的，利用`Promise链`的思路（注意，这儿是有区别的，比如`axios`的拦截器`Promise`链是预先预设好的，而`Async`函数的不是，它必须等到上一个`Promise`的状态改变之后才能挂载下一个`Promise`，但是执行起来的样子跟`axios`的拦截器`Promise`链效果是一样的）来实现。
+
+下面是我实现的`spawn`函数：
 
 ```js
 function spawn(gen) {
@@ -1051,21 +1059,279 @@ function spawn(gen) {
   }
   return new Promise((resolve, reject) => {
     const ite = gen();
-    const step = (val, action) => {
+    function next(value, action) {
+      let step = null;
       try {
-        const next = ite[action](val);
-        // 迭代器遍历完成了，以最终的结果作为Promise的返回值
-        if (next.done) {
-          resolve(next.value);
+        // 根据不同的行为做不同的事儿，可能是next也可能是throw抛出异常
+        step = ite[action](value);
+        // 如果迭代器迭代完了的话，将最后的结果最为Async函数的返回值
+        if (step.done) {
+          resolve(step.value);
+          return;
         }
-      } catch (error) {
-        reject(error);
-        return;
+        // 如果还没有迭代器还没有迭代完成的话，将上一次的返回值作为Promise包裹，并且部署它的then回调，成功继续处理，失败则报错
+        Promise.resolve(step.value).then(
+          (val) => {
+            next(val, "next");
+          },
+          (error) => {
+            // 手动触发提前终止的效果，因为try-catch是捕获不了异步错误的，将会再下次调用next函数的时候报错
+            next(error, "throw");
+          }
+        );
+      } catch (exp) {
+        // 有任何错误，就直接作为Promise的失败原因
+        reject(exp);
       }
-      // 递归的调用step方法，不断的将Generator函数中的流程向后推
-      Promise.resolve(next.value).then((val) => step(val, 'next'), (err) => _throw);
-    };
-    Promise.resolve(undefined).then(step, _throw);
+    }
+    // Generator第一次调用next不需要参数，所以传undefined开始干活儿
+    next(undefined, "next");
   });
 }
 ```
+
+用我编写的`spawn`函数来跑`Generator`函数：
+
+```js
+function a(input) {
+  return new Promise((resolve) => {
+    console.log("promise a", input);
+    setTimeout(resolve, 1000, 1);
+  });
+}
+
+function b(input) {
+  return new Promise((resolve) => {
+    console.log("promise b", input);
+    setTimeout(resolve, 2000, 2);
+  });
+}
+
+function c(input) {
+  return new Promise((resolve) => {
+    console.log("promise c", input);
+    setTimeout(resolve, 3000, 3);
+  });
+}
+
+// function d() {
+//   return Promise.reject(new Error("timeout"));
+// }
+
+function* func() {
+  const step1 = yield a();
+  const step2 = yield b(step1);
+  const step3 = yield c(step2);
+  // yield d();
+  console.log(step3);
+}
+
+function isGenerator(o) {
+  return o && o[Symbol.toStringTag] === "GeneratorFunction";
+}
+
+function spawn(gen) {
+  if (!isGenerator(gen)) {
+    return Promise.reject("parameter error");
+  }
+  return new Promise((resolve, reject) => {
+    const ite = gen();
+    function next(value, action) {
+      let step = null;
+      try {
+        step = ite[action](value);
+        if (step.done) {
+          resolve(step.value);
+          return;
+        }
+        Promise.resolve(step.value).then(
+          (val) => {
+            next(val, "next");
+          },
+          (error) => {
+            next(error, "throw");
+          }
+        );
+      } catch (exp) {
+        reject(exp);
+      }
+    }
+    next(undefined, "next");
+  });
+}
+
+(async () => {
+  const res = await spawn(func);
+  console.log(res);
+  // 最终输出:
+  // promise a undefined (1s后)
+  // promise b 1 (3s后)
+  // promise c 2 (6S后)
+  // 3 (6S后一些)
+  // hello world (6S后一些)
+})();
+```
+
+这个是阮一峰网络书籍给出的`spawn`函数：
+
+```js
+function spawn(genF) {
+  return new Promise(function (resolve, reject) {
+    const gen = genF();
+
+    function step(nextF) {
+      let next;
+      try {
+        next = nextF();
+      } catch (e) {
+        return reject(e);
+      }
+      if (next.done) {
+        return resolve(next.value);
+      }
+      Promise.resolve(next.value).then(
+        function (v) {
+          step(function () {
+            return gen.next(v);
+          });
+        },
+        function (e) {
+          step(function () {
+            return gen.throw(e);
+          });
+        }
+      );
+    }
+
+    step(function () {
+      return gen.next(undefined);
+    });
+  });
+}
+```
+
+由于我是借鉴了`babel`的编译结果的写法，所以感觉起来阮一峰写的要稍微绕一些，哈哈。
+
+因此，写`Async`函数时，没有必要去显示的指定`Promise.resolve`和`Promise.reject`，`Async`函数需要用`try-catch`包裹，这样才能捕获到异步的错误，如果两个异步操作没有先后顺序，不要写成一前一后的`await`调用，因为这样就使得两个并行的任务变成了串行。
+
+推荐采用以下两种写法：
+
+```js
+// 写法一
+let [foo, bar] = await Promise.all([getFoo(), getBar()]);
+
+// 写法二
+let fooPromise = getFoo();
+let barPromise = getBar();
+let foo = await fooPromise;
+let bar = await barPromise;
+```
+
+对于这样一个函数，`babel`的编译结果：
+
+```js
+async function func() {
+  const val1 = await 1;
+  const val2 = await (2 + val1);
+  const val3 = await (3 + val2);
+  const val4 = await (4 + val3);
+  return val4;
+}
+```
+
+编译结果：
+
+```js
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) {
+  try {
+    var info = gen[key](arg);
+    var value = info.value;
+  } catch (error) {
+    // 如果执行出错，提前结束
+    reject(error);
+    return;
+  }
+  // 如果Generator已经迭代完成，直接把最终的返回值报告给外部的Promise，作为它的fulfilled值，结束递归
+  if (info.done) {
+    resolve(value);
+  } else {
+    // 没有完成，把本轮的值包裹，最为入参传递给下一个next或者throw的调用
+    Promise.resolve(value).then(_next, _throw);
+  }
+}
+
+function _asyncToGenerator(fn) {
+  // fn就是一个Generator，执行它可以得到一个迭代器
+  return function () {
+    var self = this,
+      args = arguments;
+    return new Promise(function (resolve, reject) {
+      // 得到一个由Generator执行得到的迭代器
+      var gen = fn.apply(self, args);
+      // 定义next函数
+      function _next(value) {
+        // 递归的调用next，以使得Generator执行得到的迭代器可以一直向后迭代
+        asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value);
+      }
+      // 定义错误处理函数
+      function _throw(err) {
+        // 递归的调用throw，以使得Generator执行得到的迭代器可以一直向后迭代
+        asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err);
+      }
+      // 开始迭代，因为第一个next不能有参数，所以就传递了一个undefined
+      _next(undefined);
+    });
+  };
+}
+
+function func() {
+  return _func.apply(this, arguments);
+}
+
+function _func() {
+  _func = _asyncToGenerator(
+    // 得到一个Generator，这个Generator执行就可以得到一个迭代器
+    /*#__PURE__*/ _regeneratorRuntime().mark(function _callee() {
+      var val1, val2, val3, val4;
+      return _regeneratorRuntime().wrap(function _callee$(_context) {
+        while (1) {
+          switch ((_context.prev = _context.next)) {
+            case 0:
+              _context.next = 2;
+              return 1;
+
+            case 2:
+              val1 = _context.sent;
+              _context.next = 5;
+              return 2 + val1;
+
+            case 5:
+              val2 = _context.sent;
+              _context.next = 8;
+              return 3 + val2;
+
+            case 8:
+              val3 = _context.sent;
+              _context.next = 11;
+              return 4 + val3;
+
+            case 11:
+              val4 = _context.sent;
+              return _context.abrupt("return", val4);
+
+            case 13:
+            case "end":
+              return _context.stop();
+          }
+        }
+      }, _callee);
+    })
+  );
+  // 向外界返回一个Promise
+  return _func.apply(this, arguments);
+}
+```
+
+`Async`函数在做`Tree-shaking`时和`Generator`函数有着一样的问题。
+
+所以，综上所述。`ES6`中所有的异步解决方案均来源于回调函数的，只不过应用了很多设计技法和设计模式，简化了我们编写代码的负担。
