@@ -1,6 +1,6 @@
 # 从`Promise`到`Async`函数
 
-今天的分享不跟大家分享各种`API`怎么使用，主要分享一些我觉得有价值的东西
+今天的分享不跟大家分享各种`API`怎么使用，主要分享一些我觉得有价值的东西，要理解本文所阐述的内容，需要熟练的应用`Symbol`和`ES6`迭代器相关的知识点。
 
 ## `Promise`
 
@@ -824,9 +824,132 @@ const isGenerator = (o) => {
 };
 ```
 
+### 基础知识补充
+
+`Generator`函数，函数名前加一个`*`，函数执行后返回一个迭代器，迭代器第一次调用`next`函数无法传递参数，因为`next`函数的入参是上一个`yield`表达式的值, 第一次调用的时候前面没有`yield`表达式。
+
+`return语句`执行的时候，返回的结果是`done`为`true`。
+
+`for-of`，不会消费`done`为`true`的值，故无法遍历到`return`语句。
+
+`babel`编译`Generator函数`会把一个名叫`generator/runtime`的库（来源于脸书）打包进去，这个库实现了`Generator`函数内部状态的流转过程。
+
 ### `设计模式`之`状态模式`
 
 先来回顾一下`设计模式`中`状态模式`的应用。
+
+下面是一个状态模式的`UML`图：
+
+![alt 状态模式的URL图](https://res.cdn.changbaimg.com/-/fb229e73c4eb51e5/%E7%8A%B6%E6%80%81%E6%A8%A1%E5%BC%8F.png)
+
+根据这个`UML`图，举一个实际一点儿的例子：
+
+```ts
+/**
+ * 定义一个上下文类
+ */
+class Context {
+  // 定义初试的状态
+  private _state: State;
+
+  get state() {
+    return this._state;
+  }
+
+  set state(val: State) {
+    console.log('下一阶段的状态': state.stateName);
+    this._state = val;
+  }
+
+  constructor(state: State) {
+    this._state = state;
+  }
+
+  public request(): void {
+    this._state.handler(this);
+  }
+}
+
+// 定义一个抽象的状态类
+abstract class State {
+  stateName: string;
+  public abstract handler(ctx: Context): void;
+}
+
+class GetUpState extends State {
+  stateName = "起床状态";
+
+  handler(ctx) {
+    console.log("起床啦，今天又是元气满满的一天~");
+    ctx.state = new EatingState();
+  }
+}
+
+// 不同的具象类实现抽象类
+class EatingState extends State {
+  stateName = "吃饭状态";
+
+  handler(ctx) {
+    console.log("吃早饭啦~");
+    // 吃完饭之后刷牙
+    ctx.state = new BrushTeethState();
+  }
+}
+
+class BrushTeethState extends State {
+  stateName = '刷牙状态'；
+
+  handler(ctx) {
+    console.log("刷牙，准备干活儿啦~");
+    ctx.state = new WorkState();
+  }
+}
+
+class WorkState extends State {
+  // 工作状态
+  stateName = '工作状态';
+
+  handler(ctx) {
+    console.log("工作中...");
+  }
+}
+
+function bootstrap() {
+  const ctx = new Context(new GetUpState());
+  ctx.request();
+  // 起床啦，今天又是元气满满的一天~
+  ctx.request();
+  // 吃早饭啦~
+  ctx.request();
+  // 刷牙，准备干活儿啦~
+  ctx.request();
+  // 工作中...
+  ctx.request();
+  // 工作中...
+  ctx.request();
+  // 工作中...
+}
+```
+
+然后再回想一下`Generator`的使用场景：
+
+```js
+function* func() {
+  yield a();
+  yield b();
+  yield c();
+  yield d();
+  return e;
+}
+
+const it = func();
+
+it.next(); //{ value: ???, done: false }
+it.next(); //{ value: ???, done: false }
+it.next(); //{ value: ???, done: false }
+it.next(); //{ value: ???, done: false }
+it.next(); //{ value: ???, done: true }
+```
 
 ### 单线程的协程
 
@@ -834,12 +957,115 @@ const isGenerator = (o) => {
 
 非要把简单的问题复杂化。
 
-我们执行多次`Generator`函数了吗，并没有。`Generator`函数跟普通函数一样，还是返回的是一个值，至于是一个什么样的值，那肯定就大有学问了。
+我们执行多次`Generator`函数了吗，并没有，所以哪儿来的什么保留了内部的执行状态的之说呢？`Generator`函数跟普通函数一样，还是返回的是一个值，至于是一个什么样的值，那肯定就大有学问了。
 
-其实，`Generator`函数里面的`yield`表示是只不过是一个边界划定的东西而已。
+其实，`Generator`函数里面的`yield`表示是只不过是一个边界划定的东西而已（本文不讨论`yield *`），比如从开头到第一个`yield`语句是一个任务，后面的以此类推，直到`return`语句。
 
-就好比上周周鹏分享`gitlab`的`CI-CD`我们需要配置`stages`一样。`Generator`函数的`yield`语句将流程划分成一个一个的步骤，执行`Generator`函数得到的结果是一个迭代器，调用这个迭代器的过程中，就是不断的在把`Generator`内部预设的流程往前推而已，没有论坛上说的那么夸张。
+就好比上周周鹏分享`gitlab`的`CI-CD`我们需要配置`stages`一样。`Generator`函数的`yield`语句将流程划分成一个一个的步骤，执行`Generator`函数得到的结果是一个迭代器，调用这个迭代器的过程中，就是不断的在把`Generator`内部预设的流程往前推而已（回想一下`Promise`章节中的`Promise`链，是否有一些似曾相识呢），没有论坛上说的那么夸张。
 
 ### `Tree-shaking`中需要注意的问题
 
+以下是我们期待`Tree-shaking`掉的代码 `yield 1000`
 
+```js
+function* func() {
+  yield 1;
+  yield 2;
+  yield 3;
+  if (process.env.NODE_ENV !== "production") {
+    yield 1000;
+  }
+  yield 4;
+  return 5;
+}
+```
+
+转换之后：
+
+```js
+function func() {
+  return _regeneratorRuntime().wrap(function func$(_context) {
+    while (1) {
+      switch ((_context.prev = _context.next)) {
+        case 0:
+          _context.next = 2;
+          return 1;
+
+        case 2:
+          _context.next = 4;
+          return 2;
+
+        case 4:
+          _context.next = 6;
+          return 3;
+
+        case 6:
+          if (!(process.env.NODE_ENV !== "production")) {
+            _context.next = 9;
+            break;
+          }
+
+          _context.next = 9;
+          return 1000;
+
+        case 9:
+          _context.next = 11;
+          return 4;
+
+        case 11:
+          return _context.abrupt("return", 5);
+
+        case 12:
+        case "end":
+          return _context.stop();
+      }
+    }
+  }, _marked);
+}
+```
+
+因为`Generator`函数会被`babel`转码成状态机的执行形式，所以，想要在这里面处理`Tree-shaking`是达不到你的预期的。
+
+## `Async`函数
+
+如果你不明白`Generator`函数，其实是不大影响你理解`Async`函数的，但是前提你要清楚的明白，`Generator`函数是一个状态机，并且里面的内容完全可以使用`ES5`进行·polyfill`。
+
+### 如何判断一个函数是否是`Async`函数?
+
+```js
+const isAsyncFunction = (o) => {
+  return o && o[Symbol.toStringTag] === "AsyncFunction";
+};
+```
+
+### 如何实现`Async`函数的自动执行?
+
+在`Generator`节中，我们已经看到了，`Generator`函数可以将其划分成不同阶段的子任务去执行。但是如果我们直接去写`next`调度的话，那肯定太累了，流程也繁琐，而且也要求大家必须熟练的掌握`Generator`，这对于开发的要求太高了。
+
+所以问题回归到怎么实现`Async`函数的自动执行呢？在最开头的时候我们讲过的，利用`Promise链`来实现。
+
+```js
+function spawn(gen) {
+  if (!isGenerator(gen)) {
+    return Promise.reject("parameter error");
+  }
+  return new Promise((resolve, reject) => {
+    const ite = gen();
+    const step = (val, action) => {
+      try {
+        const next = ite[action](val);
+        // 迭代器遍历完成了，以最终的结果作为Promise的返回值
+        if (next.done) {
+          resolve(next.value);
+        }
+      } catch (error) {
+        reject(error);
+        return;
+      }
+      // 递归的调用step方法，不断的将Generator函数中的流程向后推
+      Promise.resolve(next.value).then((val) => step(val, 'next'), (err) => _throw);
+    };
+    Promise.resolve(undefined).then(step, _throw);
+  });
+}
+```
