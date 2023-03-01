@@ -768,7 +768,7 @@ module.exports = function xhrAdapter(config) {
 };
 ```
 
-`异步管道`操作，这一点非常重要。
+`异步管道`操作(即`Promise链`)，这一点非常重要。
 
 来看一下`axios`的拦截器是怎么做的
 
@@ -812,7 +812,7 @@ Axios.prototype.request = function request(config) {
 };
 ```
 
-记住这一点，后面`Async`函数我们还会用到这种手段。
+记住这一点，后面`Async`函数我们还会用到这种思路。
 
 ## `Generator`函数
 
@@ -1028,11 +1028,11 @@ function func() {
 
 ### `Generator`的异步应用
 
-其实很简单，对`yield`表达式的返回值强制要求返回`Promise`即可，这样在迭代的过程中，就可以部署出一个`Promise链`，待每个节点上的`Promise`状态改变，其后面的流程节点就能继续处理。
+其实很简单，对`yield`表达式的返回值强制要求返回`Promise`即可，这样在迭代的过程中，就可以部署出一个执行效果像`Promise链`的执行流程，待当前节点上的`Promise`状态改变，其后面的流程节点就能继续处理，重复这个过程，直到把迭代器迭代完。
 
 ## `Async`函数
 
-如果你不明白`Generator`函数，其实是不大影响你理解`Async`函数的，但是前提你要清楚的明白，`Generator`函数是一个状态机，并且里面的内容完全可以使用`ES5`进行`polyfill`。
+如果你不明白`Generator`函数，其实是不大影响你理解`Async`函数的，但是前提你要清楚的明白，`Generator`函数其实是一个状态机，并且里面的内容完全可以使用`ES5`进行`polyfill`的。
 
 `Async`函数的`await`就等价于`Generator`函数`yield`表达式返回`Promise`
 

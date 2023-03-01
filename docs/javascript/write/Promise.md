@@ -344,7 +344,7 @@ class MyPromise {
            */
           throw new TypeError("detect promise recursion called");
         }
-        // 如果是一个Promise，就部署resolve和reject在其then方法上
+        // 如果是一个Promise，就部署resolve和reject在其then方法上 （这个地方应该改成类Promise更科学）
         if (x instanceof MyPromise) {
           x.then(resolve, reject);
         } else {
