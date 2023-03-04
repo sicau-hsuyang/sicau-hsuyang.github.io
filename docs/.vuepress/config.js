@@ -28,6 +28,10 @@ module.exports = {
               path: "/javascript/write/promise",
             },
             {
+              title: "数组",
+              path: "/javascript/write/array",
+            },
+            {
               title: "深浅克隆",
               path: "/javascript/write/clone",
             },
