@@ -416,6 +416,7 @@ module.exports = {
         { title: "策略模式", path: "/design-pattern/strategy" },
         { title: "享元模式", path: "/design-pattern/flyweight" },
         { title: "中介者模式", path: "/design-pattern/mediator" },
+        { title: "状态模式", path: "/design-pattern/state" },
       ],
       // "/others": [
       //   { title: "杂项专题", path: "/others/" },

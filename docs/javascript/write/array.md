@@ -263,3 +263,27 @@ Array.prototype.reduce = function (callback, initialValue) {
   return accumulator;
 };
 ```
+
+### `Array.prototype.includes`
+
+```js
+Array.prototype.includes = function (target, fromIndex) {
+  // 异常断言
+  nullOrUndefinedCheck();
+  // 强制将数组转化成对象
+  const O = Object(this);
+  // 将数组的length向右移动0位，这个操作的含义是，如果对象的length负数，二进制表示法它将会是其绝对值的补码表示，无符号向右移动，
+  // 相当于将其强制看成一个无符号数，于是，将会得到一个很大的值，并且一定是正数。但是对于非负数，却是没有任何影响的
+  const length = O.length >>> 0;
+  let offset = typeof fromIndex === "number" ? fromIndex : 0;
+  for (let i = offset; i < length; i++) {
+    if (
+      i in O &&
+      (O[i] === target || (Number.isNaN(O[i]) && Number.isNaN(target)))
+    ) {
+      return true;
+    }
+  }
+  return false;
+};
+```
