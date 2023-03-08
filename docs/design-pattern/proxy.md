@@ -2,6 +2,14 @@
 
 ### 1、基本概念
 
+代理模式是为其他对象提供一种代理以控制对这个对象的访问
+
+就拿前端经常简单的场景举例，比如有些操作并不想频繁的触发它，需要有人限制它的触发频率；就比如有些时候我们在操作数据的时候想做一些额外的事儿，比如`Vue`的双向数据绑定。
+
+什么时候适合使用代理模式呢？——想在访问一个对象时做一些控制。
+
+代理模式的`UML`图如下：
+
 <div align="center">
   <img :src="$withBase('/design-pattern/proxy-pattern.png')" alt="代理模式的UML" />
 </div>
@@ -74,14 +82,18 @@ function SafetyArray(arr) {
     },
     set(target, propKey, value, receiver) {
       const digitProp = Number.parseInt(propKey);
+      // 不允许给数组设置除了数字以外的键
+      if (Number.isNaN(digitProp) && propKey !== "length") {
+        return false;
+      }
       if (target.length === 0 && digitProp < 0) {
         digitProp = Math.abs(digitProp);
       }
       if (propKey < 0) {
         propKey = target.length + digitProp;
       }
-      debugger;
       target[propKey] = value;
+      return true;
     },
   });
 }
@@ -89,7 +101,7 @@ function SafetyArray(arr) {
 
 #### 3.2、节流
 
-由于`JS`语法特性比较灵活，在前端开发中，`节流`和`防抖`这两个代理模式的应用场景，你可能并没有发觉。这是因为`JS`的函数可以作为参数传递，避免了我们去编写上述那么多的代码。
+由于`JS`语法特性比较灵活，在前端开发中，`节流`和`防抖`这两个代理模式的应用场景，你可能并没有发觉。这是因为`JS`的函数可以作为参数传递，和闭包搭配使用，避免了我们去编写上述那么多的代码。
 
 下述代码中，`callback`函数就相当于`UML`图中的`RealSubject`类，返回的函数`fn`就相当于是图中的`Proxy`类，当我们调用`fn`的时候，它会根据间隔的时间是否执行真正的`callback`而改变了函数的行为。
 
@@ -130,10 +142,12 @@ function throttle(callback, ms) {
 function debounce(callback, ms) {
   let timer = null;
   return function fn(...args) {
+    // 如果timer存在，说明还没有到执行的时间，需要清理定时器
     if (timer) {
       clearTimeout(timer);
       return;
     }
+    // 设置一个定时器，在规定的时间内触发即可。
     timer = setTimeout(() => {
       callback.apply(this, args);
     }, ms);
