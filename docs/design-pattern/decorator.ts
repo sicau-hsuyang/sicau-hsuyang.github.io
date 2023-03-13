@@ -1,63 +1,66 @@
-interface Component {
-  run(): void;
-}
+// interface Component {
+//   run(): void;
+// }
 
-class Decorator implements Component {
-  protected component: Component | null;
+// class Decorator implements Component {
+//   protected component: Component | null;
 
-  constructor(component?: Component) {
-    this.component = component || null;
-  }
+//   constructor(component?: Component) {
+//     this.component = component || null;
+//   }
 
-  run(): void {
-    if (this.component) {
-      this.component.run();
-    }
-  }
+//   run(): void {
+//     if (this.component) {
+//       this.component.run();
+//     }
+//   }
 
-  decorate(com: Component): Component {
-    this.component = com;
-    return this;
-  }
-}
+//   decorate(com: Component): Component {
+//     this.component = com;
+//     return this;
+//   }
+// }
 
-class GotoWork implements Component {
-  run(): void {
-    console.log("去上班了，不上班没有钱啊");
-  }
-}
+// class GotoWork implements Component {
+//   run(): void {
+//     console.log("去上班了，不上班没有钱啊");
+//   }
+// }
 
-class TakePhotoDecorator extends Decorator {
-  run(): void {
-    console.log("拍照，记录下春天美美的花草");
-    super.run();
-  }
-}
+// class TakePhotoDecorator extends Decorator {
+//   run(): void {
+//     console.log("拍照，记录下春天美美的花草");
+//     super.run();
+//   }
+// }
 
-class LookBeautyDecorator extends Decorator {
-  run(): void {
-    console.log("男人至死是少年，不看美女怎么行呢");
-    super.run();
-  }
-}
+// class LookBeautyDecorator extends Decorator {
+//   run(): void {
+//     console.log("男人至死是少年，不看美女怎么行呢");
+//     super.run();
+//   }
+// }
 
-let work = new GotoWork();
+// let work = new GotoWork();
 
-const take = new TakePhotoDecorator();
+// const take = new TakePhotoDecorator();
 
-const look = new LookBeautyDecorator();
+// const look = new LookBeautyDecorator();
 
-work = take.decorate(work);
+// work = take.decorate(work);
 
-work = look.decorate(work);
+// work = look.decorate(work);
 
-look.run();
+// look.run();
 
 // interface Component {
 //   run(): void;
 // }
 
 // class Decorator implements Component {
+//   /**
+//    *
+//    */
 //   protected components: Set<Component> = new Set();
 
 //   run(): void {
@@ -72,13 +75,13 @@ look.run();
 //   }
 // }
 
-// class TakePhotoDecorator implements Component {
+// class TakePhotoComponent implements Component {
 //   run(): void {
 //     console.log("拍照，记录下春天美美的花草");
 //   }
 // }
 
-// class LookBeautyDecorator implements Component {
+// class LookBeautyComponent implements Component {
 //   run(): void {
 //     console.log("男人至死是少年，不看美女怎么行呢");
 //   }
@@ -93,12 +96,40 @@ look.run();
 
 // const work = new Work();
 
-// const take = new TakePhotoDecorator();
+// const take = new TakePhotoComponent();
 
-// const look = new LookBeautyDecorator();
+// const look = new LookBeautyComponent();
 
 // work.decorate(take);
 
 // work.decorate(look);
 
 // work.run();
+
+// function log(msg: string) {
+//   debugger;
+//   return function (
+//     value: Function,
+//     prop: string,
+//     descriptor: PropertyDescriptor
+//   ) {
+//     debugger;
+//   };
+// }
+
+function log(target: Object, name: string, descriptor: PropertyDescriptor) {
+  var oldValue = descriptor.value;
+  descriptor.value = function () {
+    console.log(`Calling ${name} with`, arguments);
+    return oldValue.apply(this, arguments);
+  };
+
+  return descriptor;
+}
+
+class MyClass {
+  @log
+  handleClick() {
+    console.log("用户点击了按钮");
+  }
+}
