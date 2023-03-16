@@ -117,6 +117,10 @@ module.exports = {
               title: "安全的取值和赋值方法",
               path: "/javascript/snippets/safety-getandset.md",
             },
+            {
+              title: "数字千分位分隔",
+              path: "/javascript/snippets/thousand.md",
+            }
           ],
         },
       ],
@@ -417,6 +421,7 @@ module.exports = {
         { title: "享元模式", path: "/design-pattern/flyweight" },
         { title: "中介者模式", path: "/design-pattern/mediator" },
         { title: "状态模式", path: "/design-pattern/state" },
+        { title: "职责链模式", path: "/design-pattern/responsibility-chain" },
       ],
       // "/others": [
       //   { title: "杂项专题", path: "/others/" },
@@ -434,20 +439,6 @@ module.exports = {
     },
   },
   head: [
-    // 添加百度统计
-    [
-      "script",
-      {},
-      `
-    var _hmt = _hmt || [];
-    (function() {
-      var hm = document.createElement("script");
-      hm.src = "https://hm.baidu.com/hm.js?2c567a12c7860a8915d6ce4cb17a538e";
-      var s = document.getElementsByTagName("script")[0]; 
-      s.parentNode.insertBefore(hm, s);
-    })();
-      `,
-    ],
     ["meta", { name: "referrer", content: "no-referrer-when-downgrade" }],
     ["link", { rel: "icon", href: "/favicon.ico" }],
   ],
