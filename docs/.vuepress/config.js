@@ -120,7 +120,11 @@ module.exports = {
             {
               title: "数字千分位分隔",
               path: "/javascript/snippets/thousand.md",
-            }
+            },
+            {
+              title: "日期格式化",
+              path: "/javascript/snippets/date-format.md",
+            },
           ],
         },
       ],
@@ -136,6 +140,10 @@ module.exports = {
             {
               title: "合并2（K）个有序数组",
               path: "/data-structure/list/mergeArray",
+            },
+            {
+              title: "洗牌算法",
+              path: "/data-structure/list/shuffle",
             },
           ],
         },
