@@ -173,7 +173,7 @@ readyState 有这些值，每个值都表示有特定的含义
   "use strict";
   var jsonp = function (url, data, callback) {
     // 1.将传入的data数据转化为url字符串形式
-    var dataString = url.indexof("?") == -1 ? "?" : "&";
+    var dataString = url.indexOf("?") == -1 ? "?" : "&";
     for (var key in data) {
       dataString += key + "=" + data[key] + "&";
     }

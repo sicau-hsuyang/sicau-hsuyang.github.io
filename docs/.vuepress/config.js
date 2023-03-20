@@ -24,6 +24,10 @@ module.exports = {
           title: "手写",
           children: [
             {
+              title: "trim",
+              path: "/javascript/write/trim",
+            },
+            {
               title: "Promise",
               path: "/javascript/write/promise",
             },
@@ -70,6 +74,10 @@ module.exports = {
             {
               title: "Map与Set",
               path: "/javascript/write/map-and-set",
+            },
+            {
+              title: "JSONP",
+              path: "/javascript/write/jsonp",
             },
             // {
             //   title: "JSON.parse与JSON.stringify",
