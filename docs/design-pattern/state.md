@@ -253,3 +253,77 @@ function _func() {
 在这一节，我们把注意力放在`_regeneratorRuntime().mark(...)`这个位置，此刻的回调函数，其中的`_context`参数正是我们`状态模式`的这个`Context`类。
 
 首先`Generator函数`执行得到一个迭代器，我们每次调用迭代器的`next`，这个回调函数都知道去修改`Context`的状态，只不过上面的业务实现类被其写成了`switch-case`(不要怪`babel`编译的代码违背了什么开闭原则，`babel`不是在写业务，它是不知道你的业务逻辑的，它只能根据`Generator函数`的`yield语句`得到这样的分支流程，不可能为你去生成那一系列的业务实现类)，因此，我们每次调用迭代器，其行为就不一样（体现在你执行的不同的异步逻辑）
+
+以下是一个使用`Generator`函数和不使用`Generator`函数的例子：
+
+不使用`Generator`：
+
+```js
+class GreenLight {
+  next = new YellowLight();
+
+  turnon(ctx) {
+    console.log("绿灯亮起");
+    ctx.state = this.next;
+  }
+}
+
+class YellowLight {
+  next = new RedLight();
+
+  turnon(ctx) {
+    console.log("黄灯闪烁，红灯即将亮起");
+    ctx.state = this.next;
+  }
+}
+
+class RedLight {
+  next = new GreenLight();
+  turnon(ctx) {
+    console.log("红灯亮起");
+    ctx.state = this.next;
+  }
+}
+
+class SignalLight {
+  state = new GreenLight();
+
+  loop() {
+    this.state.turnon(this);
+  }
+}
+
+const light = new SignalLight();
+
+function start(immediate) {
+  setTimeout(() => {
+    light.loop();
+    start();
+  }, 1000);
+  immediate && light.loop();
+}
+```
+
+使用`Generator`：
+
+```js
+function* func() {
+  while (1) {
+    yield console.log("红灯亮起");
+    yield console.log("绿灯亮起");
+    yield console.log("黄灯闪烁，红灯即将亮起");
+  }
+}
+
+const light = func();
+
+function start(immediate) {
+  setTimeout(() => {
+    light.next();
+    start();
+  }, 1000);
+  immediate && light.next();
+}
+```
+
+因此，可以利用`Generator`的这个语法在实际开发中代替手写原生的状态模式的代码。
