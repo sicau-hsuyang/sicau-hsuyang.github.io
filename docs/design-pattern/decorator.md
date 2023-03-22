@@ -169,6 +169,45 @@ window.onload =
 
 并且，再执行这个操作，仍然可以扩展`window.onload`回调函数的能力不用担心覆盖之前的内容。
 
+以下是使用装饰模式处理`axios`请求增加`loading`提示的例子：
+
+```js
+import fetch from "axios";
+import Vue from "vue";
+/**
+ * 为请求注入loading
+ * @param {Function} fn 请求后端的函数
+ * @param {String} msg loading提示信息
+ * @returns
+ */
+function decorate(fn, msg = "") {
+  return function enhance() {
+    Vue.prototype.$loading.show(msg);
+    const result = fn.apply(this, arguments);
+    if (result && typeof result.then === "function") {
+      return result
+        .then((resp) => {
+          Vue.prototype.$loading.hide();
+          return resp;
+        })
+        .catch(() => {
+          Vue.prototype.$loading.hide();
+        });
+    }
+    return result;
+  };
+}
+
+/**
+ * 获取活动配置
+ */
+export const getAppInfo = decorate(function getAppInfo() {
+  return fetch("/api/baofang/y2023/y2023/TombSweepingDay0403/index");
+});
+```
+
+经过这个装饰函数之后，业务侧只需要关心数据处理逻辑，不用再关注处理页面的提示信息，简化调用。而对于一些不需要`loading`提示，或者处理比较复杂的`loading`就不走这个`decorate`装饰函数，根据业务需要灵活的控制。
+
 在`ES5`及之前，我们只能通过这种办法实现装饰模式，但是`ES6`引入了一个新的语法：`Decorator`（不仅可以增加原对象的能力，还可以削弱原对象的能力），同样可以实现上述方式。
 
 因为`Decorator`在`ES6`仍然是一个提案，其语法仍然在变化当中，本文以`2020`年的装饰器语法进行阐述：

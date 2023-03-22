@@ -48,9 +48,9 @@ class Invoker {
   }
 
   doWork() {
-    const map =new Map()
+    const map = new Map();
     this.chian.exec(map);
-    console.log(map)
+    console.log(map);
   }
 }
 
