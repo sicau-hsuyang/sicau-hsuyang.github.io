@@ -79,6 +79,14 @@ module.exports = {
               title: "JSONP",
               path: "/javascript/write/jsonp",
             },
+            {
+              title: "异步任务调度器",
+              path: "/javascript/write/async-task-scheduler",
+            },
+            {
+              title: "异步加法的串行和并行实现",
+              path: "/javascript/write/parallel-pk-serial",
+            },
             // {
             //   title: "JSON.parse与JSON.stringify",
             //   path: "/javascript/write/JSON",

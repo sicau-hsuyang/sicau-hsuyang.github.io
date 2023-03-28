@@ -3,6 +3,8 @@
 现在云计算早已融入了我们的日常生活，分布式服务随处可见，比如打开一个知名点儿的`App`，常常能看到“云计算服务由某某某提供”这类的字样。
 所以，在有些时候，可能某些计算需要在远端进行，这就是我们这个问题产生的原因。
 
+下面要阐述的内容，是一道大厂的面试题，但是具体是`字节跳动`还是`阿里`的面试题我已经记不清楚了。
+
 比如，要实现两个数的加法：
 
 ```js
@@ -43,9 +45,14 @@ function add(a, b) {
 
 ### 串行
 
-串行处理的思路很简单，就想普通数组的求和过程一样。
+串行处理的思路很简单，就想普通数组的求和过程一样，从头累加到尾。
 
 ```js
+/**
+ * 串行求和函数
+ * @param {Array<number>} data
+ * @returns {Promise<number>}
+ */
 function serialAccumulateAsync(data) {
   return new Promise((resolve, reject) => {
     // try-catch只能捕获同步错误
@@ -53,10 +60,12 @@ function serialAccumulateAsync(data) {
       data
         .reduce((prevVal, curVal) => {
           return Promise.resolve(prevVal).then((val) => {
+            // 此处可以不用部署catch错误的函数
             return add(val, curVal);
           });
         })
         .then(resolve)
+        // 此处需要部署异步处理的函数以捕获异步处理过程中的错误
         .catch(reject);
     } catch (exp) {
       reject(exp);
@@ -74,6 +83,11 @@ function serialAccumulateAsync(data) {
 将一个数组，两两归并，得到一个新数组，如果新数组的**长度`大于1`，说明还能继续重复上述过程**，如果得到的新数组**长度`等于1`，说明计算已经完成了**，这个元素就是我们要求的和。
 
 ```js
+/**
+ * 并行求和函数
+ * @param {Array<number>} data
+ * @returns {Promise<number>}
+ */
 function parallelAccumulateAsync(data) {
   if (data.length === 1) {
     return Promise.resolve(data[0]);
@@ -104,7 +118,7 @@ function parallelAccumulateAsync(data) {
 
 根据`归并排序`中所学到的知识，`归并排序`的时间复杂度是`N*logN`，我们在这个计算过程中，假设数组长度是`10`个，第一次需要花费`1S`（`5个`任务同时并行），第二次需要花费`1S`(`3个`任务同时并行)，第三次需要花费`1S`，（`2个`任务同时并行），第四次再尝试计算的时候，发现数组长度已经为`1`，不再计算，整个过程就是二分的效果，所以总体的时间花费是`logN秒`，相比较串行计算，这个计算过程可是提高了非常多的效率。
 
-## 测试
+### 测试
 
 ```js
 function add(a, b) {
