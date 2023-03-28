@@ -80,6 +80,10 @@ module.exports = {
               path: "/javascript/write/jsonp",
             },
             {
+              title: "promisify",
+              path: "/javascript/write/promisify",
+            },
+            {
               title: "异步任务调度器",
               path: "/javascript/write/async-task-scheduler",
             },
