@@ -70,6 +70,7 @@ class ProxySubject implements Subject {
 function SafetyArray(arr) {
   return new Proxy(arr, {
     get(target, propKey, receiver) {
+      console.log(target, propKey, receiver)
       // 如果数组为空，
       const digitProp = Number.parseInt(propKey);
       if (target.length === 0 && digitProp < 0) {
