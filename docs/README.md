@@ -33,7 +33,12 @@
 - [单例模式](https://sicau-hsuyang.github.io/design-pattern/singleton.html)
 - [代理模式](https://sicau-hsuyang.github.io/design-pattern/proxy.html)
 - [观察者模式](https://sicau-hsuyang.github.io/design-pattern/watcher.html)
+- [适配器模式](https://sicau-hsuyang.github.io/design-pattern/adaptor.html)
+- [装饰模式](https://sicau-hsuyang.github.io/design-pattern/decorator.html)
+- [策略模式](https://sicau-hsuyang.github.io/design-pattern/strategy.html)
+- [享元模式](https://sicau-hsuyang.github.io/design-pattern/flyweight.html)
 - [状态模式](https://sicau-hsuyang.github.io/design-pattern/state.html)
+- [职责链模式](https://sicau-hsuyang.github.io/design-pattern/responsibility-chain.html)
 
 更新中...
 
