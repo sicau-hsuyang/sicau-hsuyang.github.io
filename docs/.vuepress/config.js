@@ -445,6 +445,7 @@ module.exports = {
         { title: "工厂模式", path: "/design-pattern/factory" },
         { title: "命令模式", path: "/design-pattern/command" },
         { title: "代理模式", path: "/design-pattern/proxy" },
+        { title: "模板方法模式", path: "/design-pattern/template-method" },
         { title: "观察者模式", path: "/design-pattern/watcher" },
         { title: "桥接模式", path: "/design-pattern/bridge" },
         { title: "适配器模式", path: "/design-pattern/adaptor" },
