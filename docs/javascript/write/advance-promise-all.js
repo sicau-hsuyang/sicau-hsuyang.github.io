@@ -1,8 +1,8 @@
 /**
- * 1、传入参数为一个函数列表，满足Promise.all的特性
- * 2、函数返回一个start和pause函数，start可以开启任务的执行，返回结果是一个Promise，并且返回所有任务执行的结果，start函数可以多次执行，
- *    每次得到的Promise都能得到预期的执行结果，pause函数可以暂停任务的执行
- * 3、每个任务具有原子性，也就是说只能在任务的间隙才可以实现任务的暂停
+ * 1、传入参数为一个函数列表，满足Promise.all的特性。
+ * 2、函数返回一个start和pause函数，start可以开启任务的执行，返回结果是一个Promise，其结果可能所有任务执行的结果，也可能是错误信息；start函数可以多次执行，
+ *    每次得到的Promise部署then方法之后都能得到预期的结果；pause函数可以暂停任务的执行。
+ * 3、每个任务具有原子性，也就是说只能在任务的间隙才可以实现任务的暂停，暂停无法阻止已经开始执行的任务。
  * @param {Function []} taskList
  * @returns
  */
@@ -70,16 +70,14 @@ function processTask(taskList) {
   return {
     start() {
       isRunning = true;
-      // 重新唤起任务
-      run();
+      // 重新唤起任务，如果当前正在执行任务，可不必要再次执行
+      taskState != "pending" && run();
       const p = new Promise((resolve, reject) => {
         // 如果任务已经完成了，那么可以直接给结果
-        if (taskError || results.length === taskList.length) {
-          if (taskError) {
-            reject(taskError);
-          } else {
-            resolve(results);
-          }
+        if (taskError) {
+          reject(taskError);
+        } else if (results.length === taskList.length) {
+          resolve(results);
         } else {
           // 可以支持多个Promise同时状态进行改变
           resolveCallback.push(resolve);
