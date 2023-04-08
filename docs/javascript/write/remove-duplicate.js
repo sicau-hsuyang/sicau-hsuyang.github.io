@@ -58,18 +58,18 @@
 //   return dataSets;
 // }
 
-/**
- * 数组去重
- * @param {number[]} arr 待去重数组
- * @returns
- */
-function removeDuplicate(arr) {
-  // 本质上和两重for循环是一样的意思
-  return arr.filter((v, idx) => {
-    // 过滤依据是，如果当前元素第一次出现的索引和它在数组中的索引匹配的上，说明它只有一个
-    return arr.indexOf(v) === idx;
-  });
-}
+// /**
+//  * 数组去重
+//  * @param {number[]} arr 待去重数组
+//  * @returns
+//  */
+// function removeDuplicate(arr) {
+//   // 本质上和两重for循环是一样的意思
+//   return arr.filter((v, idx) => {
+//     // 过滤依据是，如果当前元素第一次出现的索引和它在数组中的索引匹配的上，说明它只有一个
+//     return arr.indexOf(v) === idx;
+//   });
+// }
 
 // /**
 //  * 数组去重
@@ -118,23 +118,23 @@ function removeDuplicate(arr) {
 //   return result;
 // }
 
-/**
- * 数组去重
- * @param {number[]} arr1
- * @param {number[]} arr2
- */
-function removeDuplicate(arr1, arr2) {
-  const map = new Map();
-  // 将没有在哈希表中出现过的元素加入到哈希表中
-  for (let i = 0; i < arr1.length; i++) {
-    const num = arr1[i];
-    map.set(num, 1);
-  }
-  // 遍历另外一个数组，如果哈希表中还没有，加入，否则跳过
-  for (let i = 0; i < arr2.length; i++) {
-    const num = arr2[i];
-    map.set(num, 1);
-  }
-  //以哈希表的键的集合作为结果集，就是不重复的元素，map.keys()得到的是一个Iterator，使用扩展运算符可以将其变成一个真的数组
-  return [...map.keys()];
-}
+// /**
+//  * 数组去重
+//  * @param {number[]} arr1
+//  * @param {number[]} arr2
+//  */
+// function removeDuplicate(arr1, arr2) {
+//   const map = new Map();
+//   // 将没有在哈希表中出现过的元素加入到哈希表中
+//   for (let i = 0; i < arr1.length; i++) {
+//     const num = arr1[i];
+//     map.set(num, 1);
+//   }
+//   // 遍历另外一个数组，如果哈希表中还没有，加入，否则跳过
+//   for (let i = 0; i < arr2.length; i++) {
+//     const num = arr2[i];
+//     map.set(num, 1);
+//   }
+//   //以哈希表的键的集合作为结果集，就是不重复的元素，map.keys()得到的是一个Iterator，使用扩展运算符可以将其变成一个真的数组
+//   return [...map.keys()];
+// }

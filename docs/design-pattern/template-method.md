@@ -221,9 +221,7 @@ export class MysqlQueryRunner extends BaseQueryRunner implements QueryRunner {
 [SqlServerRunner](https://github1s.com/typeorm/typeorm/blob/HEAD/src/driver/sqlserver/SqlServerQueryRunner.ts)
 
 ```ts
-export class SqlServerQueryRunner
-  extends BaseQueryRunner
-  implements QueryRunner {
+export class SqlServerQueryRunner extends BaseQueryRunner implements QueryRunner {
   // 省略代码，有兴趣的读者可以直接在github查看
 }
 ```
