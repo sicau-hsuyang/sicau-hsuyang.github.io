@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>图片懒加载</title>
+    <meta name="description" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <style>
+      .container {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .item {
+        width: 100%;
+        height: 100px;
+        margin-bottom: 10px;
+      }
+
+      .item img {
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <div class="container">
+        <div class="item" v-for="(i, idx) in list" :key="idx">
+          <img v-lazyload="i.img" />
+        </div>
+      </div>
+    </div>
+    <script>
+      const { createApp } = Vue;
+      const app = createApp({
+        data() {
+          return {
+            list: [
+              {
+                img: "https://aliimg.changbalive.com/photo/714/add4b2c5102c76ce_100_100.jpg",
+              },
+              {
+                img: "https://aliimg.changbalive.com/photo/319/09c9d9347dbd7793_100_100.jpg",
+              },
+              {
+                img: "https://aliimg.changbalive.com/photo/384/55204bac1912cc3f_100_100.jpg",
+              },
+              {
+                img: "https://aliimg.changbalive.com/photo/968/260f20809d20b24d_100_100.jpg",
+              },
+              {
+                img: "https://aliimg.changbalive.com/photo/360/9bfe4674fad8e9f7_100_100.jpg",
+              },
+              {
+                img: "https://aliimg.changbalive.com/photo/909/f88b99b01fdb9c09_100_100.jpg",
+              },
+              {
+                img: "https://aliimg.changbalive.com/photo/544/be1568c28c966291_100_100.jpg",
+              },
+              {
+                img: "https://aliimg.changbalive.com/photo/28/a136220e3e8634db_100_100.jpg",
+              },
+              {
+                img: "https://aliimg.changbalive.com/photo/400/ef79a0bbb2235c8d_100_100.jpg",
+              },
+              {
+                img: "https://aliimg.changbalive.com/photo/198/2c87e0febc79b050_100_100.jpg",
+              },
+              {
+                img: "https://aliimg.changbalive.com/photo/917/ecd2c927015cc04c_100_100.jpg",
+              },
+              {
+                img: "https://aliimg.changbalive.com/photo/798/6fc378c970a938fb_100_100.jpg",
+              },
+              {
+                img: "https://aliimg.changbalive.com/photo/33/c050662cccd33ebf_100_100.jpg",
+              },
+              {
+                img: "https://aliimg.changbalive.com/photo/831/16b9254a3f0ee5da_100_100.jpg",
+              },
+              {
+                img: "https://aliimg.changbalive.com/photo/43/e25e56b6853e3842_100_100.jpg",
+              },
+              {
+                img: "https://aliimg.changbalive.com/photo/755/23b50c8abc02d95c_100_100.jpg",
+              },
+              {
+                img: "https://aliimg.changbalive.com/photo/470/2fe8ddb672e2147b_100_100.jpg",
+              },
+              {
+                img: "https://aliimg.changbalive.com/photo/29/ca17dfef67a44c88_100_100.jpg",
+              },
+              {
+                img: "https://aliimg.changbalive.com/photo/866/38b744f5d9d36e4e_100_100.jpg",
+              },
+              {
+                img: "https://aliimg.changbalive.com/photo/58/3e3da998245877d1_100_100.jpg",
+              },
+              {
+                img: "https://aliimg.changbalive.com/photo/638/1ab1c09e401e8984_100_100.jpg",
+              },
+              {
+                img: "https://aliimg.changbalive.com/photo/526/346aae30d0322ac1_100_100.jpg",
+              },
+              {
+                img: "https://aliimg.changbalive.com/photo/541/fa890a4fb7d58a38_100_100.jpg",
+              },
+              {
+                img: "https://aliimg.changbalive.com/photo/444/d717df213215c317_100_100.jpg",
+              },
+              {
+                img: "https://aliimg.changbalive.com/photo/431/4447f522ab66b89b_100_100.jpg",
+              },
+              {
+                img: "https://aliimg.changbalive.com/photo/65/c6df8a1b78f7b075_100_100.jpg",
+              },
+              {
+                img: "https://aliimg.changbalive.com/photo/144/ab4c0d2dc55efe34_100_100.jpg",
+              },
+              {
+                img: "https://aliimg.changbalive.com/photo/764/84da69276b0458ca_100_100.jpg",
+              },
+              {
+                img: "https://aliimg.changbalive.com/photo/385/d403933dd9b123af_100_100.jpg",
+              },
+              {
+                img: "https://aliimg.changbalive.com/photo/266/06cea5ec267b0e8b_100_100.jpg",
+              },
+            ],
+          };
+        },
+        methods: {},
+      });
+
+      const observer = new IntersectionObserver(
+        (entiries) => {
+          entiries.forEach((e) => {
+            if (e.isIntersecting) {
+              if (e.target.getAttribute("src")) {
+                return;
+              }
+              const src = e.target.getAttribute("data-src");
+              e.target.src = src;
+            }
+          });
+        },
+        {
+          threshold: 0.1,
+        }
+      );
+
+      app.directive("lazyload", {
+        created(el, binding, vnode, prevVnode) {
+          observer.observe(el);
+          el.setAttribute("data-src", binding.value);
+          // 下面会介绍各个参数的细节
+        },
+        // 绑定元素的父组件卸载前调用
+        beforeUnmount(el, binding, vnode, prevVnode) {
+          observer.unobserve(el);
+        },
+      });
+
+      app.mount("#app");
+
+      window.onscroll = console.log
+    </script>
+  </body>
+</html>

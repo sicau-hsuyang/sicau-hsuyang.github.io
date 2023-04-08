@@ -145,6 +145,10 @@ module.exports = {
               title: "日期格式化",
               path: "/javascript/snippets/date-format.md",
             },
+            {
+              title: "图片懒加载",
+              path: "/javascript/snippets/lazyload.md",
+            },
           ],
         },
       ],

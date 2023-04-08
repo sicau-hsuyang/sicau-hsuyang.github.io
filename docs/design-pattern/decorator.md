@@ -148,7 +148,7 @@ Function.prototype.afterExec = function (fn) {
   const _this = this;
   return function wrapper() {
     const response = _this.apply(_this, arguments);
-    _this.apply(_this, arguments);
+    fn.apply(_this, arguments);
     return response;
   };
 };
