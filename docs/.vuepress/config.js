@@ -104,10 +104,10 @@ module.exports = {
               title: "扩展运算符",
               path: "/javascript/es6/spread-symbol",
             },
-            // {
-            //   title: 'Iterator和for-of循环',
-            //   path: "/javascript/es6/iterator",
-            // },
+            {
+              title: "迭代器",
+              path: "/javascript/es6/iterator",
+            },
             {
               title: "Class",
               path: "/javascript/es6/class",
