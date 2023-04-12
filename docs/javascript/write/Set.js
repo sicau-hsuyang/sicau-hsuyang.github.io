@@ -1,6 +1,6 @@
 import { MyMap } from "./Map";
 
-class MySet {
+export class MySet {
   _map = new MyMap();
 
   get size() {

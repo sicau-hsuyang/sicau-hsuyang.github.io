@@ -54,3 +54,5 @@ function main() {
 }
 
 run(main);
+
+document.querySelector("a")

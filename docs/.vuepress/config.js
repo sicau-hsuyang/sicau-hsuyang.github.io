@@ -20,6 +20,10 @@ module.exports = {
         { title: "继承", path: "/javascript/extend" },
         { title: "闭包", path: "/javascript/closure" },
         { title: "Ajax", path: "/javascript/ajax" },
+        // {
+        //   title: "JavaScript异步技术的发展进程",
+        //   path: "/javascript/async-development-history",
+        // },
         {
           title: "手写",
           children: [
