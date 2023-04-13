@@ -62,8 +62,11 @@ export class Queue<T> {
     let ele = this.head!.data;
     // 解开第一个节点的后继节点
     this.head!.next = null;
-    // 解开第一个节点的后继节点的前驱节点
-    head!.prev = null;
+    // head节点有可能不存在了
+    if (head) {
+      // 解开第一个节点的后继节点的前驱节点
+      head.prev = null;
+    }
     // 让队首元素指向新的队首元素
     this.head = head;
     // 队列长度递减
