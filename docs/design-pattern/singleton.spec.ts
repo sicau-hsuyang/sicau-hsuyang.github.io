@@ -9,8 +9,12 @@ describe("Singleton", () => {
 
   it("can not new constructor", () => {
     expect(() => {
-      // @ts-ignore
-      new Singleton();
+      try {
+        // @ts-ignore
+        new Singleton();
+      } catch (exp) {
+        throw exp;
+      }
     }).toThrowError();
   });
 });

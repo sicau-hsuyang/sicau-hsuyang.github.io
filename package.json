@@ -5,12 +5,15 @@
   "repository": "https://github.com/sicau-hsuyang/sicau-hsuyang.github.io.git",
   "author": "“yangxu” <“404189928@qq.com”>",
   "license": "MIT",
+  "type": "module",
   "scripts": {
     "docs:dev": "vuepress dev docs",
     "docs:build": "vuepress build docs"
   },
   "devDependencies": {
+    "@jest/globals": "^29.5.0",
     "@types/jest": "^29.5.0",
+    "@types/node": "^18.15.11",
     "jest": "^29.5.0",
     "ts-jest": "^29.1.0",
     "typescript": "^5.0.4",

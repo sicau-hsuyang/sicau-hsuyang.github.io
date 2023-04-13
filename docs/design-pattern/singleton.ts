@@ -6,9 +6,7 @@ export class Singleton {
   /**
    * 私有化构造函数
    */
-  constructor() {
-    throw new Error("can not call this constructor by new");
-  }
+  private constructor() {}
   /**
    * 暴露访问其实例的访问方法
    * @returns
