@@ -1,12 +1,14 @@
+
+
 /**
  * 将一个基于回调的异步处理操作转化成基于Promise的异步处理操作
  * @param fn 函数
  * @param ctx 指定promisifyFn执行的函数上下文
  */
 export function promisify(
-  fn: Function,
+  fn: (...args: any[]) => any,
   ctx?: object
-): (...args: any[]) => Promise<unknown> {
+): (...args: Parameters<typeof fn>) => Promise<unknown> {
   if (typeof fn !== "function") {
     throw new Error("promisify must enhance a function");
   }

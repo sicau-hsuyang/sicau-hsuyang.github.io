@@ -33,7 +33,7 @@ function deepClone(obj, map = new Map()) {
     if (obj[prop] instanceof Object) {
       cloneObj[prop] = deepClone(obj[prop], map);
       // 拷贝完成后，还要将其加入引用Map中去
-      map.set(obj[prop], cloneObj[obj]);
+      map.set(obj[prop], cloneObj[prop]);
     } else {
       cloneObj[prop] = obj[prop];
     }
