@@ -3,7 +3,7 @@
  * @param arr1
  * @param  arr2
  */
-function merge(arr1: number[], arr2?: number[]) {
+export function merge(arr1: number[], arr2?: number[]) {
   let offset1 = 0;
   let offset2 = 0;
   let offset = 0;

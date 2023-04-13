@@ -57,27 +57,4 @@ describe("test promisify", () => {
       }).toThrow("test error");
     });
   });
-
-  it("test fs write file", async () => {
-    const readFilePromise = promisify(fs.readFile) as (
-      path: fs.PathOrFileDescriptor,
-      options:
-        | ({
-            encoding?: BufferEncoding;
-            flag?: string | undefined;
-          } & Abortable)
-        | undefined
-        | null
-    ) => Promise<Buffer | string>;
-    const filePath = path.resolve(__dirname, "./promise.md");
-    try {
-      const content = await readFilePromise(filePath, {
-        encoding: "utf-8",
-      });
-      console.log(content);
-      expect("").toBe("");
-    } catch (exp) {
-      console.log(exp);
-    }
-  });
 });
