@@ -12,3 +12,15 @@ function getType(o) {
     return typeof o;
   }
 }
+
+function demo1() {
+  console.log("demo1");
+  demo1();
+}
+
+function demo2() {
+  console.log("demo2");
+  setTimeout(() => {
+    demo2();
+  }, 0);
+}

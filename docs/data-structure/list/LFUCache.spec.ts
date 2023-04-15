@@ -35,9 +35,9 @@ describe("LFUCache", () => {
 
   describe("put", () => {
     it("doesn't add data if capacity is zero", () => {
-      const emptyCache = new LFUCache(0);
-      emptyCache.put(1, 1);
-      expect(emptyCache.get(1)).toBe(-1);
+      expect(() => {
+        new LFUCache(0);
+      }).toThrow("the LRUCache capacity must bigger than zero");
     });
 
     it("adds data if capacity is not reached", () => {

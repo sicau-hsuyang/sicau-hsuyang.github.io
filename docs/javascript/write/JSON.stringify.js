@@ -57,3 +57,33 @@ function stringifyNonSerialize(o) {
     ? undefined
     : o;
 }
+
+/**
+ 
+
+function jsonStringify(value) {
+  if (value == null) {
+    return "null";
+  }
+  switch (typeof value) {
+    case "string":
+      return '"' + value.replace(/"/g, '\\"') + '"';
+    case "number":
+    case "boolean":
+      return String(value);
+    case "object":
+      if (Array.isArray(value)) {
+        return "[" + value.map(jsonStringify).join(",") + "]";
+      } else {
+        const properties = Object.entries(value)
+          .filter(([key, value]) => typeof value !== "function" && value !== undefined)
+          .map(([key, value]) => `"${key}":${jsonStringify(value)}`);
+        return "{" + properties.join(",") + "}";
+      }
+    default:
+      return undefined;
+  }
+}
+
+
+ */

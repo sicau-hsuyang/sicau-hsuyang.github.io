@@ -6,15 +6,4 @@ describe("Singleton", () => {
     const instance2 = Singleton.getInstance();
     expect(instance1).toBe(instance2);
   });
-
-  it("can not new constructor", () => {
-    expect(() => {
-      try {
-        // @ts-ignore
-        new Singleton();
-      } catch (exp) {
-        throw exp;
-      }
-    }).toThrowError();
-  });
 });

@@ -21,7 +21,7 @@ describe("shuffle function", () => {
   });
 
   test("returns an array with elements in a different order than the input array", () => {
-    const arr = [1, 2, 3];
+    const arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
     const originalArr = [...arr];
     shuffle(arr);
     expect(arr).not.toEqual(originalArr);

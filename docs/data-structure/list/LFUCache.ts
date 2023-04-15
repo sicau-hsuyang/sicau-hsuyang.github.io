@@ -78,7 +78,7 @@ export class LFUCache {
 
   constructor(capacity: number) {
     if (capacity <= 0) {
-      console.error("the LRUCache capacity must bigger than zero");
+      throw new Error("the LRUCache capacity must bigger than zero");
     }
     /**
      * 缓存的容量
