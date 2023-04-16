@@ -95,6 +95,10 @@ module.exports = {
               title: "异步加法的串行和并行实现",
               path: "/javascript/write/parallel-pk-serial",
             },
+            {
+              title: "LazyMan",
+              path: "/javascript/write/lazy-man",
+            }
             // {
             //   title: "JSON.parse与JSON.stringify",
             //   path: "/javascript/write/JSON",

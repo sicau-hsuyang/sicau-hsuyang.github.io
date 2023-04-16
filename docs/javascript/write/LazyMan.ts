@@ -67,6 +67,7 @@ export class LazyMan {
   }
 
   private run() {
+    this.timer = null;
     const queue: Array<() => Promise<void>> = [
       ...this.emergencyQueue,
       ...this.normalQueue,
@@ -75,24 +76,34 @@ export class LazyMan {
         this.done = null;
       },
     ];
-    this.emergencyQueue = [];
-    this.normalQueue = [];
+    this.emergencyQueue.length = 0;
+    // this.emergencyQueue = [];
+    this.normalQueue.length = 0;
+    // this.normalQueue = [];
 
-    const fn = () => {
-      if (queue.length <= 0) {
-        return;
-      }
+    // const fn = () => {
+    //   if (queue.length <= 0) {
+    //     return;
+    //   }
+    //   const task = queue.shift();
+    //   let t = setInterval(() => {
+    //     console.log("等待中...");
+    //   }, 100);
+    //   task!().then(() => {
+    //     clearInterval(t);
+    //     fn();
+    //   });
+    // };
+
+    // fn();
+
+    let p = Promise.resolve();
+    while (queue.length) {
       const task = queue.shift();
-      let t = setInterval(() => {
-        console.log("等待中...");
-      }, 100);
-      task!().then(() => {
-        clearInterval(t);
-        fn();
+      p = p.then(() => {
+        return task!();
       });
-    };
-
-    fn();
+    }
   }
 
   eat(meal: string) {

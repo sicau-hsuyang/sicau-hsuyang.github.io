@@ -5,7 +5,6 @@
   "repository": "https://github.com/sicau-hsuyang/sicau-hsuyang.github.io.git",
   "author": "“yangxu” <“404189928@qq.com”>",
   "license": "MIT",
-  "type": "module",
   "scripts": {
     "docs:dev": "vuepress dev docs",
     "docs:build": "vuepress build docs",
