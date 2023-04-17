@@ -1,3 +1,5 @@
+## 工厂模式
+
 ```ts
 // 简单工厂模式
 interface Component {

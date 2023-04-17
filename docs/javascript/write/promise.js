@@ -181,8 +181,12 @@ class MyPromise {
       const fulfilledMicroTask = () => {
         queueMicrotask(() => {
           try {
-            const fulfilledVal = onFulfilledCallback(this.val);
-            resolvePromise(promise2, fulfilledVal, resolve, reject);
+            if (this.val instanceof MyPromise) {
+              this.val.then(resolve, reject);
+            } else {
+              const fulfilledVal = onFulfilledCallback(this.val);
+              resolvePromise(promise2, fulfilledVal, resolve, reject);
+            }
           } catch (exp) {
             reject(exp);
           }
@@ -301,7 +305,7 @@ class MyPromise {
       let size = 0;
       let results = [];
       for (let i = 0; i < arr.length; i++) {
-        const p = arr[i];
+        let p = arr[i];
         if (!(p instanceof MyPromise)) {
           p = MyPromise.resolve(p);
         }
@@ -360,7 +364,7 @@ class MyPromise {
       let rejectedSize = 0;
       let rejectedErrs = [];
       for (let i = 0; i < arr.length; i++) {
-        const p = arr[i];
+        let p = arr[i];
         if (!(p instanceof MyPromise)) {
           p = MyPromise.resolve(p);
         }
@@ -612,6 +616,28 @@ class MyPromise {
 //From console:
 //"reject"
 
-const p = MyPromise.allSettled([]);
+// const p = MyPromise.allSettled([]);
 
-console.log(p);
+// console.log(p);
+
+// new MyPromise((resolve, reject) => {
+//   reject(MyPromise.resolve(1));
+// }).then(
+//   () => {
+//     console.log("222");
+//   },
+//   (err) => {
+//     console.log(err);
+//   }
+// );
+
+new Promise((resolve, reject) => {
+  resolve(Promise.reject(1));
+}).then(
+  () => {
+    console.log("222");
+  },
+  (err) => {
+    console.log(err);
+  }
+);
