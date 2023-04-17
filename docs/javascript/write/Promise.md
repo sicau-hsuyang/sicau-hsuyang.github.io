@@ -693,7 +693,7 @@ MyPromise.allSettled = function (iterator) {
     let size = 0;
     let results = [];
     for (let i = 0; i < arr.length; i++) {
-      const p = arr[i];
+      let p = arr[i];
       if (!(p instanceof MyPromise)) {
         p = MyPromise.resolve(p);
       }
@@ -744,7 +744,7 @@ MyPromise.any = function (iterator) {
     let rejectedSize = 0;
     let rejectedErrs = [];
     for (let i = 0; i < arr.length; i++) {
-      const p = arr[i];
+      let p = arr[i];
       if (!(p instanceof MyPromise)) {
         p = MyPromise.resolve(p);
       }
@@ -874,8 +874,13 @@ class MyPromise {
       const fulfilledMicroTask = () => {
         queueMicrotask(() => {
           try {
-            const fulfilledVal = onFulfilledCallback(this.val);
-            resolvePromise(promise2, fulfilledVal, resolve, reject);
+            // 有可能外界给的结果就是一个Promise，那么这个Promise就要插队了，必须用户部署的then函数监听的结果将会是这个Promise的结果
+            if (this.val instanceof MyPromise) {
+              this.val.then(resolve, reject);
+            } else {
+              const fulfilledVal = onFulfilledCallback(this.val);
+              resolvePromise(promise2, fulfilledVal, resolve, reject);
+            }
           } catch (exp) {
             reject(exp);
           }
@@ -995,7 +1000,7 @@ class MyPromise {
       let size = 0;
       let results = [];
       for (let i = 0; i < arr.length; i++) {
-        const p = arr[i];
+        let p = arr[i];
         if (!(p instanceof MyPromise)) {
           p = MyPromise.resolve(p);
         }
@@ -1054,7 +1059,7 @@ class MyPromise {
       let rejectedSize = 0;
       let rejectedErrs = [];
       for (let i = 0; i < arr.length; i++) {
-        const p = arr[i];
+        let p = arr[i];
         if (!(p instanceof MyPromise)) {
           p = MyPromise.resolve(p);
         }
