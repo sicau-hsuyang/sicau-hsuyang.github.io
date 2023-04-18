@@ -108,12 +108,23 @@ class MyPromise {
   resolve = (val) => {
     // 只有状态为pending状态的才能变为FULFILLED
     if (this.state === PENDING) {
-      this.val = val;
-      this.state = FULFILLED;
-      // 清除异步任务队列
-      while (this.resolveCallbacks.length) {
-        const fn = this.resolveCallbacks.shift();
-        typeof fn === "function" && fn(val);
+      if (val instanceof MyPromise) {
+        val.then(
+          (resolveVal) => {
+            this.resolve(resolveVal);
+          },
+          (reason) => {
+            this.reject(reason);
+          }
+        );
+      } else {
+        this.val = val;
+        this.state = FULFILLED;
+        // 清除异步任务队列
+        while (this.resolveCallbacks.length) {
+          const fn = this.resolveCallbacks.shift();
+          typeof fn === "function" && fn(val);
+        }
       }
     }
   };
@@ -181,12 +192,8 @@ class MyPromise {
       const fulfilledMicroTask = () => {
         queueMicrotask(() => {
           try {
-            if (this.val instanceof MyPromise) {
-              this.val.then(resolve, reject);
-            } else {
-              const fulfilledVal = onFulfilledCallback(this.val);
-              resolvePromise(promise2, fulfilledVal, resolve, reject);
-            }
+            const fulfilledVal = onFulfilledCallback(this.val);
+            resolvePromise(promise2, fulfilledVal, resolve, reject);
           } catch (exp) {
             reject(exp);
           }
@@ -631,13 +638,47 @@ class MyPromise {
 //   }
 // );
 
-new Promise((resolve, reject) => {
-  resolve(Promise.reject(1));
-}).then(
-  () => {
-    console.log("222");
-  },
-  (err) => {
-    console.log(err);
-  }
-);
+// new MyPromise((resolve, reject) => {
+//   resolve(MyPromise.resolve(1));
+// })
+//   .then(
+//     (val) => {
+//       console.log("222", val);
+//       return 2;
+//     },
+//     (err) => {
+//       console.log(err);
+//     }
+//   )
+//   .then((val) => {
+//     console.log(val);
+//   });
+
+// new MyPromise((resolve, reject) => {
+//   resolve(MyPromise.reject(1));
+// })
+//   .then(
+//     (val) => {
+//       console.log("222", val);
+//       return 2;
+//     },
+//     (err) => {
+//       console.log(err);
+//       return 222;
+//     }
+//   )
+//   .then((val) => {
+//     console.log(val);
+//   });
+
+// new MyPromise((resolve, reject) => {
+//   resolve(2222);
+// }).then(
+//   (val) => {
+//     console.log("222", val);
+//     return 2;
+//   },
+//   (err) => {
+//     console.log(err);
+//   }
+// );

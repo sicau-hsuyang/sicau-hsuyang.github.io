@@ -109,20 +109,32 @@ class MyPromise {
    */
   rejectedCallbacks = [];
 
-  resolve(val) {
+  resolve = (val) => {
     // 只有状态为pending状态的才能变为FULFILLED
     if (this.state === PENDING) {
-      this.val = val;
-      this.state = FULFILLED;
-      // 异步任务队列里面记住了需要做但是还尚未做的事儿，因此需清除异步任务队列
-      while (this.resolveCallbacks.length) {
-        const fn = this.resolveCallbacks.shift();
-        typeof fn === "function" && fn(val);
+      // 如果构造器塞给我们的是一个Promise，我们需要递归的将其展平
+      if (val instanceof MyPromise) {
+        val.then(
+          (resolveVal) => {
+            this.resolve(resolveVal);
+          },
+          (reason) => {
+            this.reject(reason);
+          }
+        );
+      } else {
+        this.val = val;
+        this.state = FULFILLED;
+        // 清除异步任务队列
+        while (this.resolveCallbacks.length) {
+          const fn = this.resolveCallbacks.shift();
+          typeof fn === "function" && fn(val);
+        }
       }
     }
-  }
+  };
 
-  reject(reason) {
+  reject = (reason) => {
     // 只有状态为pending状态的才能变为REJECTED
     if (this.state === PENDING) {
       this.reason = reason;
@@ -133,7 +145,7 @@ class MyPromise {
         typeof fn === "function" && fn(reason);
       }
     }
-  }
+  };
 
   constructor(executor) {
     try {
@@ -801,12 +813,24 @@ class MyPromise {
   resolve = (val) => {
     // 只有状态为pending状态的才能变为FULFILLED
     if (this.state === PENDING) {
-      this.val = val;
-      this.state = FULFILLED;
-      // 清除异步任务队列
-      while (this.resolveCallbacks.length) {
-        const fn = this.resolveCallbacks.shift();
-        typeof fn === "function" && fn(val);
+      // 如果构造器塞给我们的是一个Promise，我们需要递归的将其展平
+      if (val instanceof MyPromise) {
+        val.then(
+          (resolveVal) => {
+            this.resolve(resolveVal);
+          },
+          (reason) => {
+            this.reject(reason);
+          }
+        );
+      } else {
+        this.val = val;
+        this.state = FULFILLED;
+        // 清除异步任务队列
+        while (this.resolveCallbacks.length) {
+          const fn = this.resolveCallbacks.shift();
+          typeof fn === "function" && fn(val);
+        }
       }
     }
   };
