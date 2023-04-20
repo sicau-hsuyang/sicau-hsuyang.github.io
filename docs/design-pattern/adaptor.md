@@ -195,4 +195,135 @@ class UserList extends React.Component {
 }
 ```
 
+最后一个例子，叫做`参数归一化`，以下是使用适配器模式编写的一个工具函数`groupBy`：
+
+```ts
+/**
+ * 对数据进行分组
+ * @param arr 源数据
+ * @param groupByPredicate 分组条件
+ * @returns
+ */
+export function groupBy<T>(
+  arr: T[],
+  groupByPredicate: ((item: T) => string) | string
+) {
+  const fn =
+    typeof groupByPredicate === "string"
+      ? (item: T) => item[groupByPredicate]
+      : groupByPredicate;
+  const record: Record<string, T[]> = {};
+  arr.forEach((item) => {
+    const groupByProp = fn(item);
+    let group = record[groupByProp];
+    if (!group) {
+      record[groupByProp] = [item];
+    } else {
+      group.push(item);
+    }
+  });
+  return record;
+}
+```
+
+以下是这个函数的测试用例，它既可以对普通类型进行分组，也可以对复杂类型进行分组：
+
+```ts
+import { groupBy } from "./group-by";
+
+describe("group by test", () => {
+  it("group age", () => {
+    const list = [
+      {
+        name: "wangwu",
+        age: 12,
+      },
+      {
+        name: "zhangsan",
+        age: 12,
+      },
+      {
+        name: "lisi",
+        age: 18,
+      },
+      {
+        name: "zhaosi",
+        age: 17,
+      },
+    ];
+    const res = groupBy(list, "age");
+    expect(res).toEqual({
+      12: [
+        {
+          name: "wangwu",
+          age: 12,
+        },
+        {
+          name: "zhangsan",
+          age: 12,
+        },
+      ],
+      18: [
+        {
+          name: "lisi",
+          age: 18,
+        },
+      ],
+      17: [
+        {
+          name: "zhaosi",
+          age: 17,
+        },
+      ],
+    });
+  });
+
+  it("group by age+gender", () => {
+    type Person = { name: string; age: number; gender: string };
+    const list: Person[] = [
+      {
+        name: "wangwu",
+        age: 12,
+        gender: "male",
+      },
+      {
+        name: "zhangsan",
+        age: 12,
+        gender: "female",
+      },
+      {
+        name: "lisi",
+        age: 18,
+        gender: "female",
+      },
+      {
+        name: "zhaosi",
+        age: 17,
+        gender: "male",
+      },
+      {
+        name: "Alice",
+        age: 18,
+        gender: "female",
+      },
+    ];
+    const res = groupBy(list, (item: Person) => {
+      return item.age + "+" + item.gender;
+    });
+    expect(Object.keys(res).length).toBe(4);
+  });
+
+  it("group by basic type", () => {
+    const nums = [1, 2, 3, 4, 5, 6, 7, 8];
+    const res = groupBy(nums, (item) => {
+      return item % 2 !== 0 ? "odd" : "even";
+    });
+    expect(res).toEqual({
+      odd: [1, 3, 5, 7],
+      even: [2, 4, 6, 8],
+    });
+  });
+});
+```
+
 阅读完本文的读者，快快把适配器模式用起来，提高你的`KPI`吧~
