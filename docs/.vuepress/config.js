@@ -157,6 +157,10 @@ module.exports = {
               title: "图片懒加载",
               path: "/javascript/snippets/lazyload.md",
             },
+            {
+              title: "阿拉伯数字转中文大写",
+              path: "/javascript/snippets/money-transfer.md",
+            }
           ],
         },
       ],
