@@ -98,6 +98,10 @@ module.exports = {
             {
               title: "LazyMan",
               path: "/javascript/write/lazy-man",
+            },
+            {
+              title: 'memoize',
+              path: "/javascript/write/memoize",
             }
             // {
             //   title: "JSON.parse与JSON.stringify",
