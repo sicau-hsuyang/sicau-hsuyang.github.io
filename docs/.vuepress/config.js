@@ -178,6 +178,10 @@ module.exports = {
               path: "/data-structure/list/array",
             },
             {
+              title: "大数加法",
+              path: "/data-structure/list/add",
+            },
+            {
               title: "合并2（K）个有序数组",
               path: "/data-structure/list/mergeArray",
             },
