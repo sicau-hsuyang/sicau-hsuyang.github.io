@@ -1,16 +1,20 @@
 export function maxSubArray(arr: number[]) {
-  return findMaxPartition(arr, 0, arr.length);
+  return findMaxPartition(arr, 0, arr.length - 1);
 }
 
 function findMaxPartition(arr: number[], left: number, right: number) {
-  if (left >= right) {
-    return Math.max(arr[left], 0);
+  if (left < right) {
+    let mid = Math.floor((left + right) / 2);
+    // 这儿不能写出mid-1和mid啊，因为mid-1有可能比right小，程序就出问题了，
+    // 所以说在分治算法的时候都要写成mid和mid+1，这样才能保证递归过程中right永远比left大
+    // 比如left 1 right 2 mid就是1，mid+1就是2，但是如果是mid-1 就是0，这就是问题
+    const leftMax = findMaxPartition(arr, left, mid);
+    const rightMax = findMaxPartition(arr, mid + 1, right);
+    const crossMidMax = findCrossMidMax(arr, left, mid, right);
+    return Math.max(leftMax, rightMax, crossMidMax);
+  } else {
+    return arr[left];
   }
-  let mid = Math.floor((left + right) / 2);
-  const leftMax = findMaxPartition(arr, left, mid - 1);
-  const rightMax = findMaxPartition(arr, mid, right);
-  const crossMidMax = findCrossMidMax(arr, left, mid, right);
-  return Math.max(leftMax, rightMax, crossMidMax);
 }
 
 function findCrossMidMax(
@@ -21,7 +25,7 @@ function findCrossMidMax(
 ) {
   let leftMidMax = -Infinity;
   let preLeftSum = 0;
-  for (let i = mid - 1; i >= left; i--) {
+  for (let i = mid; i >= left; i--) {
     const num = arr[i];
     preLeftSum += num;
     if (preLeftSum > leftMidMax) {
@@ -30,7 +34,7 @@ function findCrossMidMax(
   }
   let rightMidMax = -Infinity;
   let preRightSum = 0;
-  for (let i = mid; i <= right; i++) {
+  for (let i = mid + 1; i <= right; i++) {
     const num = arr[i];
     preRightSum += num;
     if (preRightSum > rightMidMax) {
