@@ -9,7 +9,7 @@ module.exports = {
       { text: "数据结构&算法", link: "/data-structure/" },
       { text: "设计模式", link: "/design-pattern/" },
       { text: "JavaScript", link: "/javascript/" },
-      { text: "前端框架", link: "/frameworks/" },
+      { text: "前端框架与工具", link: "/frameworks-with-utils/" },
       // { text: "其他", link: "/others/" },
     ],
     sidebar: {

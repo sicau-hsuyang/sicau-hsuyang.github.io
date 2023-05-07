@@ -169,6 +169,7 @@ function inheritPrototype(subType, superType) {
   var prototype = Object.create(superType.prototype); // 创建对象，创建父类原型的一个副本
   prototype.constructor = subType; // 增强对象，弥补因重写原型而失去的默认的constructor 属性
   subType.prototype = prototype; // 指定对象，将新创建的对象赋值给子类的原型
+  subType.__proto__ = superType; // 挂载构造器的指向关系，使得构造器上的静态属性也能继承
 }
 
 // 父类初始化实例属性和原型属性

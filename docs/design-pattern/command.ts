@@ -1,44 +1,72 @@
-// interface Command {
-//   action: Action;
+/**
+ * 消息通知类
+ */
+class Receiver {
+  notify() {
+    console.log("通知消息已传达~~");
+  }
+}
 
-//   exec(): void;
-// }
+/**
+ * 命令接口
+ */
+interface Command {
+  action: Action;
 
-// class CopyCommand implements Command {
-//   constructor(public action: Action) {}
+  exec(): void;
+}
 
-//   exec(): void {
-//     this.action.work();
-//   }
-// }
+/**
+ * 业务命令接口
+ */
+class CopyCommand implements Command {
+  constructor(public action: Action) {}
 
-// class Invoker {
-//   protected cmd: Command;
+  // #region 非必须，可以根据业务需要决定
+  receiver: Receiver;
 
-//   setCommand(cmd: Command) {
-//     this.cmd = cmd;
-//   }
+  setReceiver(r: Receiver) {
+    this.receiver = r;
+  }
+  // #endregion
 
-//   execCommand() {
-//     this.cmd.exec();
-//   }
-// }
+  exec(): void {
+    // 非必须，可以根据业务决定
+    this.receiver.notify();
+    this.action.work();
+  }
+}
 
-// class Action {
-//   work() {
-//     console.log("干活儿");
-//   }
-// }
+/**
+ * 命令调用者，命令模式核心类
+ */
+class Invoker {
+  protected cmd: Command;
 
-// const copyAction = new Action();
+  setCommand(cmd: Command) {
+    this.cmd = cmd;
+  }
 
-// const copyCmd = new CopyCommand(copyAction);
+  execCommand() {
+    this.cmd.exec();
+  }
+}
 
-// const invoker = new Invoker();
+class Action {
+  work() {
+    console.log("干活儿");
+  }
+}
 
-// invoker.setCommand(copyCmd);
+const copyAction = new Action();
 
-// invoker.execCommand();
+const copyCmd = new CopyCommand(copyAction);
+
+const invoker = new Invoker();
+
+invoker.setCommand(copyCmd);
+
+invoker.execCommand();
 
 // abstract class Command {
 //   abstract exec(): void;
@@ -62,116 +90,116 @@
 //   }
 // }
 
-abstract class Command {
-  protected preVal: number;
-  abstract exec(prev: number, ...args: number[]): number;
-  abstract cancel(): number;
-}
+// abstract class Command {
+//   protected preVal: number;
+//   abstract exec(prev: number, ...args: number[]): number;
+//   abstract cancel(): number;
+// }
 
-class AddCommand extends Command {
-  protected preVal: number = 0;
+// class AddCommand extends Command {
+//   protected preVal: number = 0;
 
-  exec(prev: number, ...args: number[]): number {
-    this.preVal = prev;
-    return args.reduce((prev, cur) => {
-      return prev + cur;
-    }, prev);
-  }
+//   exec(prev: number, ...args: number[]): number {
+//     this.preVal = prev;
+//     return args.reduce((prev, cur) => {
+//       return prev + cur;
+//     }, prev);
+//   }
 
-  cancel(): number {
-    return this.preVal;
-  }
-}
+//   cancel(): number {
+//     return this.preVal;
+//   }
+// }
 
-class MultiCommand extends Command {
-  protected preVal: number = 0;
+// class MultiCommand extends Command {
+//   protected preVal: number = 0;
 
-  exec(prev: number, ...args: number[]): number {
-    return args.reduce((prev, cur) => {
-      return prev - cur;
-    }, prev);
-  }
+//   exec(prev: number, ...args: number[]): number {
+//     return args.reduce((prev, cur) => {
+//       return prev - cur;
+//     }, prev);
+//   }
 
-  cancel(): number {
-    return this.preVal;
-  }
-}
+//   cancel(): number {
+//     return this.preVal;
+//   }
+// }
 
-class MinusCommand extends Command {
-  prevVal = 0;
+// class MinusCommand extends Command {
+//   prevVal = 0;
 
-  exec(prev: number, ...args: number[]): number {
-    this.prevVal = prev;
-    return args.reduce((prev, cur) => {
-      return prev * cur;
-    }, prev);
-  }
+//   exec(prev: number, ...args: number[]): number {
+//     this.prevVal = prev;
+//     return args.reduce((prev, cur) => {
+//       return prev * cur;
+//     }, prev);
+//   }
 
-  cancel(): number {
-    return this.prevVal;
-  }
-}
+//   cancel(): number {
+//     return this.prevVal;
+//   }
+// }
 
-class Calculator {
-  maxLength = 10;
+// class Calculator {
+//   maxLength = 10;
 
-  historyQueue: Command[] = [];
+//   historyQueue: Command[] = [];
 
-  addCmd: Command;
+//   addCmd: Command;
 
-  minusCmd: Command;
+//   minusCmd: Command;
 
-  multiCmd: Command;
+//   multiCmd: Command;
 
-  setAddCmd(cmd: Command) {
-    this.addCmd = cmd;
-  }
+//   setAddCmd(cmd: Command) {
+//     this.addCmd = cmd;
+//   }
 
-  sum = 0;
+//   sum = 0;
 
-  done(action: string, ...num: number[]) {
-    switch (action) {
-      case "+":
-        this.add(num);
-        break;
-      case "-":
-        this.minus(num);
-      case "*":
-        this.multi(num);
-        break;
-    }
-  }
+//   done(action: string, ...num: number[]) {
+//     switch (action) {
+//       case "+":
+//         this.add(num);
+//         break;
+//       case "-":
+//         this.minus(num);
+//       case "*":
+//         this.multi(num);
+//         break;
+//     }
+//   }
 
-  undone() {
-    const node = this.historyQueue.pop();
-    if (!node) {
-      console.log("没有可以撤销的命令啦~");
-      return;
-    }
-    const cmd = node;
-    this.sum = cmd.cancel();
-  }
+//   undone() {
+//     const node = this.historyQueue.pop();
+//     if (!node) {
+//       console.log("没有可以撤销的命令啦~");
+//       return;
+//     }
+//     const cmd = node;
+//     this.sum = cmd.cancel();
+//   }
 
-  recordCommand(cmd: Command) {
-    this.historyQueue.push(cmd);
-    if (this.historyQueue.length > this.maxLength) {
-      console.log("超出了最大的记录数，系统将丢弃一些记录");
-      this.historyQueue.shift();
-    }
-  }
+//   recordCommand(cmd: Command) {
+//     this.historyQueue.push(cmd);
+//     if (this.historyQueue.length > this.maxLength) {
+//       console.log("超出了最大的记录数，系统将丢弃一些记录");
+//       this.historyQueue.shift();
+//     }
+//   }
 
-  add(nums: number[]) {
-    this.sum = this.addCmd.exec(this.sum, ...nums);
-    this.recordCommand(this.addCmd);
-  }
+//   add(nums: number[]) {
+//     this.sum = this.addCmd.exec(this.sum, ...nums);
+//     this.recordCommand(this.addCmd);
+//   }
 
-  minus(nums: number[]) {
-    this.sum = this.minusCmd.exec(this.sum, ...nums);
-    this.recordCommand(this.minusCmd);
-  }
+//   minus(nums: number[]) {
+//     this.sum = this.minusCmd.exec(this.sum, ...nums);
+//     this.recordCommand(this.minusCmd);
+//   }
 
-  multi(nums: number[]) {
-    this.sum = this.multiCmd.exec(this.sum, ...nums);
-    this.recordCommand(this.multiCmd);
-  }
-}
+//   multi(nums: number[]) {
+//     this.sum = this.multiCmd.exec(this.sum, ...nums);
+//     this.recordCommand(this.multiCmd);
+//   }
+// }
