@@ -100,9 +100,17 @@ module.exports = {
               path: "/javascript/write/lazy-man",
             },
             {
-              title: 'memoize',
+              title: "memoize",
               path: "/javascript/write/memoize",
-            }
+            },
+            // {
+            //   title: "debounce",
+            //   path: '/javascript/write/debounce'
+            // },
+            // {
+            //   title: "throttle",
+            //   path: '/javascript/write/throttle'
+            // }
             // {
             //   title: "JSON.parse与JSON.stringify",
             //   path: "/javascript/write/JSON",
@@ -164,7 +172,7 @@ module.exports = {
             {
               title: "阿拉伯数字转中文大写",
               path: "/javascript/snippets/money-transfer.md",
-            }
+            },
           ],
         },
       ],
@@ -455,6 +463,24 @@ module.exports = {
             {
               title: "跳跃链表",
               path: "/data-structure/search/skipList",
+            },
+          ],
+        },
+        {
+          title: "递归",
+          children: [
+            {
+              title: "递归的介绍",
+              path: "/data-structure/recursion/basic",
+            },
+          ],
+        },
+        {
+          title: "分治",
+          children: [
+            {
+              title: "分治算法介绍",
+              path: "/data-structure/divide/basic",
             },
           ],
         },
