@@ -87,37 +87,59 @@ enum Role {
  * 中介者
  */
 interface IMediator {
+  /**
+   * 发送事件
+   * @param sender 事件的发送方
+   * @param channel 频道
+   * @param toRole 通知目标的角色
+   * @param args 数据参数
+   */
   emit(
-    sender: Person,
+    sender: ICollege,
     channel: string,
     toRole: Role | null,
     ...args: any[]
   ): void;
-  registry(user: Person): void;
+
+  /**
+   * 注册可通知的人员
+   * @param user
+   */
+  registry(user: ICollege): void;
 }
 
 /**
  * 普通人
  */
-abstract class Person {
-  protected mediator: IMediator;
-  public role: Role;
-  abstract send(channel: string, toRole: Role | null, ...args: any[]): void;
-  abstract emit(sender: Person, channel: string, ...args: any[]): void;
-}
-
-class ProjectManager implements IMediator {
-  private users: Map<Role, Person> = new Map();
-
+abstract class ICollege {
   /**
-   *
+   * 持有的中介者
+   */
+  protected mediator: IMediator;
+  /**
+   * 角色
+   */
+  public role: Role;
+  /**
+   * 发送事件
+   * @param channel 事件频道
+   * @param toRole
+   * @param args
+   */
+  abstract send(channel: string, toRole: Role | null, ...args: any[]): void;
+  /**
+   * 通知方法，主要供Mediator调用
    * @param sender
    * @param channel
-   * @param toRole 传递的值为null则通知所有人
    * @param args
-   * @returns
    */
-  emit(sender: Person, channel: string, toRole: Role, ...args: any[]): void {
+  abstract emit(sender: ICollege, channel: string, ...args: any[]): void;
+}
+
+export class ProjectManager implements IMediator {
+  private users: Map<Role, ICollege> = new Map();
+
+  emit(sender: ICollege, channel: string, toRole: Role, ...args: any[]): void {
     if (toRole === null) {
       this.users.forEach((u) => {
         if (u != sender) {
@@ -138,12 +160,12 @@ class ProjectManager implements IMediator {
    * 注册用户
    * @param user
    */
-  registry(user: Person) {
+  registry(user: ICollege) {
     this.users.set(user.role, user);
   }
 }
 
-class Employee extends Person {
+class Employee extends ICollege {
   mediator: IMediator;
 
   protected events = new EventEmitter();
@@ -161,26 +183,29 @@ class Employee extends Person {
     this.mediator.emit(this, channel, toRole, ...args);
   }
 
-  emit(sender: Person, channel: string, ...args: any[]) {
+  emit(sender: ICollege, channel: string, ...args: any[]) {
     this.events.$emit(channel, ...[sender, ...args]);
   }
 }
 
-class WebFEDeveloper extends Employee {
+export class WebFEDeveloper extends Employee {
   role: Role = Role.FE;
 
   constructor() {
     super();
-    this.registryEvent("UIReady", (sender: Person, ...args: any[]) => {
+    this.registryEvent("UIReady", (sender: ICollege, ...args: any[]) => {
       console.log("UI就绪", args);
+      console.log("事件的发送方", sender);
       this.startWork();
     });
-    this.registryEvent("BEReady", (sender: Person, ...args: any[]) => {
+    this.registryEvent("BEReady", (sender: ICollege, ...args: any[]) => {
       console.log("后端接口就绪", args);
+      console.log("事件的发送方", sender);
       this.finishWork();
     });
-    this.registryEvent("done", (sender: Person, ...args: any[]) => {
+    this.registryEvent("done", (sender: ICollege, ...args: any[]) => {
       console.log("前端已知晓开发完成~~~~~~~~~~", args);
+      console.log("事件的发送方", sender);
     });
   }
 
@@ -198,24 +223,30 @@ class WebFEDeveloper extends Employee {
     );
   }
 
-  finishWork() {
+  async finishWork() {
     console.log("前后端联调完成");
-    this.mediator.emit(
-      this,
-      "done",
-      null,
-      "本次活动开发完成，可以提测了，请相关业务方周知"
-    );
+    return new Promise<void>((resolve) => {
+      setTimeout(() => {
+        resolve();
+        this.mediator.emit(
+          this,
+          "done",
+          null,
+          "本次活动开发完成，可以提测了，请相关业务方周知"
+        );
+      }, 500);
+    });
   }
 }
 
-class WebBEDeveloper extends Employee {
+export class WebBEDeveloper extends Employee {
   role: Role = Role.BE;
 
   constructor() {
     super();
-    this.registryEvent("done", (sender: Person, ...args: any[]) => {
+    this.registryEvent("done", (sender: ICollege, ...args: any[]) => {
       console.log("~~~~~~~~后端已知晓开发完成~~~~~~~");
+      console.log("事件的发送方", sender);
       console.log(args);
     });
   }
@@ -225,7 +256,7 @@ class WebBEDeveloper extends Employee {
   }
 }
 
-class UIDesigner extends Employee {
+export class UIDesigner extends Employee {
   role: Role = Role.UI;
 
   constructor() {
@@ -233,6 +264,7 @@ class UIDesigner extends Employee {
 
     this.registryEvent("done", (sender, ...args) => {
       console.log("~~~~~~UI已知晓开发完成~~~~~");
+      console.log("事件的发送方", sender);
       console.log(args);
     });
   }
@@ -247,21 +279,3 @@ class UIDesigner extends Employee {
     );
   }
 }
-
-const zmh = new ProjectManager();
-
-const yx = new WebFEDeveloper();
-
-const yz = new UIDesigner();
-
-const lj = new WebBEDeveloper();
-
-yz.setMediator(zmh);
-
-yx.setMediator(zmh);
-
-lj.setMediator(zmh);
-
-yz.finishWork();
-
-lj.startWork();
