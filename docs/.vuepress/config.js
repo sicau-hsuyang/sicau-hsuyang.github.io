@@ -9,7 +9,7 @@ module.exports = {
       { text: "数据结构&算法", link: "/data-structure/" },
       { text: "设计模式", link: "/design-pattern/" },
       { text: "JavaScript", link: "/javascript/" },
-      { text: "前端框架与工具", link: "/frameworks-with-utils/" },
+      { text: "前端框架与工具", link: "/frameworks-and-utils/" },
       // { text: "其他", link: "/others/" },
     ],
     sidebar: {
@@ -502,6 +502,9 @@ module.exports = {
         { title: "状态模式", path: "/design-pattern/state" },
         { title: "职责链模式", path: "/design-pattern/responsibility-chain" },
       ],
+      "/frameworks-and-utils/": [
+        // { title: "前端框架与工具", path: "/frameworks-and-utils/" },
+      ]
       // "/others": [
       //   { title: "杂项专题", path: "/others/" },
       //   {
