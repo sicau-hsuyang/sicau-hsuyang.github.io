@@ -147,8 +147,8 @@ Function.prototype.beforeExec = function (fn) {
 Function.prototype.afterExec = function (fn) {
   const _this = this;
   return function wrapper() {
-    const response = _this.apply(_this, arguments);
-    fn.apply(_this, arguments);
+    const response = _this.apply(this, arguments);
+    fn.apply(this, arguments);
     return response;
   };
 };

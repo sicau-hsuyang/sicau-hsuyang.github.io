@@ -4,9 +4,11 @@
 
 闭包（`Closure`），MDN 上给的定义是这样的：
 
-> 是一个函数以及其捆绑的周边环境状态（lexical environment，词法环境）的引用的组合。换而言之，闭包让开发者可以从内部函数访问外部函数的作用域。在 JavaScript 中，闭包会随着函数的创建而被同时创建。
+> 是一个函数以及其捆绑的周边环境状态（`lexical environment`，词法环境）的引用的组合。换而言之，闭包让开发者可以从内部函数访问外部函数的作用域。在`JavaScript`中，闭包会随着函数的创建而被同时创建。
 
 我对它通俗的理解是这样的：**父子函数嵌套（一般情况下是，有些时候也并不是出现在父子函数的情况，后文会举例说明），在父函数内部定义的变量，当父函数执行完成，其子函数仍然有访问这些变量的权利**。
+
+在阅读下文的作用域和作用域链后，您就能明白一般情况以外的情况了。
 
 比如：
 
@@ -163,10 +165,205 @@ fn2();
 
 ### 闭包的用途
 
-### 闭包的一些问题
+我们在这节，仅讨论您已经明确知道会创建闭包的情况下的一些编程手段。
+
+#### 1、使用闭包进行封装：
 
 ```js
-const test = 2;
+function Person() {
+  // 注意定义变量不能定义在this上
+  let _name;
+  this.setName = function setter(name) {
+    // 外界无法访问_name，只能通过setter设置_name的值
+    _name = name;
+  };
+  this.getName = function getter() {
+    // 外界无法访问_name，只能通过getter获取_name的值
+    return _name;
+  };
+}
+
+const people = new Person();
+people.setName("bill gates");
+console.log(people.getName());
+```
+
+这个代码范式，在`ES5`及以前使用的非常多，在`ES6`引入了`class`之后使用场景不多。
+
+#### 2、通用柯里化函数：
+
+```js
+/**
+ * 通用柯里化函数
+ * @param {Function} fn 待柯里化的函数
+ * @param {unknown[]} bindArgs 已确定参数
+ * @returns
+ */
+function curry(fn, bindArgs = []) {
+  // 返回一个已经柯里化了的函数
+  return function curried() {
+    const curArgs = arguments;
+    // 合并已确定的函数参数和本轮传递的参数
+    const combinedArgs = [...bindArgs, ...curArgs];
+    // 如果已确定参数能够满足函数的执行，则执行函数，否则递归调用柯里化函数
+    if (combinedArgs.length >= fn.length) {
+      return fn.apply(this, combinedArgs);
+    } else {
+      return curry(fn, combinedArgs);
+    }
+  };
+}
+
+function add(a, b, c, d, e) {
+  return a + b + c + d + e;
+}
+
+const curryAdd = curry(add);
+
+const sum = curryAdd(1, 2, 3, 4, 5);
+const sum2 = curryAdd(1)(2)(3)(4)(5);
+const sum3 = curryAdd(1, 2)(3, 4)(5);
+
+console.log(sum, sum2, sum3);
+```
+
+在这种场景下，使用闭包既可以**提前确定参数**，又能够达到**延迟计算**的效果
+
+#### 3、实现单例模式
+
+单例模式既可以使用`class`的方式实现，也可以使用闭包实现
+
+```js
+const Singleton = (function () {
+  let instance; // 私有变量，用于存储单例实例
+  function createInstance() {
+    // 创建单例实例的逻辑
+    return {
+      // 单例的公共方法和属性
+      foo: function () {
+        console.log("Hello, I am the singleton instance!");
+      },
+    };
+  }
+  return {
+    getInstance: function () {
+      if (!instance) {
+        instance = createInstance();
+      }
+      return instance;
+    },
+  };
+})();
+```
+
+#### 4、实现装饰模式
+
+```js
+// 原函数执行前执行
+Function.prototype.beforeExec = function enhanceFn(beforeExec, ctx) {
+  const fn = this;
+  return function decorate() {
+    const bindCtx = ctx || this;
+    beforeExec.apply(bindCtx, arguments);
+    return fn.apply(bindCtx, arguments);
+  };
+};
+// 原函数执行后执行
+Function.prototype.afterExec = function enhanceFn(afterExec, ctx) {
+  const fn = this;
+  return function decorate() {
+    const bindCtx = ctx || this;
+    const response = fn.apply(bindCtx, arguments);
+    afterExec.apply(bindCtx, arguments);
+    return response;
+  };
+};
+
+const func1 = (() => {
+  console.log("hello closure");
+}).beforeExec(() => {
+  console.log("before exec");
+});
+
+const func2 = (() => {
+  console.log("hello closure");
+}).afterExec(() => {
+  console.log("after exec");
+});
+
+func1();
+func2();
+```
+
+防抖和节流其实也属于这类场景，就不再赘述了。
+
+### 闭包的一些问题
+
+#### 1、无意中触发了闭包
+
+这个场景在初学者经常出现，常常也作为面试题出现。需求很简单，给你一堆`div`，为每个`div`绑定`click`事件，当`div`被点击的时候打印出当前`div`的索引。
+
+为了说明问题，我在此例中用会出现问题的写法（可以有很多种办法直接回避这个问题）：
+
+```js
+function attachEventForDivCollection() {
+  const divList = [...document.querySelectorAll("div")];
+  for (var i = 0; i < divList.length; i++) {
+    var curDiv = divList[i];
+    curDiv.onclick = function () {
+      console.log(i);
+    };
+  }
+}
+```
+
+上述代码执行以后，每个`div`打印出来的结果都是`divList`的`length`，为什么是这样呢？你思考一个问题，当你点击某个`div`的时候，`for`循环是否已经执行完成？`for`循环执行完成之后，`i`是多少，自然是`divList`的`length`，给每个`div`绑定索引是在什么位置定义的呢？在事件处理函数的上级作用域定义的，为了使得事件处理器能够引用更上层作用域中定义的变量，所以`JS`引擎就会创建闭包。
+
+但是实际上，我们其实是不需要其创建闭包，最简单的办法就是使用`ES6`引入的块级作用域，只需要将这个代码改写成这样就可以了：
+
+```js
+function attachEventForDivCollection() {
+  const divList = [...document.querySelectorAll("div")];
+  // var改写成let
+  for (let i = 0; i < divList.length; i++) {
+    var curDiv = divList[i];
+    curDiv.onclick = function () {
+      console.log(i);
+    };
+  }
+}
+```
+
+如果你研究过`babel`的编译结果的话，平时我们用`let`写的`for`循环，`babel`会给我们转义成以下形式：
+
+```js
+function attachEventForDivCollection() {
+  // _toConsumableArray没有给出，读者可以自行查看babel的编译结果
+  var divList = _toConsumableArray(document.querySelectorAll("div"));
+  // var改写成let
+  var _loop = function _loop(i) {
+    curDiv = divList[i];
+    curDiv.onclick = function () {
+      console.log(i);
+    };
+  };
+
+  for (var i = 0; i < divList.length; i++) {
+    var curDiv;
+    _loop(i);
+  }
+}
+```
+
+因此，在`MDN`官方有一句话是：
+
+> 如果不想使用过多的闭包，你可以用`ES2015`引入的`let`或`const`关键词
+
+由此可见，**`let`和`const`不仅可以解决变量提升的问题，某些场景下还能减少闭包的创建，因此建议大家在实际开发中不要再使用`var`定义变量。**
+
+#### 2、闭包的安全性问题
+
+```js
 const o = (function () {
   const obj = {
     a: 1,
@@ -178,18 +375,110 @@ const o = (function () {
     },
   };
 })();
-
-// Object.defineProperty(Object.prototype, "abc", {
-//   get() {
-//     return this;
-//   },
-// });
-
-// const obj = o.get("abc");
-
-// delete obj.a;
-
-// delete obj.b;
-
-// console.log(o.get("a"));
 ```
+
+上述代码用闭包封装了一个取值器，你觉得它的这个操作安全吗？咋一看好像没有什么问题，`obj`是一个局部变量，当匿名函数执行完成之后，外界得到了一个取值访问器。
+
+```js
+Object.defineProperty(Object.prototype, "abc", {
+  get() {
+    return this;
+  },
+});
+
+const obj = o.get("abc");
+delete obj.a;
+delete obj.b;
+console.log(o.get("a"));
+```
+
+但是，如果我执行这样的操作，你还觉得这个定义安全吗？😂，因为你在定义的时候没有进行一些权限判断，那我就可以通过嗅探的方式篡改你的内部实现，从而是想向你的代码投毒。
+
+因此，我们在使用闭包进行一些权限判断的时候，一定要重视这些问题，才能提高我们编写的代码的健壮性。
+
+上述代码需要加入一些防篡改的操作：
+
+```js
+const o = (function () {
+  // 冻结对象，防止被篡改
+  const obj = Object.freeze({
+    a: 1,
+    b: 2,
+  });
+  return {
+    get(prop) {
+      // 不允许访问除了obj自身属性以外的属性
+      if (!obj.hasOwnProperty(prop)) {
+        return null;
+      }
+      return obj[prop];
+    },
+  };
+})();
+```
+
+#### 3、内存泄露的问题
+
+在阐述这个问题之前，我们需要明确`JS`的垃圾回收机制。
+
+`JS`中常见的垃圾回收机制是基于标记清除算法，标记清除算法的基本思想是通过标记对象是否可达来确定哪些对象是垃圾。垃圾收集器首先会将根对象（全局对象、活动执行上下文中的变量等）标记为可达对象，然后从根对象开始递归遍历所有引用的对象，并标记为可达。未被标记的对象则被认为是垃圾，可以被回收。
+
+其实对上述叙述，很简单的一个理解就是一个变量是否从全局作用域通过一系列路径能够访问到它，如果能，那么它就不能视为垃圾，就不能被`GC`回收。
+
+```js
+function createCounter() {
+  let count = 0;
+
+  return function () {
+    count++;
+    console.log(count);
+  };
+}
+
+const counter = createCounter();
+
+// 每次调用 counter 函数，count 值会递增
+counter(); // 输出 1
+counter(); // 输出 2
+counter(); // 输出 3
+
+// 假设在某个时刻不再需要使用 counter 函数了，但是它仍然保留了对 createCounter 函数的引用
+// 这会导致 createCounter 函数中的 count 变量无法被垃圾回收
+```
+
+因此，在实际开发中，我们应该注意这样的问题。
+
+### 闭包的销毁
+
+闭包的销毁其实很简单，因为闭包的产生是因为函数以及其捆绑的周边环境状态，那么我们不再引用它周边的环境状态自然就可以了。
+
+使用调试模式执行以下代码：
+
+```js
+function demo() {
+  var obj = {
+    a: 1,
+    b: 2,
+  };
+
+  return function test() {
+    var b = obj;
+    setTimeout(() => {
+      b = null;
+      obj = null;
+    }, 1000);
+  };
+}
+
+const fn = demo();
+
+fn();
+```
+
+<div align="center">
+  <img src="https://res.cdn.changbaimg.com/-/62c5b66fe4f794a8/%E5%88%9B%E5%BB%BA%E9%97%AD%E5%8C%85.png" alt="闭包" />
+</div>
+
+<div align="center">
+  <img src="https://res.cdn.changbaimg.com/-/9f18aeb652e919a4/%E9%94%80%E6%AF%81%E9%97%AD%E5%8C%85.png" alt="闭包" />
+</div>
