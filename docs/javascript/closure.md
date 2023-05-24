@@ -29,9 +29,7 @@ console.log(sum);
 
 我们把这段代码以调试的方式跑起来：
 
-<div align="center">
-  <img src="https://res.cdn.changbaimg.com/-/3bf660d6eefb576b/closure.png" alt="闭包" />
-</div>
+<MarkdownImage src="https://res.cdn.changbaimg.com/-/3bf660d6eefb576b/closure.png" alt="闭包" />
 
 因为在`Child`函数里面，引用着变量`a`和`b`，所以`a`和`b`就没办法销毁，`JS`引擎就会把当时(`Child`函数定义时的)的环境的引用的变量一并打包创建出一块特殊的内存区域，这块特殊的内存区域就称作闭包。
 
@@ -132,13 +130,8 @@ let c = 3;
 
 `eval`的欺骗作用域：
 
-<div align="center">
-  <img src="https://res.cdn.changbaimg.com/-/f2bda840ecc78559/eval-before.png" alt="eval" />
-</div>
-
-<div align="center">
-  <img src="https://res.cdn.changbaimg.com/-/8fa8017fcd5de7a4/eval-after.png" alt="eval" />
-</div>
+<MarkdownImage src="https://res.cdn.changbaimg.com/-/f2bda840ecc78559/eval-before.png" alt="eval" />
+<MarkdownImage src="https://res.cdn.changbaimg.com/-/8fa8017fcd5de7a4/eval-after.png" alt="eval" />
 
 内部的作用域可以访问外部的作用域，当一个`JS`引擎读取一个变量时，首先尝试当前作用域找，找不到就接着一直向上层作用域找，直到找到全局作用域（在这之前任何一个作用域中找到了就停止），如果找不到，就会报`Uncaught ReferenceError: xxx is not defined`的错误，这就是`JS`的作用域链。
 
@@ -494,10 +487,6 @@ const fn = demo();
 fn();
 ```
 
-<div align="center">
-  <img src="https://res.cdn.changbaimg.com/-/62c5b66fe4f794a8/%E5%88%9B%E5%BB%BA%E9%97%AD%E5%8C%85.png" alt="闭包" />
-</div>
+<MarkdownImage  src="https://res.cdn.changbaimg.com/-/62c5b66fe4f794a8/%E5%88%9B%E5%BB%BA%E9%97%AD%E5%8C%85.png" alt="闭包"  />
 
-<div align="center">
-  <img src="https://res.cdn.changbaimg.com/-/9f18aeb652e919a4/%E9%94%80%E6%AF%81%E9%97%AD%E5%8C%85.png" alt="闭包" />
-</div>
+<MarkdownImage  src="https://res.cdn.changbaimg.com/-/9f18aeb652e919a4/%E9%94%80%E6%AF%81%E9%97%AD%E5%8C%85.png" alt="闭包" />
