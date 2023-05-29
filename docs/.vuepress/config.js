@@ -20,6 +20,7 @@ module.exports = {
         { title: "继承", path: "/javascript/extend" },
         { title: "闭包", path: "/javascript/closure" },
         { title: "Ajax", path: "/javascript/ajax" },
+        { title: '位运算', path: "/javascript/bit-operation" },
         // {
         //   title: "JavaScript异步技术的发展进程",
         //   path: "/javascript/async-development-history",
@@ -478,10 +479,14 @@ module.exports = {
         {
           title: "分治",
           children: [
-            {
-              title: "分治算法介绍",
-              path: "/data-structure/divide/basic",
-            },
+            // {
+            //   title: "分治算法介绍",
+            //   path: "/data-structure/divide/basic",
+            // },
+            // {
+            //   title: "快速选择求TOP K",
+            //   path: "/data-structure/divide/quick-select",
+            // },
           ],
         },
       ],
@@ -504,7 +509,7 @@ module.exports = {
       ],
       "/frameworks-and-utils/": [
         // { title: "前端框架与工具", path: "/frameworks-and-utils/" },
-      ]
+      ],
       // "/others": [
       //   { title: "杂项专题", path: "/others/" },
       //   {
