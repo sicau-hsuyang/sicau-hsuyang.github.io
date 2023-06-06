@@ -16,8 +16,8 @@ function excelToJson(excelFilePath) {
 }
 
 // 示例用法
-const excelFilePath = "./百度地图提取坐标信息.xlsx";
-const jsonFilePath = path.resolve(__dirname, "./file.json");
+const excelFilePath = "./提取经纬度.xlsx";
+const jsonFilePath = path.resolve(__dirname, "./next-json.json");
 
 const jsonContent = excelToJson(excelFilePath);
 

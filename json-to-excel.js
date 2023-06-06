@@ -18,7 +18,9 @@ function jsonToExcel(jsonData, sheetName, excelFilePath) {
 }
 
 // 示例用法
-const jsonData = require("./response.json");
+const jsonData = require("./data20230530.json");
+
+jsonData.sort((a, b) => a.code - b.code);
 
 const sheetName = "Sheet1";
 const excelFilePath = "结果集.xlsx";
