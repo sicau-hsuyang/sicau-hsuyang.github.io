@@ -1,4 +1,7 @@
-import { convertNumberSystem } from "./convert-number-system";
+import {
+  convertNumberSystem,
+  calcShortLinkCode,
+} from "./convert-number-system";
 
 describe("convertNumberSystem", () => {
   it("should convert decimal to binary correctly", () => {
@@ -21,5 +24,12 @@ describe("convertNumberSystem", () => {
     expect(() => convertNumberSystem(123, 37)).toThrowError(
       "Convert range error, between 2 and 36"
     );
+  });
+
+  it("calc short link code", () => {
+    const code1 = calcShortLinkCode(1000000000);
+    const code2 = calcShortLinkCode(1000000001);
+    console.log(code1, code2);
+    debugger;
   });
 });
