@@ -34,11 +34,11 @@ doIncrease() {
 ```ts
 export declare function eventLoopThrottle<T extends unknown[], R>(
   fn: (...args: T) => R,
-  ctx: unknown
+  ctx?: unknown
 ): (...args: T) => R;
 ```
 
-然后再思考一下，既然是基于事件循环，肯定会有一个标记，根据标记判断是否能够执行函数，然后在微任务队列里面重置这个标记。
+然后再思考一下，既然是基于事件循环，肯定会有一个标记，根据标记判断是否能够执行函数，然后在下一轮宏任务里面重置这个标记。
 
 ```ts
 export function eventLoopThrottle<T extends unknown[], R>(
@@ -55,10 +55,10 @@ export function eventLoopThrottle<T extends unknown[], R>(
     const response = fn.apply(ctx || this, args);
     // 设置标记，同一轮事件循环内将无法再次执行
     isExecuted = true;
-    Promise.resolve().then(() => {
-      // 在微任务队列里面清楚已经执行的标记
+    setTimeout(() => {
+      // 在下一个宏任务里面清除已经执行的标记
       isExecuted = false;
-    });
+    }, 0);
     return response;
   };
 }

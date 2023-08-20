@@ -41,7 +41,7 @@
 
 export function eventLoopThrottle<T extends unknown[], R>(
   fn: (...args: T) => R,
-  ctx: unknown
+  ctx?: unknown
 ): (...args: T) => R {
   let isExecuted = false;
   return function throttled(...args: T) {
@@ -50,9 +50,9 @@ export function eventLoopThrottle<T extends unknown[], R>(
     }
     const response = fn.apply(ctx || this, args);
     isExecuted = true;
-    Promise.resolve().then(() => {
+    setTimeout(() => {
       isExecuted = false;
-    });
+    }, 0);
     return response;
   };
 }
