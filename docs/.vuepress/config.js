@@ -20,7 +20,7 @@ module.exports = {
         { title: "继承", path: "/javascript/extend" },
         { title: "闭包", path: "/javascript/closure" },
         { title: "Ajax", path: "/javascript/ajax" },
-        { title: '位运算', path: "/javascript/bit-operation" },
+        { title: "位运算", path: "/javascript/bit-operation" },
         // {
         //   title: "JavaScript异步技术的发展进程",
         //   path: "/javascript/async-development-history",
@@ -103,6 +103,10 @@ module.exports = {
             {
               title: "memoize",
               path: "/javascript/write/memoize",
+            },
+            {
+              title: "SinglePromise",
+              path: "/javascript/write/single-promise",
             },
             // {
             //   title: "debounce",
