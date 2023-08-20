@@ -108,6 +108,10 @@ module.exports = {
               title: "SinglePromise",
               path: "/javascript/write/single-promise",
             },
+            {
+              title: '基于事件循环的节流函数',
+              path: '/javascript/write/loop-throttle'
+            }
             // {
             //   title: "debounce",
             //   path: '/javascript/write/debounce'
