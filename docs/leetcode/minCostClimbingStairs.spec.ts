@@ -10,6 +10,7 @@ describe("min cost climbing stairs", () => {
   it("test 2", () => {
     const arr = [1, 100, 1, 1, 1, 100, 1, 1, 100, 1];
     const cost = minCostClimbingStairs(arr);
+    console.log(cost)
     expect(cost).toBe(6);
   });
 });

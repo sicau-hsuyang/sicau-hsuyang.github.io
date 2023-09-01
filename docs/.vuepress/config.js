@@ -133,6 +133,10 @@ module.exports = {
               title: "扩展运算符",
               path: "/javascript/es6/spread-symbol",
             },
+            // {
+            //   title: 'Reflect',
+            //   path: '/javascript/es6/reflect',
+            // },
             {
               title: "迭代器",
               path: "/javascript/es6/iterator",
