@@ -4,6 +4,10 @@ class Dsu {
    */
   private _set: number[];
 
+  /**
+   * 代表了从序号为0到n-1的点
+   * @param len
+   */
   init(len: number) {
     this._set = Array.from({
       length: len,
@@ -11,7 +15,7 @@ class Dsu {
   }
 
   /**
-   * 查找元素是否在集合中，若存在，则返回根节点所在的索引，若不在，则返回-1
+   * 查找元素是否存在于一个集合中，若存在，则返回这个集合根节点所在的索引，若不在，则返回-1
    * @param target 目标元素
    */
   find(target: number): number {
