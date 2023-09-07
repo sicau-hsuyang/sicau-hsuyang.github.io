@@ -109,9 +109,9 @@ module.exports = {
               path: "/javascript/write/single-promise",
             },
             {
-              title: '基于事件循环的节流函数',
-              path: '/javascript/write/loop-throttle'
-            }
+              title: "基于事件循环的节流函数",
+              path: "/javascript/write/loop-throttle",
+            },
             // {
             //   title: "debounce",
             //   path: '/javascript/write/debounce'
@@ -387,7 +387,6 @@ module.exports = {
             },
           ],
         },
-
         {
           title: "哈希表",
           children: [
@@ -476,6 +475,15 @@ module.exports = {
             {
               title: "跳跃链表",
               path: "/data-structure/search/skipList",
+            },
+          ],
+        },
+        {
+          title: "并查集",
+          children: [
+            {
+              title: "并查集的介绍",
+              path: "/data-structure/dsu/desc",
             },
           ],
         },
