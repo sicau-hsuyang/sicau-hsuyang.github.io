@@ -3,7 +3,7 @@ import { Edge, Graph, Vertex } from "./topology-sort";
 interface VertexInfo {
   id: string;
   name: string;
-  deps: string;
+  deps: string | string[];
 }
 
 export class BuildDAG {
@@ -49,12 +49,16 @@ export class BuildDAG {
       inDegree: [],
       outDegree: [],
     };
-    const depsNodes: Vertex[] =
-      deps === ""
-        ? []
-        : deps.split(",").map((depId) => {
-            return this.buildVertex(depId) as Vertex;
-          });
+    let depsNodes!: Vertex[];
+    if (Array.isArray(deps)) {
+      depsNodes = deps.map((depId) => {
+        return this.buildVertex(depId) as Vertex;
+      });
+    } else if (deps) {
+      depsNodes = deps.split(",").map((depId) => {
+        return this.buildVertex(depId) as Vertex;
+      });
+    }
     depsNodes.forEach((pre) => {
       this.link(pre, vertex);
     });

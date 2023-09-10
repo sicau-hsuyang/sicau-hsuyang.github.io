@@ -340,3 +340,109 @@ export class BuildDAG {
 ```
 
 有了这个结果，那么我们就可以直接根据每个学期学生需要完成的课程数进行分块，每块就是该学生对应学期需要完成的课程。
+
+### 拓扑排序的应用之——`Monorepo`项目的构建顺序
+
+现在的开源库已经逐渐采用`pnpm`+`monorepo`的管理方式，其拥有以下优点：
+
+- **代码共享和重用**： 在 Monorepo 中，不同部分的代码可以轻松共享和重用。这有助于避免重复工作，提高代码的一致性，并使开发人员更容易找到和使用已经存在的功能模块或库。
+
+- **统一的构建和部署**： 由于所有代码都在一个仓库中，构建和部署过程变得更加统一和协调。这有助于确保不同部分的代码之间没有不兼容性，减少构建和部署的问题。
+
+- **版本一致性**： 在 Monorepo 中，所有代码都可以使用相同的版本控制系统和工具进行管理。这有助于确保项目的各个部分保持一致的版本，减少版本冲突和依赖问题。
+
+- **易于跟踪更改**： Monorepo 使得跟踪项目中的更改变得更加容易，因为所有更改都在同一个仓库中进行。这有助于开发团队更好地理解和管理代码变更。
+
+- **简化协作**： 当多个团队或开发者同时工作在一个项目中时，Monorepo 可以简化协作过程。开发者可以更容易地查看和理解整个项目的状态，而不必在不同的仓库之间切换。
+
+- **提高构建性能**： 在一些情况下，Monorepo 可以提高构建性能。因为代码和依赖项都在一个仓库中，可以更有效地利用缓存和并行构建，从而加快构建时间。
+
+- **强化代码质量控制**： 通过将所有代码集中在一个仓库中，可以更容易地实施代码审查、测试和代码质量控制标准，确保高质量的代码交付。
+
+虽然`Monorepo`模式拥有以上优点，但是`Monorepo`模式自然就逃不过一个问题——>依赖的先后顺序问题。
+
+假设 B 项目依赖 A 项目，若 A 项目没有构建成功，B 项目是肯定不会构建成功的，因此，我们就需要得到一个科学的构建关系，怎么样得到这个科学的构建关系，即对依赖关系进行拓扑排序。
+
+以下是我所在公司一个基于`Monorepo`模式管理的项目的依赖关系：
+
+```json
+[
+  {
+    "id": "@funny/widgets",
+    "deps": ["@funny/env"]
+  },
+  {
+    "id": "@funny/track",
+    "deps": ["@funny/env"]
+  },
+  {
+    "id": "@funny/share",
+    "deps": [
+      "@funny/env",
+      "@funny/bridge",
+      "@funny/cross-platform",
+      "@funny/goto",
+      "@funny/request",
+      "@funny/widgets"
+    ]
+  },
+  {
+    "id": "@funny/env",
+    "deps": []
+  },
+  {
+    "id": "@funny/goto",
+    "deps": [
+      "@funny/env",
+      "@funny/bridge",
+      "@funny/cross-platform",
+      "@funny/request",
+      "@funny/track",
+      "@funny/widgets"
+    ]
+  },
+  {
+    "id": "@funny/request",
+    "deps": ["@funny/env"]
+  },
+  {
+    "id": "@funny/core",
+    "deps": [
+      "@funny/env",
+      "@funny/bridge",
+      "@funny/cross-platform",
+      "@funny/goto",
+      "@funny/request",
+      "@funny/share",
+      "@funny/track",
+      "@funny/widgets"
+    ]
+  },
+  {
+    "id": "@funny/bridge",
+    "deps": ["@funny/env", "@funny/cross-platform"]
+  },
+  {
+    "id": "@funny/cross-platform",
+    "deps": ["@funny/env", "@funny/widgets"]
+  }
+]
+```
+
+经过拓扑排序之后，得到的科学的依赖构建顺序如下：
+
+```json
+[
+  "@funny/env",
+  "@funny/widgets",
+  "@funny/track",
+  "@funny/request",
+  "@funny/cross-platform",
+  "@funny/bridge",
+  "@funny/goto",
+  "@funny/share",
+  "@funny/core"
+]
+```
+
+因为 deps 改成了数组，只需要简单的调整上述算法即可，因此此处不再赘述。

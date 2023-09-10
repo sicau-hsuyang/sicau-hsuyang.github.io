@@ -211,4 +211,81 @@ describe("topology sort", () => {
     const res = topologySort(g);
     console.log(res.map((v) => v.name));
   });
+
+  it("case 3", () => {
+    const deps = [
+      {
+        name: "@funny/widgets",
+        id: "@funny/widgets",
+        deps: ["@funny/env"],
+      },
+      {
+        name: "@funny/track",
+        id: "@funny/track",
+        deps: ["@funny/env"],
+      },
+      {
+        name: "@funny/share",
+        id: "@funny/share",
+        deps: [
+          "@funny/env",
+          "@funny/bridge",
+          "@funny/cross-platform",
+          "@funny/goto",
+          "@funny/request",
+          "@funny/widgets",
+        ],
+      },
+      {
+        name: "@funny/env",
+        id: "@funny/env",
+        deps: [],
+      },
+      {
+        name: "@funny/goto",
+        id: "@funny/goto",
+        deps: [
+          "@funny/env",
+          "@funny/bridge",
+          "@funny/cross-platform",
+          "@funny/request",
+          "@funny/track",
+          "@funny/widgets",
+        ],
+      },
+      {
+        name: "@funny/request",
+        id: "@funny/request",
+        deps: ["@funny/env"],
+      },
+      {
+        name: "@funny/core",
+        id: "@funny/core",
+        deps: [
+          "@funny/env",
+          "@funny/bridge",
+          "@funny/cross-platform",
+          "@funny/goto",
+          "@funny/request",
+          "@funny/share",
+          "@funny/track",
+          "@funny/widgets",
+        ],
+      },
+      {
+        name: "@funny/bridge",
+        id: "@funny/bridge",
+        deps: ["@funny/env", "@funny/cross-platform"],
+      },
+      {
+        name: "@funny/cross-platform",
+        id: "@funny/cross-platform",
+        deps: ["@funny/env", "@funny/widgets"],
+      },
+    ];
+    const builder = new BuildDAG(deps);
+    const g = builder.build();
+    const res = topologySort(g).map((v) => v.name);
+    console.log(res)
+  });
 });
