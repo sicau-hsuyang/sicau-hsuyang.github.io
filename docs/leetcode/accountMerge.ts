@@ -1,46 +1,4 @@
-interface DsuElement<T> {
-  dat: T;
-  parent: number;
-}
-
-class Dsu<T> {
-  set: DsuElement<T>[];
-
-  initSection() {}
-
-  find(val: T): number {
-    for (let i = 0; i < this.set.length; i++) {
-      const cur = this.set[i];
-      if (cur.dat === val) {
-        let p = cur.parent;
-        while (this.set[p].parent >= 0) {
-          p = this.set[p].parent;
-        }
-        return p;
-      }
-    }
-    return -1;
-  }
-
-  union(val1: T, val2: T) {
-    const idx1 = this.find(val1);
-    const idx2 = this.find(val2);
-    if (idx1 != idx2) {
-      const size1 = Math.abs(this.set[idx1].parent);
-      const size2 = Math.abs(this.set[idx2].parent);
-      if (size1 > size2) {
-        this.set[idx2].parent = idx1;
-      } else {
-        if (size1 === size2) {
-          this.set[idx2].parent--;
-        }
-        this.set[idx1].parent = idx2;
-      }
-    }
-  }
-}
-
-function accountsMerge(accounts: string[][]): string[][] {
+export function accountsMerge(accounts: string[][]): string[][] {
   const map: Map<string, string[][]> = new Map();
   accounts.forEach((act) => {
     const userName = act[0];
@@ -53,5 +11,54 @@ function accountsMerge(accounts: string[][]): string[][] {
       map.set(userName, [set]);
     }
   });
-  return [];
+  const results: string[][] = [];
+  for (const [person, group] of map.entries()) {
+    const markedMap: Map<string[], true> = new Map();
+    let set: Set<string> | null = null;
+    for (let g = 0; g < group.length; g++) {
+      // 取当前的一行
+      const emailGroup = group[g];
+      // 如果已经被合并过了，则跳过
+      if (markedMap.get(emailGroup)) {
+        continue;
+      }
+      if (!set) {
+        set = new Set<string>(emailGroup);
+      }
+      // 向后合并
+      let k = g + 1;
+      while (k < group.length) {
+        const nextEmailGroup = group[k];
+        // 尝试合并下一行
+        const tmpSet = new Set([...set!, ...nextEmailGroup]);
+        // 合并之后元素肯定少了，说明是重复的，并且将其标记为已处理
+        if (tmpSet.size < nextEmailGroup.length + set!.size) {
+          set = tmpSet;
+          // 标记为已处理
+          markedMap.set(nextEmailGroup, true);
+        }
+        // 向后继续处理下一行
+        k++;
+      }
+      const arr = [...set!].sort((a, b) => {
+        let offset1 = 0;
+        let offset2 = 0;
+        while (offset1 < a.length && offset2 < b.length) {
+          if (a.charCodeAt(offset1) === b.charCodeAt(offset2)) {
+            offset1++;
+            offset2++;
+          } else if (a.charCodeAt(offset1) > b.charCodeAt(offset2)) {
+            return true;
+          } else {
+            return false;
+          }
+        }
+        return (a.length - b.length) as any;
+      });
+      results.push([person, ...arr]);
+      // 合并完成，清理数据
+      set = null;
+    }
+  }
+  return results;
 }

@@ -58,22 +58,20 @@ export class Dsu<T> {
         let pos = i;
         // 尝试找这个元素的祖先节点
         while (this._set[pos].parent >= 0) {
-          // 路径压缩：将当前节点的父节点直接设为根节点
-          const nextPos = this._set[pos].parent;
-          // 如果还没有找到根节点
-          if (this._set[nextPos].parent >= 0) {
-            // 将当前节点向上提一层
-            this._set[pos].parent = nextPos;
-          } else {
-            // 如果找到了，此刻，nextPos表示的就是根节点，负号表示的是根节点，绝对值表示的是集合的秩。
-            this._set[pos].parent = nextPos - 1;
-          }
-          // 继续向上查找根节点
-          pos = nextPos;
+          pos = this._set[pos].parent;
         }
+        // 路径压缩
+        let p = i;
+        while (p != pos) {
+          const next = this._set[p].parent;
+          this._set[p].parent = pos;
+          p = next;
+        }
+        // 找到了，返回根节点的索引
         return pos;
       }
     }
+    // 找不到返回 -1
     return -1;
   }
 

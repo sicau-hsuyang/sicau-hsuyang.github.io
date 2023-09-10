@@ -485,6 +485,10 @@ module.exports = {
               title: "并查集的介绍",
               path: "/data-structure/dsu/desc",
             },
+            {
+              title: "并查集应用——验证二叉树",
+              path: "/data-structure/dsu/valid-binary-tree",
+            },
           ],
         },
         {

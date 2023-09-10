@@ -16,7 +16,7 @@
 
 ### 并查集的通用数据结构定义及实现
 
-并查集是基于数组实现的，数组的索引代表的节点，节点的值会存储一个指向它的父节点索引的域从而实现索引关系
+并查集是基于数组实现的，数组的索引代表的节点，节点的值会存储一个指向它的父节点索引的域从而实现索引关系，若这个值为负数，则说明它是根节点。
 
 并查集通用的数据结构定义如下：
 
@@ -91,7 +91,7 @@ class Dsu<T> {
         let p = i;
         while (p != pos) {
           const next = this._set[p].parent;
-          this.set[p].parent = pos;
+          this._set[p].parent = pos;
           p = next;
         }
         // 找到了，返回根节点的索引
@@ -173,7 +173,7 @@ class Dsu<T> {
         // let p = i;
         // while (p != pos) {
         //   const next = this._set[p].parent;
-        //   this.set[p].parent = pos;
+        //   this._set[p].parent = pos;
         //   p = next;
         // }
         // 找到了，返回根节点的索引
