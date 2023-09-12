@@ -81,6 +81,7 @@ class SimpleDsu {
     }, 0);
   }
 }
+
 function validateBinaryTreeNodes(
   n: number,
   leftChild: number[],
