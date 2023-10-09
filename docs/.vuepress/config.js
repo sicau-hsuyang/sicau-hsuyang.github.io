@@ -13,6 +13,18 @@ module.exports = {
       // { text: "其他", link: "/others/" },
     ],
     sidebar: {
+      "/frameworks-and-utils/": [
+        { title: "前端框架与工具专题", path: "/frameworks-and-utils/" },
+        {
+          title: "杂项",
+          children: [
+            {
+              title: "Vite项目下的Vue组件HMR过程",
+              path: "/frameworks-and-utils/others/hmr",
+            },
+          ],
+        },
+      ],
       "/javascript/": [
         { title: "JavaScript专题", path: "/javascript/" },
         { title: "函数上下文this", path: "/javascript/this" },
@@ -530,9 +542,6 @@ module.exports = {
         { title: "中介者模式", path: "/design-pattern/mediator" },
         { title: "状态模式", path: "/design-pattern/state" },
         { title: "职责链模式", path: "/design-pattern/responsibility-chain" },
-      ],
-      "/frameworks-and-utils/": [
-        // { title: "前端框架与工具", path: "/frameworks-and-utils/" },
       ],
       // "/others": [
       //   { title: "杂项专题", path: "/others/" },
