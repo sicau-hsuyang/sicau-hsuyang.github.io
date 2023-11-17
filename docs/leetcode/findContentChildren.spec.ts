@@ -19,7 +19,7 @@ describe("find content children test", () => {
     const g = [1, 2, 2, 2, 5, 8, 5, 3],
       s = [1, 2, 3, 5, 6];
     const size = findContentChildren(g, s);
-    expect(size).toBe(4);
+    expect(size).toBe(5);
   });
 
   it("case 4", () => {

@@ -222,6 +222,10 @@ module.exports = {
               title: "洗牌算法",
               path: "/data-structure/list/shuffle",
             },
+            {
+              title: "前缀和",
+              path: "/data-structure/list/prefix-sum",
+            }
           ],
         },
         {
