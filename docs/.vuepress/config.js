@@ -9,10 +9,23 @@ module.exports = {
       { text: "数据结构&算法", link: "/data-structure/" },
       { text: "设计模式", link: "/design-pattern/" },
       { text: "JavaScript", link: "/javascript/" },
+      { text: "Nodejs", link: "/nodejs/" },
       { text: "前端框架与工具", link: "/frameworks-and-utils/" },
       // { text: "其他", link: "/others/" },
     ],
     sidebar: {
+      "/nodejs": [
+        { title: "Nodejs", path: "/nodejs/" },
+        { title: "Nodejs中常见的坑点", path: "/nodejs/desc" },
+        {
+          title: "Nodejs中常见的工具方法",
+          path: "/nodejs/utils",
+        },
+        {
+          title: "使用Nodejs开发脚手架工具",
+          path: "/nodejs/generator",
+        },
+      ],
       "/frameworks-and-utils/": [
         { title: "前端框架与工具专题", path: "/frameworks-and-utils/" },
         {
@@ -225,7 +238,7 @@ module.exports = {
             {
               title: "前缀和",
               path: "/data-structure/list/prefix-sum",
-            }
+            },
           ],
         },
         {
