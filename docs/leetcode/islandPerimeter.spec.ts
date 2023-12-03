@@ -31,11 +31,17 @@ describe("island perimeter", () => {
   });
 
   it("island perimeter unit test 5", () => {
+    const grid = [[0], [1], [1]];
+    const size = islandPerimeter(grid);
+    expect(size).toBe(6);
+  });
+
+  it("island perimeter unit test 6", () => {
     const grid = [
       [1, 1],
       [1, 1],
     ];
     const size = islandPerimeter(grid);
-    expect(size).toBe(6);
+    expect(size).toBe(8);
   });
 });
