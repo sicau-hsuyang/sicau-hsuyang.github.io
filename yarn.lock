@@ -6265,7 +6265,7 @@ latest-version@^5.0.0:
 
 leetcode-test-utils@^0.1.3:
   version "0.1.3"
-  resolved "https://registry.npmjs.org/leetcode-test-utils/-/leetcode-test-utils-0.1.3.tgz"
+  resolved "https://registry.npmmirror.com/leetcode-test-utils/-/leetcode-test-utils-0.1.3.tgz#cd8242ef76aeb4e79e383d380a29501f68e63e71"
   integrity sha512-SUd1K7wrlg4VFTmiKl8QcX9ngAs4FvdDdFeorqV0TTD1pHuSqFKjQol9EtoEypPTvIbt7oShUPMPZ8ewIOPWHA==
   dependencies:
     node-clipboardy "^1.0.3"
