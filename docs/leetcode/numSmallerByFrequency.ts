@@ -71,11 +71,6 @@ export function binarySearch(nums: number[], target: number) {
   let left = 0;
   let mid = Math.floor((right + left) / 2);
   let count = -1;
-  if (target > nums[right]) {
-    return 0;
-  } else if (target < nums[left]) {
-    return nums.length;
-  }
   while (left <= right) {
     if (target >= nums[mid]) {
       left = mid + 1;
