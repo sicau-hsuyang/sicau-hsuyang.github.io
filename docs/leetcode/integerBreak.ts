@@ -2,10 +2,10 @@ export function integerBreak(n: number): number {
   const dp: number[] = [0, 1, 1];
   for (let num = 3; num <= n; num++) {
     let max = -Infinity;
-    for (let k = 1; k < num; k++) {
+    for (let k = 1; k <= Math.ceil(num / 2); k++) {
       let v1 = k;
       let v2 = num - k;
-      let acc = Math.max(v1 * v2, dp[v1] * v2, v1 * dp[v2]);
+      let acc = Math.max(v1 * v2, dp[v1] * v2);
       if (max < acc) {
         max = acc;
       }
