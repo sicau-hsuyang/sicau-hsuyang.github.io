@@ -18,21 +18,17 @@ interface TreeNode {
   right: TreeNode | null;
 }
 
-function diameterOfBinaryTree(root: TreeNode | null): number {
-  if (!root) {
-    return 0;
+export function diameterOfBinaryTree(root: TreeNode | null): number {
+  let maxHeight = 1;
+  function getHeight(node: TreeNode | null) {
+    if (node === null) {
+      return 0;
+    }
+    const lHeight = getHeight(node.left);
+    const rHeight = getHeight(node.right);
+    maxHeight = Math.max(maxHeight, lHeight + rHeight + 1);
+    return Math.max(lHeight, rHeight) + 1;
   }
-  if (root.left && root.right) {
-    const leftDiameter = diameterOfBinaryTree(root.left);
-    const rightDiameter = diameterOfBinaryTree(root.right);
-    return Math.max(leftDiameter, rightDiameter) + 1;
-  } else if (root.left) {
-    const leftDiameter = diameterOfBinaryTree(root.left);
-    return leftDiameter + 1;
-  } else if (root.right) {
-    const rightDiameter = diameterOfBinaryTree(root.right);
-    return rightDiameter + 1;
-  } else {
-    return 1;
-  }
+  getHeight(root);
+  return maxHeight - 1;
 }

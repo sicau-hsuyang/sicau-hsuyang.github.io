@@ -10,7 +10,6 @@ export function numTrees(n: number): number {
       for (let k = 1; k <= i; k++) {
         const dpLeft = dp[i - k];
         const dpRight = dp[k - 1];
-        console.log(dpLeft, dpRight);
         dp[i] += dpLeft * dpRight;
       }
     }

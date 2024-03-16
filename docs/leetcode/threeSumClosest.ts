@@ -1,28 +1,24 @@
 export function threeSumClosest(nums: number[], target: number): number {
-  let minAbsDistance = Infinity;
-  // 先排序
-  nums.sort((a, b) => a - b);
-  for (let i = 1; i < nums.length - 1; i++) {
+  // 最终的最小距离
+  let minDistance = Infinity;
+  let targetSum = Infinity;
+  for (let i = 1; i < nums.length - 1; i--) {
     let left = 0;
     let right = nums.length - 1;
-    const sum = nums[left] + nums[right] + nums[i];
+    let leftVal = nums[left];
+    let rightVal = nums[right];
+    let midVal = nums[i];
+    let sum = leftVal + midVal + rightVal;
+    // 本轮的最小距离
+    let currentDistance = Math.abs(sum - target);
+    let currentTargetSum = sum;
     while (left < i && right > i) {
-      const currentDistance = Math.abs(sum - target);
-      // target是负数，distance是负数
-      if (currentDistance < 0 && target < 0) {
-      }
-      // target是正数，distance是正数
-      else if (currentDistance < 0 && target > 0) {
-      }
-      // target是正数，distance是正数
-      else if (currentDistance > 0 && target > 0) {
-      }
-      // target是负数，distance是正数
-      else if (currentDistance > 0 && target < 0) {
-      }
-      // 如果target是0
-      else if (target === 0) {
-      }
+
+    }
+    if (currentDistance < minDistance) {
+      targetSum = currentTargetSum;
+      minDistance = currentDistance;
     }
   }
+  return target;
 }
