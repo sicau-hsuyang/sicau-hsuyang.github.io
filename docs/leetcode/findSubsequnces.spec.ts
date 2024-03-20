@@ -24,15 +24,29 @@ describe("find subsequences", () => {
     expect(results.length).toBe(expectVal.length);
   });
 
+  it("case 4", () => {
+    const input = [4, 4, 3, 2, 1, 4, 4, 5, 5, 5, 6];
+    const results = findSubsequences(input);
+    const expectVal = [[4, 4]];
+    expect(results.length).toBe(expectVal.length);
+  });
+
   it("case 3", () => {
     const input = [4, 4, 7, 7, 7, 7];
     const results = findSubsequences(input);
     const expectVal = [
       [4, 4],
+      [4, 4, 7],
+      [4, 4, 7, 7],
+      [4, 4, 7, 7, 7],
+      [4, 7, 7, 7, 7],
       [4, 7],
+      [4, 7, 7],
       [4, 7, 7, 7],
+      [4, 7, 7, 7, 7],
       [7, 7],
       [7, 7, 7],
+      [7, 7, 7, 7],
     ];
     expect(results.length).toBe(expectVal.length);
   });

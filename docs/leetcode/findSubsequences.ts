@@ -1,31 +1,67 @@
-// TODO:
-export function findSubsequences(numList: number[]): number[][] {
-  const results: number[][] = [];
-  const map: Map<number, Set<number>> = new Map();
-  for (let i = 0; i < numList.length; i++) {
-    let cur = numList[i];
-    const set: Set<number> = new Set();
-    map.set(cur, set);
-    for (let k = i + 1; k < numList.length; k++) {
-      let tmp = [numList[i]];
-      let now = cur;
-      let offset = k;
-      let next = numList[offset];
-      if (map.get(cur)!.has(next)) {
-        continue;
+function excludeSame(
+  record: number[],
+  map: Map<number, number[][]>
+): number[] | null {
+  if (!map.get(record.length)) {
+    map.set(record.length, [record]);
+    return record;
+  }
+  let result: null | number[] = null;
+  const exist = map.get(record.length) || [];
+  const isExistRecord = exist.some((seq) => {
+    const isSame = seq.every((el, elIdx) => {
+      return el === record[elIdx];
+    });
+    return isSame;
+  });
+  if (!isExistRecord) {
+    result = record;
+    exist.push(record);
+  }
+  return result;
+}
+
+function calc(nums: number[]): number[][] {
+  if (nums.length == 1) {
+    return [nums];
+  } else {
+    const results: number[][] = [];
+    const val = nums[0];
+    const nextNums = nums.slice(1);
+    const nxtResults = calc(nextNums);
+    const map: Map<number, number[][]> = new Map();
+    nxtResults.forEach((record) => {
+      const r = excludeSame(record, map);
+      if (r) {
+        results.push(r);
       }
-      while (offset < numList.length) {
-        if (next >= now) {
-          tmp.push(next);
-          // copy一份
-          results.push(tmp.slice(0));
-          map.get(cur)!.add(next);
-          now = next;
+    });
+    for (let i = 0; i < nxtResults.length; i++) {
+      const arr = nxtResults[i];
+      if (val <= arr[0]) {
+        const record = [val, ...arr];
+        const r = excludeSame(record, map);
+        if (r) {
+          results.push(r);
         }
-        offset++;
-        next = numList[offset];
       }
     }
+    results.push([val]);
+    return results;
   }
-  return results;
+}
+
+export function findSubsequences(nums: number[]): number[][] {
+  const results = calc(nums);
+  let distResults: number[][] = [];
+  const realResults = results.filter((v) => v.length > 1);
+  // const map: Map<number, number[][]> = new Map();
+  // realResults.forEach((record) => {
+  //   const r = excludeSame(record, map);
+  //   if (r) {
+  //     distResults.push(r);
+  //   }
+  // });
+  distResults = realResults;
+  return distResults;
 }
