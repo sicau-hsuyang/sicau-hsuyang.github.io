@@ -12,8 +12,6 @@
  * }
  */
 
-import { cloneDeep } from "lodash";
-
 interface TreeNode {
   val: number;
   left: TreeNode | null;
@@ -21,56 +19,92 @@ interface TreeNode {
 }
 
 export function generateTrees(n: number): Array<TreeNode | null> {
-  const map: Map<number, Array<TreeNode>> = new Map();
-  map.set(1, [createNode(1)]);
-  const root1 = createNode(1);
-  root1.right = createNode(2);
-  const root2 = createNode(2);
-  root2.left = createNode(1);
-  map.set(2, [root1, root2]);
-  if (n === 1) {
-    return map.get(1)!;
-  } else if (n === 2) {
-    return map.get(2)!;
-  } else {
-    for (let i = 3; i <= n; i++) {
-      const results: TreeNode[] = [];
-      for (let k = 1; k <= i; k++) {
-        let dpLeft = cloneDeep(map.get(i - k) || []);
-        let dpRight = cloneDeep(map.get(k - 1) || []);
-        if (dpRight.length === 0) {
-          dpLeft.forEach((subTree) => {
-            const node = createNode(k);
-            node.left = subTree;
-            results.push(node)
-          });
-        } else if (dpLeft.length === 0) {
-          dpRight.forEach((subTree) => {
-            const node = createNode(k);
-            node.right = subTree;
-            results.push(node)
-          });
-        } else {
-          for (let l = 0; l < dpLeft.length; l++) {
-            for (let r = 0; r < dpRight.length; r++) {
-              const node = createNode(k);
-              node.left = dpLeft[l];
-              node.right = dpRight[r];
-              results.push(node);
-            }
-          }
-        }
-      }
-      map.set(3, results);
-    }
-    return map.get(n)!;
+  let results: TreeNode[] = [];
+  for (let i = 1; i <= n; i++) {
+    // 已i为根节点，节点范围开始是1，结束是n
+    results = results.concat(buildTree(i, 1, n));
   }
+  return results;
 }
 
-function createNode<T>(val: T) {
-  return {
-    val,
-    left: null,
-    right: null,
-  } as TreeNode;
+/**
+ * 构建以root数字为根节点，下限为low数字，上限为high的所有二叉搜索树
+ * @param root 根节点的数字
+ * @param low 下限数字
+ * @param high 上限数字
+ * @returns
+ */
+function buildTree(root: number, low: number, high: number): Array<TreeNode> {
+  // 只有一个节点
+  if (root === low && root === high) {
+    return [
+      {
+        val: root,
+        left: null,
+        right: null,
+      },
+    ];
+  }
+  // 没有右子树
+  else if (root === high) {
+    const results: TreeNode[] = [];
+    for (let i = low; i < root; i++) {
+      const nextRootNum = i;
+      const subTrees = buildTree(nextRootNum, low, root - 1);
+      for (let k = 0; k < subTrees.length; k++) {
+        const leftTree = subTrees[k];
+        const rootNode = {
+          val: root,
+          left: leftTree,
+          right: null,
+        };
+        results.push(rootNode);
+      }
+    }
+    return results;
+  }
+  // 没有左子树
+  else if (root === low) {
+    const results: TreeNode[] = [];
+    for (let i = root + 1; i <= high; i++) {
+      const nextRootNum = i;
+      const subTrees = buildTree(nextRootNum, root + 1, high);
+      for (let k = 0; k < subTrees.length; k++) {
+        const rightNode = subTrees[k];
+        const rootNode = {
+          val: root,
+          left: null,
+          right: rightNode,
+        };
+        results.push(rootNode);
+      }
+    }
+    return results;
+  }
+  // 有左右子树
+  else {
+    const results: TreeNode[] = [];
+    let subLeftTrees: TreeNode[] = [];
+    for (let i = low; i < root; i++) {
+      const nextRootNum = i;
+      subLeftTrees = subLeftTrees.concat(buildTree(nextRootNum, low, root - 1));
+    }
+    let subRightTrees: TreeNode[] = [];
+    for (let i = root + 1; i <= high; i++) {
+      const nextRootNum = i;
+      subRightTrees = subRightTrees.concat(
+        buildTree(nextRootNum, root + 1, high)
+      );
+    }
+    subLeftTrees.forEach((leftNode) => {
+      subRightTrees.forEach((rightNode) => {
+        results.push({
+          left: leftNode,
+          val: root,
+          right: rightNode,
+        });
+      });
+    });
+    return results;
+  }
 }
