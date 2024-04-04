@@ -21,7 +21,7 @@ export function minimumOperations(root: TreeNode | null): number {
         nextChunk.push(node.right);
       }
     });
-    let levelCount = insertionSort(chunk);
+    let levelCount = calcMiniumOpt(chunk.map((v) => v.val));
     count += levelCount;
     if (nextChunk.length) {
       queue.push(nextChunk);
@@ -30,20 +30,31 @@ export function minimumOperations(root: TreeNode | null): number {
   return count;
 }
 
-function insertionSort(nodeList: TreeNode[]): number {
-  let count = 0;
-  for (let i = 1; i < nodeList.length; i++) {
-    let idx = i;
-    let node = nodeList[idx];
-    while (idx > 0 && node.val < nodeList[idx - 1].val) {
-      nodeList[idx] = nodeList[idx - 1];
-      idx--;
-    }
-    nodeList[idx] = node;
-    // 必须要动过，才算一次次数
-    if (idx < i) {
-      count++;
-    }
-  }
-  return count;
-}
+// function calcMiniumOpt(nums: number[]): number {
+//   let result = 0;
+//   // 创建一个辅助数组，包含每个数字及其原始索引的信息
+//   const arr = nums.map((value, index) => ({ value, index }));
+//   // 根据数字的大小对辅助数组进行排序
+//   arr.sort((a, b) => a.value - b.value);
+//   // 用一个数组visited记录每个元素是否已经在正确的位置或已被访问过
+//   const visited = new Array(nums.length).fill(false);
+//   for (let i = 0; i < nums.length; i++) {
+//     // 如果已经访问过，或者元素已经在正确的位置，则跳过
+//     if (visited[i] || arr[i].index === i) {
+//       continue;
+//     }
+//     // 计算每个循环（环）的大小
+//     let cycleSize = 0;
+//     let j = i;
+//     while (!visited[j]) {
+//       visited[j] = true;
+//       j = arr[j].index;
+//       cycleSize++;
+//     }
+//     // 如果环的大小大于0，那么需要的交换次数是环的大小减1
+//     if (cycleSize > 0) {
+//       result += cycleSize - 1;
+//     }
+//   }
+//   return result;
+// }

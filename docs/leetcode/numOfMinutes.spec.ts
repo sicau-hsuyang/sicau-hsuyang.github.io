@@ -21,4 +21,9 @@ describe("num of minutes", () => {
     );
     expect(speedTime).toBe(1);
   });
+
+  it("case 3", () => {
+    const speedTime = numOfMinutes(1, 0, [-1], [0]);
+    expect(speedTime).toBe(0);
+  });
 });
