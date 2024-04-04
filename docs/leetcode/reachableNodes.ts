@@ -11,13 +11,18 @@ export function reachableNodes(
     const [from, to] = edg;
     const nextSiblings = map.get(from) || [];
     nextSiblings.push(to);
-    if (nextSiblings.length === 0) {
+    if (nextSiblings.length === 1) {
       map.set(from, nextSiblings);
+    }
+    const preSiblings = map.get(to) || [];
+    preSiblings.push(from);
+    // 记录双向边
+    if (preSiblings.length === 1) {
+      map.set(to, preSiblings);
     }
   });
   const queue: number[] = [0];
-  while(queue.length) {
+  while (queue.length) {
     const num = queue.shift();
-    
   }
 }
