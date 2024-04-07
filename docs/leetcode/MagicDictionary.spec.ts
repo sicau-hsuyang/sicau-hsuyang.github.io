@@ -9,4 +9,21 @@ describe("MagicDictionary", () => {
       console.log(flag);
     });
   });
+
+  it("case 2", () => {
+    const dic = new MagicDictionary();
+    dic.buildDict(["hello", "hallo", "leetcode"]);
+    [
+      ["hello"],
+      ["hhllo"],
+      ["hell"],
+      ["hella"],
+      ["leetcoae"],
+      ["leetcoaa"],
+      ["leetcoded"],
+    ].forEach(([word]) => {
+      const flag = dic.search(word);
+      console.log(flag);
+    });
+  });
 });
