@@ -22,19 +22,19 @@ export function characterReplacement(s: string, k: number): number {
       if (char !== selectChar) {
         // 执行替换操作
         windowK--;
-        // 如果替换的次数已经用完了，向后滑动
+        // 如果替换的次数已经用完了，向后滑动，这儿需要注意一个点，
+        // 比如 SSSABCD 假设K=4，此刻如果有一个非S的字符串X进来的话，要想继续保持最大替换K个窗口，那么，我们必须要丢弃SSSA，直到窗口内
+        // 的元素为BCDX，所以必须使用的是while循环
         while (windowK < 0) {
           if (s[left] !== selectChar) {
             windowK++;
           }
           left++;
         }
-        // console.log(s.substring(left, right + 1));
       }
       // 更新最大距离
       let D = right - left + 1;
       if (D > maxDistance) {
-        // console.log(s.substring(left, right + 1));
         maxDistance = D;
       }
     }
