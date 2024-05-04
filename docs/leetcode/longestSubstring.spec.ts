@@ -8,6 +8,13 @@ describe("longestSubstring", () => {
     expect(size).toBe(3);
   });
 
+  it("case 1-1", () => {
+    const s = "aaaaaa",
+      k = 3;
+    const size = longestSubstring(s, k);
+    expect(size).toBe(6);
+  });
+
   it("case 2", () => {
     const s = "ababbc",
       k = 2;
@@ -26,6 +33,15 @@ describe("longestSubstring", () => {
     const s = "aaabbasfksdfdkkssandadnndaseojjfqakkfowkc",
       k = 3;
     const size = longestSubstring(s, k);
-    expect(size).toBe(3);
+    expect(size).toBe(12);
+    // andadnnda
+    // ssandadnndas
+  });
+
+  it("case 5", () => {
+    const s = "ssandadnndas",
+      k = 3;
+    const size = longestSubstring(s, k);
+    expect(size).toBe(12);
   });
 });

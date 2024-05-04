@@ -1,33 +1,71 @@
-export function longestNiceSubstring(s: string): string {
-  let results = "";
-  let maxDistance = 0;
-  let left = 0;
-  const map: Map<string, number> = new Map();
-  for (let right = 0; right < s.length; right++) {
-    let char = s[right];
-    map.set(char, right);
-    if (right === 0) {
-      continue;
+function validKey(map: Map<string, number>) {
+  for (const key of map.keys()) {
+    const lowerKey = key.toLowerCase();
+    const upperKey = key.toUpperCase();
+    // 必须同时有2个大小写的key
+    if (
+      (!map.has(lowerKey) && map.has(upperKey)) ||
+      (map.has(lowerKey) && !map.has(upperKey))
+    ) {
+      return false;
     }
-    const pre = right - 1;
-    const preChar = s[pre];
-    // 如果把当前字符加进来的话，会导致前面的一个字符在窗口中不会出现大小写
-    // TODO: 如果同时抹除了某些字符串
-    if (!map.has(preChar.toLowerCase()) || !map.has(preChar.toUpperCase())) {
-      map.clear();
-      // 直接丢弃前面的
-      left = right;
-      map.set(char, right);
-    } else {
-      const set = new Set([...map.keys()].map((v) => v.toLowerCase()));
-      if (set.size * 2 === map.size) {
-        const D = right - left + 1;
-        if (D > maxDistance) {
-          results = s.substring(left, right + 1);
-          maxDistance = D;
-        }
+  }
+  return true;
+}
+
+export function longestNiceSubstring(s: string): string {
+  let distLeft = -1;
+  let distRight = -1;
+  let maxDistance = 0;
+  let len = Math.min(s.length, 100);
+  for (let k = 2; k <= len; k++) {
+    const map: Map<string, number> = new Map();
+    let left = 0;
+    for (let i = 0; i < k; i++) {
+      const char = s[i];
+      const count = map.get(char) || 0;
+      if (count === 0) {
+        map.set(char, 1);
+      } else {
+        map.set(char, count + 1);
+      }
+    }
+    if (validKey(map) && k > maxDistance) {
+      // console.log(s.substring(left, k));
+      maxDistance = k;
+      distLeft = left;
+      distRight = k;
+    }
+    for (let i = k; i < len; i++) {
+      const removeChar = s[left];
+      const insertChar = s[i];
+      // console.log(removeChar, insertChar);
+      let count = map.get(insertChar) || 0;
+      const removeCount = map.get(removeChar)!;
+      if (removeCount === 1) {
+        map.delete(removeChar);
+      } else {
+        map.set(removeChar, removeCount - 1);
+      }
+      // 如果增加和删除操作的是同一个元素的话，需要对已有的元素递减
+      if (insertChar === removeChar) {
+        count--;
+      }
+      if (count === 0) {
+        map.set(insertChar, 1);
+      } else {
+        map.set(insertChar, count + 1);
+      }
+      left++;
+      if (validKey(map) && k > maxDistance) {
+        // console.log(s.substring(left, i + 1));
+        maxDistance = k;
+        distLeft = left;
+        distRight = i + 1;
       }
     }
   }
-  return results;
+  return distLeft === distRight && distLeft === -1
+    ? ""
+    : s.substring(distLeft, distRight);
 }

@@ -3,19 +3,20 @@
  * @param {number} target 目标值
  * @param {number[]} arr 原数组
  */
-export function minSubArrayLen(target: number, arr: number[]) {
-  let minLength = Infinity;
-  let left = 0;
+export function minSubArrayLen(target: number, nums: number[]) {
   let sum = 0;
-  for (let right = 0; right < arr.length; right++) {
-    sum += arr[right];
+  let left = 0;
+  let minDistance = Infinity;
+  for (let right = 0; right < nums.length; right++) {
+    const num = nums[right];
+    sum += num;
     while (sum >= target) {
-      let subLength = right - left + 1;
-      if (subLength < minLength) {
-        minLength = subLength;
+      let D = right - left + 1;
+      if (minDistance > D) {
+        minDistance = D;
       }
-      sum -= arr[left++];
+      sum -= nums[left++];
     }
   }
-  return Number.isFinite(minLength) ? minLength : 0;
+  return Number.isFinite(minDistance) ? minDistance : 0;
 }

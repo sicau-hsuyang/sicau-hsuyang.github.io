@@ -39,5 +39,13 @@ describe("longestNiceSubstring", () => {
 
   it("case 7", () => {
     const s = "BebjJE"
+    const res = longestNiceSubstring(s);
+    expect(res).toBe("BebjJE");
+  })
+
+  it("case 8", () => {
+    const s = 'jceWzKNUrLQvxRyljvkUwCUymYuyAMAJLVaFfQfn'
+    const res = longestNiceSubstring(s);
+    expect(res).toBe("Ff");
   })
 });

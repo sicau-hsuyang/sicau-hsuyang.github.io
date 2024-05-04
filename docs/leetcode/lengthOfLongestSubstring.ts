@@ -1,5 +1,5 @@
 export function lengthOfLongestSubstring(s: string): number {
-  let maxDistance = -Infinity;
+  let maxDistance = 0;
   // 每种字符上次出现的位置
   const dict: Record<string, number> = {};
   let left = 0;
@@ -19,5 +19,5 @@ export function lengthOfLongestSubstring(s: string): number {
       maxDistance = D;
     }
   }
-  return maxDistance === -Infinity ? 0 : maxDistance;
+  return maxDistance;
 }
