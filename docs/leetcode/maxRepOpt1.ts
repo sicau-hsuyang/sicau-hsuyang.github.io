@@ -12,29 +12,60 @@ export function maxRepOpt1(text: string): number {
   }
   let maxDistance = 0;
   let left = 0;
-  let lastChar = "";
-  // 最大只有可能是2个
-  let collectedChar: string[] = [];
-  let dict: Record<string, number> = {};
+  const windowMap: Map<string, number> = new Map();
   for (let right = 0; right < text.length; right++) {
     let char = text[right];
-    // 如果字符的品类不到2个，随便加入
-    if (collectedChar.length < 2) {
-      collectedChar.push(char);
-      const preNum = dict[char] || 0;
-      dict[char] = preNum + 1;
-    } else if (collectedChar.length === 2 && char === lastChar) {
-      let oneChar, otherChar;
-      if (collectedChar[0] === char) {
-        oneChar = collectedChar[1];
-        otherChar = collectedChar[0];
-      } else {
-        oneChar = collectedChar[0];
-        otherChar = collectedChar[1];
-      }
-      // TODO: 需要考虑一个字符串仅有一个，窗口的剩余位置全是其它字符
+    // 如果窗口里面没有这个字符，并且窗口装得下
+    if (!windowMap.has(char) && windowMap.size <= 1) {
+      windowMap.set(char, 1);
     }
-    lastChar = char;
+    // 窗口可能装不下
+    else if (windowMap.size === 2 && windowMap.has(char)) {
+      const [char1, char2] = windowMap.keys();
+      let multiChar;
+      let singleChar;
+      // abb 来的是a; aab 来的是b
+      if (
+        windowMap.get(char1)! === 1 &&
+        windowMap.get(char2)! > 1 &&
+        char === char1
+      ) {
+        singleChar = char1;
+        multiChar = char2;
+      } else if (
+        windowMap.get(char2)! === 1 &&
+        windowMap.get(char1)! > 1 &&
+        char === char2
+      ) {
+        singleChar = char2;
+        multiChar = char1;
+      }
+      // 找到哪个字符是唯一出现那一次的字符
+      // const multiChar
+    }
+    // 窗口装不下了
+    else if (windowMap.size === 2 && !windowMap.has(char)) {
+    }
   }
   return maxDistance;
 }
+
+/**
+ 
+a b
+
+
+ab a
+ab b
+ab c
+
+aabaa a
+
+baaaa a
+abaaa a
+
+
+aaaab 
+
+ * 
+ */
