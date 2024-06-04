@@ -22,19 +22,7 @@ function calc(n: number): string[] {
 }
 
 export function countNumbersWithUniqueDigits(n: number): number {
-  if (n === 0) {
-    return 1;
-  }
-  let total = 0;
-  for (let i = 2; i <= n; i++) {
-    let plans = calc(i);
-    plans = plans.filter((v) => {
-      return !/^0/.test(v);
-    });
-    total += plans.length;
-  }
-
-  return 10 ** n - total;
+  
 }
 
 /**

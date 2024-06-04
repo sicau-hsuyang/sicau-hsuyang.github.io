@@ -1,31 +1,32 @@
+function isMatchPattern(word: string, pattern: string): boolean {
+  const leftToRight: Map<string, string> = new Map();
+  const rightToLeft: Map<string, string> = new Map();
+  for (let i = 0; i < word.length; i++) {
+    const char = word[i];
+    const targetChar = pattern[i];
+    const existChar = leftToRight.get(char);
+    // 关系存在，必须是对应从左到右的对应
+    if (existChar && existChar !== targetChar) {
+      return false;
+    }
+    // 关系不存在，如果从右边校验过来，能够反向映射到左边
+    else if (!existChar) {
+      const leftChar = rightToLeft.get(targetChar);
+      if (leftChar && leftChar !== char) {
+        return false;
+      }
+    }
+    // 设置从左边到右边的映射
+    leftToRight.set(char, targetChar);
+    // 设置从右边到左边的映射
+    rightToLeft.set(targetChar, char);
+  }
+  return true;
+}
+
 export function findAndReplacePattern(
   words: string[],
   pattern: string
 ): string[] {
-  const result: string[] = [];
-  for (let i = 0; i < words.length; i++) {
-    const word = words[i];
-    if (word.length !== pattern.length) {
-      continue;
-    }
-    const map: Map<string, string> = new Map();
-    const reverseMap: Map<string, string> = new Map();
-    let flag = true;
-    for (let k = 0; k < word.length; k++) {
-      const char = word[k];
-      const patternChar = map.get(char);
-      // 不存在，且没有被用过
-      if (!patternChar && !reverseMap.has(pattern[k])) {
-        map.set(char, pattern[k]);
-        reverseMap.set(pattern[k], char);
-      } else {
-        flag = false;
-        break;
-      }
-    }
-    if (flag) {
-      result.push(word);
-    }
-  }
-  return result;
+  return words.filter((word) => isMatchPattern(word, pattern));
 }

@@ -1,7 +1,19 @@
-interface Edge {
-  from: string;
-  to: string;
-  cost: number;
+interface NumNode {
+  /**
+   * 出度
+   */
+  out: NeighborNode[];
+}
+
+interface NeighborNode {
+  /**
+   * 权重
+   */
+  weight: number;
+  /**
+   * 邻接节点的编号
+   */
+  node: string;
 }
 
 export function calcEquation(
@@ -9,143 +21,78 @@ export function calcEquation(
   values: number[],
   queries: string[][]
 ): number[] {
-  const inputMap: Map<string, Edge[]> = new Map();
-  const outputMap: Map<string, Edge[]> = new Map();
-  equations.forEach((eq, idx) => {
-    const [from, to] = eq;
-    const outputEdge: Edge = {
-      from,
-      to,
-      cost: values[idx],
-    };
-    const inputEdge: Edge = {
-      from: to,
-      to: from,
-      cost: 1 / values[idx],
-    };
-    const outputEdges = outputMap.get(from) || [];
-    if (outputEdges.length === 0) {
-      outputMap.set(from, outputEdges);
+  const map: Map<string, NumNode> = new Map();
+  for (let i = 0; i < equations.length; i++) {
+    const cost = values[i];
+    let [fromCode, endCode] = equations[i];
+    let fromNode = map.get(fromCode);
+    let endNode = map.get(endCode);
+    if (!fromNode) {
+      fromNode = {
+        out: [],
+      };
+      map.set(fromCode, fromNode);
     }
-    outputEdges.push(outputEdge);
-    const inputEdges = inputMap.get(to) || [];
-    if (inputEdges.length === 0) {
-      inputMap.set(to, inputEdges);
+    if (!endNode) {
+      endNode = {
+        out: [],
+      };
+      map.set(endCode, endNode);
     }
-    inputEdges.push(inputEdge);
-  });
-  const results: number[] = Array.from({
-    length: queries.length,
-  }).fill(-1.0) as number[];
-  for (let i = 0; i < queries.length; i++) {
-    const q = queries[i];
-    const [from, to] = q;
-    const inputEdges = inputMap.get(from) || [];
-    const outputEdges = outputMap.get(from) || [];
-    if (from === to) {
-      results[i] = inputEdges.length > 0 || outputEdges.length > 0 ? 1 : -1;
-      // 自己除以自己
-      continue;
-    }
-    let hasResult = false;
-    for (let o = 0; o < outputEdges.length; o++) {
-      const edge = outputEdges[o];
-      const res = findTarget(edge, outputMap, inputMap, to, edge.cost, false);
-      if (res.isExist) {
-        results[i] = res.val;
-        hasResult = true;
-        break;
-      }
-    }
-    if (hasResult) {
-      continue;
-    }
-    for (let k = 0; k < inputEdges.length; k++) {
-      const edge = inputEdges[k];
-      const res = findTarget(edge, inputMap, outputMap, to, edge.cost, true);
-      if (res.isExist) {
-        results[i] = res.val;
-        break;
-      }
-    }
+    fromNode.out.push({
+      weight: cost,
+      node: endCode,
+    });
+    endNode.out.push({
+      weight: 1 / cost,
+      node: fromCode,
+    });
   }
-  return results;
+  return queries.map((q) => {
+    const [from, to] = q;
+    return calcPath(from, to, map);
+  });
 }
 
-/**
- * 从一个路径查找到指定的某个路径
- * @param e
- * @param accumulate
- * @param isDivide
- */
-function findTarget(
-  e: Edge,
-  edgeInRef: Map<string, Edge[]>,
-  edgeOutRef: Map<string, Edge[]>,
-  targetName: string,
-  accumulate: number,
-  isDivide: boolean,
-  usedSet: Set<Edge> = new Set()
-): { isExist: boolean; val: number } {
-  if (usedSet.has(e)) {
-    return {
-      isExist: false,
-      val: -1,
-    };
+function calcPath(from: string, to: string, map: Map<string, NumNode>) {
+  // 如果开始节点和结束节点都不在这个关系集合里面
+  if (!map.get(from) || !map.get(to)) {
+    return -1;
   }
-  usedSet.add(e);
-  if (e.to === targetName) {
-    // const val = isDivide ? accumulate / e.cost : accumulate * e.cost;
-    return {
-      isExist: true,
-      val: accumulate,
-    };
+  // 原地相除
+  if (from === to) {
+    return 1;
   }
-  const nextEdges1 = edgeInRef.get(e.to) || [];
-  let output: { isExist: boolean; val: number } | null = null;
-  for (let i = 0; i < nextEdges1.length; i++) {
-    const edge = nextEdges1[i];
-    const v = isDivide ? accumulate / edge.cost : accumulate * edge.cost;
-    const result = findTarget(
-      edge,
-      edgeInRef,
-      edgeOutRef,
-      targetName,
-      v,
-      isDivide,
-      usedSet
-    );
-    if (result.isExist) {
-      output = result;
+  const set: Set<string> = new Set();
+  const ref: Map<string, { code: string; cost: number }> = new Map();
+  set.add(from);
+  const queue: string[] = [from];
+  let found = false;
+  while (queue.length) {
+    const node = queue.shift()!;
+    const nextNode = map.get(node);
+    nextNode?.out.forEach((next) => {
+      if (!set.has(next.node)) {
+        ref.set(next.node, { code: node, cost: next.weight });
+        queue.push(next.node);
+        set.add(next.node);
+      }
+    });
+    if (to === node) {
+      found = true;
       break;
     }
   }
-  if (output) {
-    return output;
+  if (!found) {
+    return -1;
   }
-  const nextEdges2 = edgeOutRef.get(e.to) || [];
-  for (let i = 0; i < nextEdges2.length; i++) {
-    const edge = nextEdges2[i];
-    const v = isDivide ? accumulate / edge.cost : accumulate * edge.cost;
-    const result = findTarget(
-      edge,
-      edgeInRef,
-      edgeOutRef,
-      targetName,
-      v,
-      isDivide,
-      usedSet
-    );
-    if (result.isExist) {
-      output = result;
-      break;
-    }
+  let val = 1;
+  let dist = to;
+  let tempNode = ref.get(dist);
+  while (tempNode) {
+    val *= tempNode.cost;
+    dist = tempNode.code;
+    tempNode = ref.get(dist);
   }
-  if (!output) {
-    output = {
-      isExist: false,
-      val: -1,
-    };
-  }
-  return output;
+  return val;
 }

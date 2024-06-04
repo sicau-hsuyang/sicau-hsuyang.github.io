@@ -61,4 +61,17 @@ describe("calcEquation", () => {
     const results = calcEquation(equations, values, queries);
     console.log(results);
   });
+
+  it("case 5", () => {
+    const equations = [
+        ["a", "e"],
+        ["e", "c"],
+        ["e", "f"],
+        ["f", "g"],
+      ],
+      values = [4.0, 3.0, 6.0, 0.3, 10],
+      queries = [["a", "g"]];
+    const results = calcEquation(equations, values, queries);
+    console.log(results);
+  });
 });

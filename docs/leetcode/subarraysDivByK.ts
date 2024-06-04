@@ -1,22 +1,35 @@
 export function subarraysDivByK(nums: number[], k: number): number {
-  const prefixSumCount: Map<number, number> = new Map();
-  prefixSumCount.set(0, 1);
-  let result = 0;
-  let prefixSum = 0;
+  const preSumCountMap: Map<number, number> = new Map();
+  preSumCountMap.set(0, 1);
+  let preSum = 0;
+  let counter = 0;
   for (let i = 0; i < nums.length; i++) {
-    const number = nums[i];
-    prefixSum += number;
-    const counter1 = prefixSumCount.get(prefixSum) || 0;
-    if (counter1) {
-      result += counter1;
+    const num = nums[i];
+    preSum += num;
+    const divideK = preSum % k;
+    const size = preSumCountMap.get(divideK) || 0;
+    if (size === 0) {
+      preSumCountMap.set(divideK, 1);
+    } else {
+      counter += size;
+      preSumCountMap.set(divideK, size + 1);
     }
-    const counter = prefixSumCount.get(prefixSum % k) || 0;
-    if (counter) {
-      // console.log(prefixSum, number, counter1, counter);
-      result += counter;
-    }
-    const prev = prefixSumCount.get(prefixSum) || 0;
-    prefixSumCount.set(prefixSum, prev + 1);
   }
-  return result;
+  return counter;
 }
+
+/**
+ [   4, 5, 0, -2, -3, 1]
+ [0, 4, 9, 9,  7,  4, 5]
+ 9-4 [4, 5] - [4] = [5]
+
+ 9-4 [4, 5, 0] - [4] = [5, 0]
+
+ 9-9 [0] [4, 5, 0] - [4, 5] = [0]
+
+ 4-9 [4, 5, 0, -2, -3] - [4, 5] = [0, -2, -3]
+ 4-9 [4, 5, 0, -2, -3] - [4, 5, 0] = [-2, -3]
+ 4-4 [4, 5, 0, -2, -3] - [4] = [5, 0, -2, -3]
+
+ 5-0 [4, 5, 0, -2, -3, 1] - [] = [4, 5, 0, -2, -3, 1]
+ */
