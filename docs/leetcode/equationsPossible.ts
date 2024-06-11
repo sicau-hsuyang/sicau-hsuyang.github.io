@@ -1,22 +1,19 @@
-interface DsuElement<T> {
+interface DsuElement {
   /**
    * 数据域
    */
-  data: T;
+  data: string;
   /**
    * 父节点的索引，如果为负数，则没有父节点
    */
   parent: number;
 }
 
-/**
- * 静态并查集
- */
-export class Dsu<T> {
+class Dsu {
   /**
    * 集合存储域
    */
-  private _set: DsuElement<T>[] = [];
+  private _set: DsuElement[] = [];
 
   /**
    * 判等依据
@@ -24,41 +21,39 @@ export class Dsu<T> {
    * @param target
    * @returns
    */
-  private _equalCondition = (data: T, target: T) => {
+  private _equalCondition = (data: string, target: string) => {
     return data === target;
   };
-
-  constructor(initValues: T[]) {
-    this.init(initValues);
-  }
 
   /**
    * 设置判等条件
    * @param outerEqualCondition
    */
-  public setEqual(outerEqualCondition: (data: T, target: T) => boolean) {
+  public setEqual(
+    outerEqualCondition: (data: string, target: string) => boolean
+  ) {
     this._equalCondition = outerEqualCondition;
   }
 
   /**
    * 初始化并查集
-   * @param values
+   * @param str
    */
-  init(values: T[]) {
-    values.forEach((v) => {
+  init(str: string) {
+    for (let i = 0; i < str.length; i++) {
       this._set.push({
-        // 初始化的时候，每个子树只有一个元素，树高为1
+        // 初始化的时候，每个子树只有一个元素
         parent: -1,
-        data: v,
+        data: str[i],
       });
-    });
+    }
   }
 
   /**
    * 查找元素是否在集合中，若存在，则返回根节点所在的索引，若不在，则返回-1
    * @param target 目标元素
    */
-  find(target: T): number {
+  find(target: string): number {
     for (let i = 0; i < this._set.length; i++) {
       // 元素在数组中能够被找到
       if (this._equalCondition(this._set[i].data, target)) {
@@ -78,7 +73,6 @@ export class Dsu<T> {
         return pos;
       }
     }
-    // INFO: 对于静态并查集，看起来似乎是为了不让程序报错的兜底返回
     // 找不到返回 -1
     return -1;
   }
@@ -88,13 +82,12 @@ export class Dsu<T> {
    * @param set1
    * @param set2
    */
-  union(set1: T, set2: T) {
+  union(set1: string, set2: string) {
     const r1 = this.find(set1);
     const r2 = this.find(set2);
-    if (r1 != r2 && r1 !== -1 && r2 !== -1) {
+    if (r1 != r2) {
       const val1 = Math.abs(this._set[r1].parent);
       const val2 = Math.abs(this._set[r2].parent);
-      // NOTE: 这儿parent的绝对值代表的是树高
       // 将小树贴到大树上
       if (val1 < val2) {
         this._set[r1].parent = r2;
@@ -107,18 +100,28 @@ export class Dsu<T> {
       }
     }
   }
+}
 
-  /**
-   * 统计并查集中子树的个数
-   * @returns
-   */
-  counter() {
-    let size = 0;
-    this._set.forEach((v) => {
-      if (v.parent < 0) {
-        size++;
+export function equationsPossible(equations: string[]): boolean {
+  const dsu = new Dsu();
+  const s = "abcdefghijklmnopqrstuvwxyz";
+  dsu.init(s);
+  equations.forEach((eq) => {
+    if (eq.indexOf("==") >= 0) {
+      const left = eq[0];
+      const right = eq[3];
+      dsu.union(left, right);
+    }
+  });
+  for (let i = 0; i < equations.length; i++) {
+    const eq = equations[i];
+    if (eq.indexOf("!=") >= 0) {
+      const left = eq[0];
+      const right = eq[3];
+      if (dsu.find(left) === dsu.find(right)) {
+        return false;
       }
-    });
-    return size;
+    }
   }
+  return true;
 }
