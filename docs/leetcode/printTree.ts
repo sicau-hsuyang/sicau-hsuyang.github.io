@@ -12,21 +12,21 @@
  * }
  */
 
-function getTreeHeight(root: TreeNode | null) {}
+interface TreeNode {
+  val: number;
+  left: TreeNode | null;
+  right: TreeNode | null;
+}
 
-export function printTree(root: TreeNode | null): string[][] {}
+function getTreeHeight(root: TreeNode | null) {
+  if (!root) {
+    return 0;
+  }
+  const leftHeight = getTreeHeight(root.left);
+  const rightHeight = getTreeHeight(root.right);
+  return 1 + Math.max(leftHeight, rightHeight);
+}
 
-/**
-
-   1
- 2   3
-4 5 6 7
-mid = 7/2 = 3
-[0, 0, 0, 1, 0, 0, 0]
-left: mid = 3 - 2 = 1
-right: mid = 3 + 2 = 5
-[0, 2, 0, 0, 0, 3, 0]
-left: mid = 3 - 2
-[4, 0, 5, 0, 6, 0, 7]
-
- */
+export function printTree(root: TreeNode | null): string[][] {
+  const height = getTreeHeight(root);
+}
