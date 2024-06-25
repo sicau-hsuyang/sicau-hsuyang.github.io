@@ -2,6 +2,7 @@ import { combinationSum2 } from "./combinationSum2";
 
 describe("combinationSum2", () => {
   it("case 1", () => {
+    [1, 1, 2, 5, 6, 7, 10];
     const candidates = [10, 1, 2, 7, 6, 1, 5],
       target = 8;
     const results = combinationSum2(candidates, target);

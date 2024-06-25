@@ -33,6 +33,7 @@ function find(
     find(board, word, row, col + 1, offset + 1);
   // 递归完成以后，恢复现场
   board[row][col] = tmp;
+  // 这是一个不需要额外空间就能够实现不走回头路的递归
   return answer;
 }
 

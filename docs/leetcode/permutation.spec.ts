@@ -6,4 +6,10 @@ describe("permutation", () => {
     const results = permutation(str);
     console.log(results);
   });
+
+  it("case 2", () => {
+    const str = "qqw";
+    const results = permutation(str);
+    console.log(results);
+  });
 });

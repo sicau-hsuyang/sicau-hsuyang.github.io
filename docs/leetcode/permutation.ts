@@ -1,4 +1,4 @@
-export function permutation(S: string): string[] {
+export function permutation(S: string, set: Set<string> = new Set()): string[] {
   if (S.length === 1) {
     return [S];
   } else {
@@ -11,7 +11,10 @@ export function permutation(S: string): string[] {
         const leftStr = str.substring(0, i);
         const rightStr = str.substring(i);
         const combineStr = leftStr + char + rightStr;
-        results.push(combineStr);
+        if (!set.has(combineStr)) {
+          results.push(combineStr);
+          set.add(combineStr);
+        }
       }
     });
     return results;
