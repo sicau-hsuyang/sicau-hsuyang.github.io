@@ -36,4 +36,40 @@ describe("TextEditor", () => {
       }
     }
   });
+
+  it("case 2", () => {
+    const actions = [
+      "TextEditor",
+      "addText",
+      "cursorLeft",
+      "deleteText",
+      "addText",
+      "cursorRight",
+      "cursorLeft",
+      "deleteText",
+      "cursorLeft",
+      "cursorRight",
+    ];
+    const args = [
+      [],
+      ["leetcode"],
+      [12],
+      [4],
+      ["practice"],
+      [3],
+      [8],
+      [10],
+      [2],
+      [6],
+    ];
+    for (let i = 1; i < actions.length; i++) {
+      const action = actions[i];
+      const arg = args[i];
+      const val = editor[action].apply(editor, arg);
+      // editor.printText();
+      if (val) {
+        console.log(val);
+      }
+    }
+  });
 });

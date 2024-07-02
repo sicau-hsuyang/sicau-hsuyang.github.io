@@ -85,10 +85,16 @@ export class TextEditor {
   }
 
   deleteText(k: number): number {
-    let node: TextNode | null = this.currentPos.prev;
+    if (
+      this.currentPos.char === "HOME" ||
+      this.currentPos.prev?.char === "HOME"
+    ) {
+      return 0;
+    }
+    let node: TextNode = this.currentPos.prev as TextNode;
     let count = 0;
-    while (node && node.char !== "HOME" && count < k) {
-      node = node!.prev;
+    while (node.char !== "HOME" && count < k) {
+      node = node.prev!;
       count++;
     }
     let now: TextNode = node!;
@@ -99,7 +105,10 @@ export class TextEditor {
 
   public cursorLeft(k: number): string {
     // 如果位于最左边
-    if (this.currentPos.char === "HOME") {
+    if (
+      this.currentPos.char === "HOME" ||
+      this.currentPos.prev?.char === "HOME"
+    ) {
       return "";
     }
     let count = 0;
@@ -125,7 +134,10 @@ export class TextEditor {
   cursorRight(k: number): string {
     // 如果还没有到最后一个位置，一直向后移动，直到K个为止
     let count = 0;
-    let node = this.currentPos;
+    let node =
+      this.currentPos.char === "HOME"
+        ? (this.currentPos.next as TextNode)
+        : this.currentPos;
     // 向右至多移动K次
     while (node.char !== "END" && count < k) {
       node = node.next as TextNode;
