@@ -25,7 +25,7 @@ class SimpleDsu {
    * @returns
    */
   public find(num: number) {
-    let idx = num - 1;
+    let idx = num;
     // 查找并查集中不存在的元素
     if (idx < 0 || idx >= this._set.length) {
       return -1;
@@ -59,18 +59,31 @@ class SimpleDsu {
       }
     }
   }
-
-  /**
-   * 统计集合的个数
-   * @returns
-   */
-  public count() {
-    return this._set.reduce((total, item) => {
-      return total + (item < 0 ? 1 : 0);
-    }, 0);
-  }
 }
 
-function smallestStringWithSwaps(s: string, pairs: number[][]): string {
+export function smallestStringWithSwaps(s: string, pairs: number[][]): string {
   const dsu = new SimpleDsu(s.length);
+  const idexSet = new Set();
+  pairs.forEach(([a, b]) => {
+    dsu.union(a, b);
+    idexSet.add(a);
+    idexSet.add(b);
+  });
+  const it = idexSet.values() as IterableIterator<number>;
+  const chars: string[] = [];
+  for (const idx of it) {
+    chars.push(s[idx]);
+  }
+  chars.sort();
+  let offset = 0;
+  let res = "";
+  for (let i = 0; i < s.length; i++) {
+    const target = dsu.find(i);
+    if (target === -1) {
+      res += s[i];
+    } else {
+      res += chars[offset++];
+    }
+  }
+  return res;
 }

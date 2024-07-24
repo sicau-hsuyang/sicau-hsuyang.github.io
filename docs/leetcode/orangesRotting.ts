@@ -6,12 +6,6 @@ interface Orange {
 export function orangesRotting(grid: number[][]): number {
   const queue: Orange[][] = [];
   const rotOrangePass: Orange[] = [];
-  // 初始化标记数组
-  const maker: boolean[][] = Array.from({
-    length: grid.length,
-  }).map(() => {
-    return [];
-  });
   // 记录一下健康的橘子
   let healthOrange = 0;
   for (let i = 0; i < grid.length; i++) {
@@ -23,7 +17,7 @@ export function orangesRotting(grid: number[][]): number {
           col: j,
         });
         // 标记为已处理
-        maker[i][j] = true;
+        grid[i][j] = 0;
       } else if (orange === 1) {
         healthOrange++;
       }
@@ -43,14 +37,17 @@ export function orangesRotting(grid: number[][]): number {
     const rotPass = queue.shift()!;
     const nextRotPass: Orange[] = [];
     rotPass.forEach((rot) => {
+      // 已经腐烂过的橘子，就没有必要再处理了
+      if (grid[rot.row][rot.col] === 2) {
+        return;
+      }
       grid[rot.row][rot.col] = 2;
       // 上边的橘子存在，并且没有被处理过，并且还是新鲜的橘子
       if (
         Array.isArray(grid[rot.row - 1]) &&
-        !maker[rot.row - 1][rot.col] &&
         grid[rot.row - 1][rot.col] === 1
       ) {
-        maker[rot.row - 1][rot.col] = true;
+        grid[rot.row - 1][rot.col] = 0;
         nextRotPass.push({
           row: rot.row - 1,
           col: rot.col,
@@ -60,10 +57,9 @@ export function orangesRotting(grid: number[][]): number {
       // 下边的橘子存在，并且没有被处理过，并且还是新鲜的橘子
       if (
         Array.isArray(grid[rot.row + 1]) &&
-        !maker[rot.row + 1][rot.col] &&
         grid[rot.row + 1][rot.col] === 1
       ) {
-        maker[rot.row + 1][rot.col] = true;
+        grid[rot.row + 1][rot.col] = 0;
         nextRotPass.push({
           row: rot.row + 1,
           col: rot.col,
@@ -71,8 +67,8 @@ export function orangesRotting(grid: number[][]): number {
         healthOrange--;
       }
       // 左边的橘子必须是健康的橘子
-      if (!maker[rot.row][rot.col - 1] && grid[rot.row][rot.col - 1] === 1) {
-        maker[rot.row][rot.col - 1] = true;
+      if (grid[rot.row][rot.col - 1] === 1) {
+        grid[rot.row][rot.col - 1] = 0;
         nextRotPass.push({
           row: rot.row,
           col: rot.col - 1,
@@ -80,8 +76,8 @@ export function orangesRotting(grid: number[][]): number {
         healthOrange--;
       }
       // 右边的橘子必须是健康的橘子
-      if (!maker[rot.row][rot.col + 1] && grid[rot.row][rot.col + 1] === 1) {
-        maker[rot.row][rot.col + 1] = true;
+      if (grid[rot.row][rot.col + 1] === 1) {
+        grid[rot.row][rot.col + 1] = 0;
         nextRotPass.push({
           row: rot.row,
           col: rot.col + 1,

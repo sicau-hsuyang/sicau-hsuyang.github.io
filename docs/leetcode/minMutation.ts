@@ -1,42 +1,51 @@
+interface MutationNode {
+  gene: string;
+  count: number;
+}
+
 export function minMutation(
   startGene: string,
   endGene: string,
   bank: string[]
 ): number {
-  const indexes = new Map();
+  const indexes: Set<string> = new Set();
   for (let i = 0; i < bank.length; i++) {
     const gene = bank[i];
-    indexes.set(gene, i);
+    indexes.add(gene);
   }
-  // 找到结尾的基因的位置
-  const endGenePos = bank.findIndex((v) => v === endGene);
-  const existGeneMap: Set<string> = new Set();
-  existGeneMap.add(startGene)
-  const queue: string[] = [startGene];
-  let min = Number.MAX_VALUE;
+  let minDistance = Number.MAX_VALUE;
+  const queue: MutationNode[] = [
+    {
+      gene: startGene,
+      count: 0,
+    },
+  ];
+  const GeneIndexes = "AGCT";
+  const usedSet = new Set();
   while (queue.length) {
-    const curGene = queue.shift()!;
-    const pos = indexes.get(curGene) || -1;
-    // 并且是要在前面的基因中
-    if (pos !== -1 && pos <= endGenePos) {
-      const distance = endGenePos - pos + 1;
-      if (distance < min) {
-        min = distance;
+    const { gene: curGen, count } = queue.shift()!;
+    if (curGen === endGene && minDistance > count) {
+      minDistance = count;
+    }
+    // 去重变化的基因
+    const set: Set<string> = new Set();
+    for (let i = 0; i < curGen.length; i++) {
+      for (let j = 0; j < GeneIndexes.length; j++) {
+        const nextGene =
+          curGen.substring(0, i) + GeneIndexes[j] + curGen.substring(i + 1);
+        // 变化的基因在基因库内
+        if (!usedSet.has(nextGene) && indexes.has(nextGene)) {
+          usedSet.add(nextGene);
+          set.add(nextGene);
+        }
       }
     }
-    for (let i = 0; i < curGene.length; i++) {
-      const leftSubStr = curGene.slice(0, i);
-      const curChar = ["A", "G", "C", "T"].filter((v) => v !== curGene[i]);
-      const rightSubStr = curGene.slice(i + 1);
-      curChar.forEach((gene) => {
-        const nextGene = leftSubStr + gene + rightSubStr;
-        if (!existGeneMap.has(nextGene)) {
-          queue.push(nextGene);
-          existGeneMap.add(nextGene);
-        }
+    set.forEach((gene) => {
+      queue.push({
+        gene,
+        count: count + 1,
       });
-    }
-    console.log("PASS");
+    });
   }
-  return min === Number.MAX_VALUE ? -1 : min;
+  return minDistance === Number.MAX_VALUE ? -1 : minDistance;
 }

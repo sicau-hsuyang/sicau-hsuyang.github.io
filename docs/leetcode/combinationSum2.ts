@@ -1,46 +1,54 @@
 function calc(
-  candidates: number[],
+  candidates: number[][],
   target: number,
   offset: number
 ): number[][] {
-  if (offset >= candidates.length || target <= 0) {
+  if (!candidates[offset]) {
     return [];
   }
-  // 如果能找的到的话
-  if (candidates.slice(offset).find((v) => v === target)) {
-    return [[target]];
-  }
-  const results: number[][] = [];
-  let startNum = candidates[offset];
-  let pos = offset + 1;
-  // 向后找到一个不相同的数字
-  while (pos < candidates.length && candidates[pos] === candidates[offset]) {
-    pos++;
-  }
-  // 表示当前有这么多个相同的数字
-  let size = pos - offset;
-  for (let i = 0; i <= size; i++) {
-    const sum = startNum * i;
-    const subResults = calc(candidates, target - sum, pos);
-    for (let k = 0; k < subResults.length; k++) {
-      results.push([
-        ...(Array.from({
-          length: i,
-        }).fill(startNum) as number[]),
-        ...subResults[k],
-      ]);
+  const res: number[][] = [];
+  const group = candidates[offset];
+  for (let S = 1; S <= group.length; S++) {
+    if (target === S * group[0]) {
+      const arr: number[] = [];
+      for (let k = 0; k < S; k++) {
+        arr.push(group[0]);
+      }
+      res.push(arr);
+    } else if (target > S * group[0]) {
+      const sub1 = calc(candidates, target - S * group[0], offset + 1);
+      sub1.forEach((arr) => {
+        for (let k = 0; k < S; k++) {
+          arr.unshift(group[0]);
+        }
+        res.push(arr);
+      });
     }
   }
-  return results;
+  const sub2 = calc(candidates, target, offset + 1);
+  sub2.forEach((arr) => {
+    res.push(arr);
+  });
+  return res;
+}
+
+function groupBy(arr: number[]) {
+  const map: Map<number, number[]> = new Map();
+  for (let i = 0; i < arr.length; i++) {
+    const g = map.get(arr[i]) || [];
+    if (!g.length) {
+      map.set(arr[i], g);
+    }
+    g.push(arr[i]);
+  }
+  return [...map.values()];
 }
 
 export function combinationSum2(
   candidates: number[],
   target: number
 ): number[][] {
-  // 先排序
-  candidates.sort((a, b) => {
-    return a - b;
-  });
-  return calc(candidates, target, 0);
+  const g = groupBy(candidates);
+  const res = calc(g, target, 0);
+  return res;
 }

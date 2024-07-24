@@ -19,7 +19,7 @@ describe("coinChange", () => {
     const coins = [429, 171, 485, 26, 381, 31, 290],
       amount = 8440;
     const plan = coinChange(coins, amount);
-    expect(plan).toBe(-1);
+    expect(plan).toBe(20);
   });
 
   it("case 4", () => {

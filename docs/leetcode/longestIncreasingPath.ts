@@ -1,90 +1,61 @@
 export function longestIncreasingPath(matrix: number[][]): number {
-  const cache: number[][] = Array.from({
+  /**
+   * 用来记住递增的索引
+   */
+  const record = Array.from({
     length: matrix.length,
-  }).map(() => {
-    // return Array.from({
-    //   length: matrix[0].length,
-    // }).fill(-1) as number[];
+  }).map((v) => {
     return [];
   }) as number[][];
 
-  const maxIncreasingPathFromPosition = (
-    startVal: number,
-    prevVal: number,
+  const dfs = (
     matrix: number[][],
-    row: number,
-    col: number
+    startX: number,
+    startY: number,
+    prevVal: number
   ): number => {
-    // 越界
+    // 越界 或者非递增
     if (
-      row < 0 ||
-      row >= matrix.length ||
-      col < 0 ||
-      col >= matrix[row].length
+      startY < 0 ||
+      startY >= matrix.length ||
+      startX < 0 ||
+      startX >= matrix[startY].length ||
+      matrix[startY][startX] <= prevVal
     ) {
       return 0;
     }
-    // 如果已经算过
-    if (cache[row][col]) {
-      return cache[row][col];
+    if (typeof record[startY][startX] !== "undefined") {
+      return record[startY][startX];
     }
-    const val = matrix[row][col];
-    let step: number;
-    if (val > prevVal) {
-      matrix[row][col] = 0;
-      const top = maxIncreasingPathFromPosition(
-        startVal,
-        val,
-        matrix,
-        row - 1,
-        col
-      );
-      const bottom = maxIncreasingPathFromPosition(
-        startVal,
-        val,
-        matrix,
-        row + 1,
-        col
-      );
-      const left = maxIncreasingPathFromPosition(
-        startVal,
-        val,
-        matrix,
-        row,
-        col - 1
-      );
-      const right = maxIncreasingPathFromPosition(
-        startVal,
-        val,
-        matrix,
-        row,
-        col + 1
-      );
-      const maxIncreasing = Math.max(top, bottom, left, right);
-      matrix[row][col] = val;
-      step = maxIncreasing + 1;
-    } else {
-      step = 0;
-    }
-    cache[row][col] = step;
-    return step;
+    const current = matrix[startY][startX];
+    // 防止走回头路
+    matrix[startY][startX] = -1;
+    // 向左
+    const leftRes = dfs(matrix, startX - 1, startY, current);
+    // 向右
+    const rightRes = dfs(matrix, startX + 1, startY, current);
+    // 向下
+    const bottomRes = dfs(matrix, startX, startY + 1, current);
+    // 向上
+    const topRes = dfs(matrix, startX, startY - 1, current);
+    // 将原来的值换回来
+    matrix[startY][startX] = current;
+    const size = Math.max(leftRes, rightRes, bottomRes, topRes) + 1;
+    // 记住从这个节点开始的最大长度是多少
+    record[startY][startX] = size;
+    return size;
   };
 
-  let max = -Infinity;
+  let maxPathCount = -Infinity;
 
   for (let i = 0; i < matrix.length; i++) {
     for (let j = 0; j < matrix[i].length; j++) {
-      const maxStep = maxIncreasingPathFromPosition(
-        matrix[i][j],
-        0,
-        matrix,
-        i,
-        j
-      );
-      if (maxStep > max) {
-        max = maxStep;
+      const count = dfs(matrix, j, i, -1);
+      if (count > maxPathCount) {
+        maxPathCount = count;
       }
     }
   }
-  return max;
+
+  return maxPathCount;
 }

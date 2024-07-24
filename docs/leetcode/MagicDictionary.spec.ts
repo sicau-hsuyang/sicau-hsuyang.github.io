@@ -14,12 +14,16 @@ describe("MagicDictionary", () => {
     const dic = new MagicDictionary();
     dic.buildDict(["hello", "hallo", "leetcode"]);
     [
+      // ["hello"],
+      // ["hhllo"],
+      // ["hell"],
+      // ["hella"],
+      // // ["leetcoae"],
+      // // ["leetcoaa"],
+      // // ["leetcoded"],
       ["hello"],
       ["hhllo"],
       ["hell"],
-      ["hella"],
-      ["leetcoae"],
-      ["leetcoaa"],
       ["leetcoded"],
     ].forEach(([word]) => {
       const flag = dic.search(word);

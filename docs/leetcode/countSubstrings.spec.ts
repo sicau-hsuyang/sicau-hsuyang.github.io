@@ -1,17 +1,15 @@
 import { countSubstrings, isPalindrome } from "./countSubstrings";
 
-describe("isPalindrome", () => {
+describe("countSubstrings", () => {
   it("case 1", () => {
     const s = "aaa";
-    isPalindrome(s, 0, s.length - 1);
+    const res = countSubstrings(s);
+    console.log(res);
   });
 
   it("case 2", () => {
-    const s = "aa";
-    isPalindrome(s, 0, s.length - 1);
+    const s = "aaba";
+    const res = countSubstrings(s);
+    console.log(res);
   });
-});
-
-describe("countSubstrings", () => {
-  it("case 1", () => {});
 });

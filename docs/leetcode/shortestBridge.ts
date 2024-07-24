@@ -1,121 +1,119 @@
-function isEdgeCell(grid: number[][], x: number, y: number) {
-  let n = grid.length;
-  let prevX = x - 1;
-  let nextX = x + 1;
-  // 向左
-  if (prevX >= 0 && grid[y][prevX] === 0) {
-    return true;
+interface Cell {
+  row: number;
+  col: number;
+  distance: number;
+}
+
+/**
+ * 首先找到一个岛所有与水相连的边
+ * @param startY
+ * @param startX
+ * @param grid
+ * @returns
+ */
+function findStartCells(
+  startY: number,
+  startX: number,
+  grid: number[][]
+): Cell[] {
+  const edges: Cell[] = [];
+  const queue: number[][] = [[startY, startX]];
+  while (queue.length) {
+    const [y, x] = queue.shift()!;
+    if (grid[y][x] === -1) {
+      continue;
+    }
+    grid[y][x] = -1;
+    const left = grid[y][x - 1] === 0;
+    const right = grid[y][x + 1] === 0;
+    const top = grid[y - 1] && grid[y - 1][x] === 0;
+    const bottom = grid[y + 1] && grid[y + 1][x] === 0;
+    // 如果是边界的话
+    if (left || right || top || bottom) {
+      edges.push({
+        row: y,
+        col: x,
+        distance: 0,
+      });
+      grid[y][x] = 2;
+    }
+    if (grid[y][x - 1] === 1) {
+      queue.push([y, x - 1]);
+    }
+    if (grid[y][x + 1] === 1) {
+      queue.push([y, x + 1]);
+    }
+    if (grid[y - 1] && grid[y - 1][x] === 1) {
+      queue.push([y - 1, x]);
+    }
+    if (grid[y + 1] && grid[y + 1][x] === 1) {
+      queue.push([y + 1, x]);
+    }
   }
-  // 向右
-  if (nextX < n && grid[y][nextX] === 0) {
-    return true;
-  }
-  let prevY = y - 1;
-  let nextY = y + 1;
-  // 向上
-  if (prevY >= 0 && grid[prevY][x] === 0) {
-    return true;
-  }
-  // 向下
-  if (nextY < n && grid[nextY][x] === 0) {
-    return true;
-  }
-  return false;
+  return edges;
 }
 
 export function shortestBridge(grid: number[][]): number {
-  let startY: number = -1;
   let startX: number = -1;
-  let n = grid.length;
-  for (let i = 0; i < n; i++) {
-    let found = false;
-    for (let j = 0; j < n; j++) {
-      const cell = grid[i][j];
-      // 找到一个岛
-      if (cell === 1) {
+  let startY: number = -1;
+  // 找到其中一个岛屿
+  for (let i = 0; i < grid.length; i++) {
+    for (let j = 0; j < grid[i].length; j++) {
+      if (grid[i][j] === 1) {
         startY = i;
         startX = j;
-        found = true;
         break;
       }
     }
-    if (found) {
+    if (startX >= 0 && startY >= 0) {
       break;
     }
   }
-  // 用于记录
-  const record: number[][] = Array.from({
-    length: n,
-  }).map((v) => {
-    return [];
-  });
-  // 起始点
-  const queue: number[][] = [[startY, startX]];
-  // 边缘
-  const startEdges: number[][] = [];
+  let minDistance = Number.MAX_VALUE;
+  const edges = findStartCells(startY, startX, grid);
+  const queue: Cell[] = edges;
   while (queue.length) {
-    const node = queue.shift()!;
-    const [y, x] = node;
-    let prevX = x - 1;
-    let nextX = x + 1;
-    // 向左
-    if (prevX >= 0 && !record[y][prevX] && grid[y][prevX] === 1) {
-      queue.push([y, prevX]);
-      record[y][prevX] = 1;
-      if (isEdgeCell(grid, prevX, y)) {
-        startEdges.push([y, prevX]);
-      }
+    const { row, col, distance } = queue.shift()!;
+    if (grid[row][col] === -1) {
+      continue;
     }
-    // 向右
-    if (nextX < n && !record[y][nextX] && grid[y][nextX] === 1) {
-      queue.push([y, nextX]);
-      record[y][nextX] = 1;
-      if (isEdgeCell(grid, nextX, y)) {
-        startEdges.push([y, nextX]);
-      }
+    grid[row][col] = -1;
+    // 找到了另外一个岛的边界
+    const left = grid[row][col - 1] === 1;
+    const right = grid[row][col + 1] === 1;
+    const top = grid[row - 1] && grid[row - 1][col] === 1;
+    const bottom = grid[row + 1] && grid[row + 1][col] === 1;
+    if ((left || right || top || bottom) && distance < minDistance) {
+      minDistance = distance;
     }
-    let prevY = y - 1;
-    let nextY = y + 1;
-    // 向上
-    if (prevY >= 0 && !record[prevY][x] && grid[prevY][x] === 1) {
-      queue.push([prevY, x]);
-      record[prevY][x] = 1;
-      if (isEdgeCell(grid, x, prevY)) {
-        startEdges.push([prevY, x]);
-      }
+    if (grid[row][col - 1] === 0) {
+      queue.push({
+        row,
+        col: col - 1,
+        distance: distance + 1,
+      });
     }
-    // 向下
-    if (nextY < n && !record[nextY][x] && grid[nextY][x] === 1) {
-      queue.push([nextY, x]);
-      record[nextY][x] = 1;
-      if (isEdgeCell(grid, x, nextY)) {
-        startEdges.push([nextY, x]);
-      }
+    if (grid[row][col + 1] === 0) {
+      queue.push({
+        row,
+        col: col + 1,
+        distance: distance + 1,
+      });
     }
-  }
-  let levelCount = 0;
-  const levelQueue: number[][][] = [startEdges];
-  while (levelQueue.length) {
-    const level = levelQueue.shift()!;
-    const nextLevel: number[][] = [];
-    let found = false;
-    for (let k = 0; k < level.length; k++) {
-      const [posY, posX] = level[k];
-      // 把当前翻转为陆地，即向外延展一圈
-      grid[posY][posX] = 1;
-      record[posY][posX] = 1;
-      if (grid[posY][posX] === 1 && record[posY][posX]) {
-        found = true;
-        break;
-      }
+    if (grid[row - 1] && grid[row - 1][col] === 0) {
+      queue.push({
+        row: row - 1,
+        col,
+        distance: distance + 1,
+      });
     }
-    if (found) {
-      break;
-    }
-    if (nextLevel.length) {
-      levelCount++;
-      levelQueue.push(nextLevel);
+    if (grid[row + 1] && grid[row + 1][col] === 0) {
+      queue.push({
+        row: row + 1,
+        col,
+        distance: distance + 1,
+      });
     }
   }
-  return levelCount;
+  return minDistance;
 }

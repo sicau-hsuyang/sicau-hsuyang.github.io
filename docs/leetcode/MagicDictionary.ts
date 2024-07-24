@@ -1,23 +1,23 @@
 /**
  * 定义字典树的结构
  */
-class Trie {
-  /**
-   * 字典树的字符
-   */
-  char: string;
+interface Trie {
+  // /**
+  //  * 字典树的字符
+  //  */
+  // char: string;
   /**
    * 字典树的结尾标记
    */
-  isEnd: boolean = false;
+  isEnd: boolean;
   /**
    * 子节点
    */
-  children: Record<string, Trie> = {};
+  children: Record<string, Trie>;
 }
 
 export class MagicDictionary {
-  root: Trie = new Trie();
+  root: Record<string, Trie> = {};
 
   constructor() {}
 
@@ -28,72 +28,73 @@ export class MagicDictionary {
   }
 
   addWord(word: string): void {
-    let thisTrie = this.root.children;
+    let thisTrie = this.root;
     const len = word.length;
+    let lastTrie: Trie;
     for (let i = 0; i < len; i++) {
       const char = word[i];
-      const isEnd = i === len - 1;
+      // const isEnd = i === len - 1;
       let trie = thisTrie[char];
       if (!trie) {
-        trie = new Trie();
-        trie.char = char;
+        trie = {
+          isEnd: false,
+          children: {},
+        };
+        // trie.char = char;
         thisTrie[char] = trie;
       }
       thisTrie = trie.children;
-      if (isEnd) {
-        trie!.isEnd = true;
-      }
+      // if (isEnd) {
+      //   trie!.isEnd = true;
+      // }
+      lastTrie = trie;
+    }
+    lastTrie!.isEnd = true;
+  }
+
+  /**
+   *
+   * @param char
+   * @param trie
+   * @param word
+   * @param offset
+   */
+  private dfs(
+    char: string,
+    trie: Trie,
+    word: string,
+    offset: number,
+    once: boolean
+  ) {
+    // 单词的最后一个字母
+    if (offset === word.length - 1) {
+      // 之前已经替换过了 或者 之前还没有替换过
+      return (
+        ((char === word[word.length - 1] && once) ||
+          (char !== word[word.length - 1] && !once)) &&
+        trie.isEnd
+      );
+    }
+    // 如果当前字母相等
+    if (char === word[offset]) {
+      return Object.entries(trie.children).some(([childChar, childTrie]) => {
+        return this.dfs(childChar, childTrie, word, offset + 1, once);
+      });
+    } else {
+      // 如果还没有失配过，才进行比较，否则直接就是
+      return (
+        !once &&
+        Object.entries(trie.children).some(([childChar, childTrie]) => {
+          return this.dfs(childChar, childTrie, word, offset + 1, true);
+        })
+      );
     }
   }
 
-  search(word: string, isOnce = false, record?: Record<string, Trie>): boolean {
-    let thisTrie = record || this.root.children;
-    const len = word.length;
-    for (let i = 0; i < len; i++) {
-      const char = word[i];
-      const isEnd = i === len - 1;
-      const trie = thisTrie[char];
-      // 如果找不到的话
-      if (!trie) {
-        // 如果是第2次遇到，已经超过次数了
-        if (isOnce) {
-          return false;
-        } else {
-          const substr = word.substring(i + 1);
-          const record = Object.values(thisTrie);
-          // 如果前面的N个字符已经匹配，最后一个字符不匹配，需要看看一下最后一个字符对应的节点上是否有结尾标记即可
-          if (substr === "") {
-            return record.findIndex((v) => v.isEnd) >= 0;
-          }
-          // 继续在子树上找一个可能性存在的结果
-          return record.some((trie) => {
-            return this.search(substr, true, trie.children);
-          });
-        }
-      } else {
-        // 尝试找寻另外几种可能性
-        if (!isOnce) {
-          const substr = word.substring(i + 1);
-          const record = Object.values(thisTrie);
-          const exist = record.some((trie) => {
-            // 要排除当前相同的路径，因为已经假设替换了
-            if (trie.char === substr[0]) {
-              return false;
-            }
-            return this.search(substr, true, trie.children);
-          });
-          if (exist) {
-            return true;
-          }
-        }
-        if (isEnd) {
-          return trie.isEnd && isOnce;
-        } else {
-          thisTrie = trie.children;
-        }
-      }
-    }
-    return false;
+  search(word: string): boolean {
+    return Object.entries(this.root).some(([char, trie]) => {
+      return this.dfs(char, trie, word, 0, false);
+    });
   }
 }
 
