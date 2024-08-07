@@ -1,34 +1,28 @@
 export function lengthOfLIS(nums: number[]): number {
-  let MAX = -Infinity;
+  let MAX = nums[0];
+  const dp: Array<{
+    end: number;
+    len: number;
+  }> = [
+    {
+      end: nums[0],
+      len: 1,
+    },
+  ];
   for (let i = 0; i < nums.length; i++) {
-    let cur = nums[i];
-    const seqs = [[cur]];
-    for (let k = i + 1; k < nums.length; k++) {
-      const num = nums[k];
-      // 如果当前值比开始的值大，最大长度+1
-      if (num <= cur) {
-        continue;
-      }
-      // 如果当前来的值要比起始值大，这样才有操作的意义
-      for (let d = 0; d < seqs.length; d++) {
-        const seq = seqs[d];
-        if (num > seq[seq.length - 1]) {
-          seq.push(num);
-        } else {
-          // 重新生成新的子序列
-          seqs.push([cur, num]);
-        }
-      }
+    if (dp[i - 1].end < nums[i]) {
+      dp[i] = {
+        end: nums[i],
+        len: dp[i - 1].len + 1,
+      };
+    } else {
+      dp[i] = {
+        end: nums[i],
+        len: 1,
+      };
     }
-    let max = -Infinity;
-    for (let k = 0; k < seqs.length; k++) {
-      const len = seqs[k].length;
-      if (len > max) {
-        max = len;
-      }
-    }
-    if (max > MAX) {
-      MAX = max;
+    if (dp[i].len > MAX) {
+      MAX = dp[i].len;
     }
   }
   return MAX;

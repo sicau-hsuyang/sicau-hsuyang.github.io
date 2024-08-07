@@ -81,16 +81,18 @@ export function maxProfit(prices: number[]): number {
       length: 3,
     }).fill(-1) as number[];
   });
-  //第一天什么都不做
+  //第一天不持有
   dp[0][0] = 0;
   // 第一天持有
   dp[0][1] = -prices[0];
   // 第一天卖出
   dp[0][2] = -1;
   for (let i = 1; i < prices.length; i++) {
-    // 第i天
+    // 第i天不持有股票，之前持有或者之前已经卖出了
     dp[i][0] = Math.max(dp[i - 1][0], dp[i - 1][2]);
+    // 第i天持有，之前不持有且今天买入或者之前持有
     dp[i][1] = Math.max(dp[i - 1][1], dp[i - 1][0] - prices[i]);
+    // 第i天卖出，之前持有，并且加上今天卖出的价格
     dp[i][2] = dp[i - 1][1] + prices[i];
   }
 }

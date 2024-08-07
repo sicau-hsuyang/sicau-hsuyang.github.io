@@ -1,21 +1,60 @@
+// function calculator(
+//   prices: number[],
+//   holdChip: number,
+//   offset: number,
+//   memo: number[][]
+// ) {
+//   if (offset >= prices.length) {
+//     return 0;
+//   }
+//   if (memo[offset][holdChip] !== -1) {
+//     return memo[offset][holdChip];
+//   }
+//   // 当前持有芯片
+//   if (holdChip) {
+//     // 卖出芯片，即不再持有芯片
+//     const saleProfit = prices[offset];
+//     const waitProfit = calculator(prices, 1, offset + 1, memo);
+//     const profit = Math.max(saleProfit, waitProfit);
+//     memo[offset][holdChip] = profit;
+//     return profit;
+//   } else {
+//     const buyProfit = -prices[offset] + calculator(prices, 1, offset + 1, memo);
+//     const waitProfit = calculator(prices, 0, offset + 1, memo);
+//     const profit = Math.max(buyProfit, waitProfit);
+//     memo[offset][holdChip] = profit;
+//     return profit;
+//   }
+// }
+
+// export function maxProfit(prices: number[]): number {
+//   const memo: number[][] = Array.from({
+//     length: prices.length,
+//   }).map((v) => {
+//     return [-1, -1];
+//   }) as number[][];
+//   const p = calculator(prices, 0, 0, memo);
+//   return p;
+// }
+
 export function maxProfit(prices: number[]): number {
   const dp: number[][] = Array.from({
-    length: 2,
+    length: prices.length,
   }).map(() => {
-    return Array.from({
-      length: prices.length,
-    }).fill(0);
+    return [0, 0];
   }) as number[][];
-  // 第一天买入
-  dp[0][0] = -prices[0];
-  // 第一天肯定是无法进行卖出的
-  dp[1][0] = 0;
+  // 第一天不持有
+  dp[0][0] = 0;
+  // 第一天持有
+  dp[0][1] = -prices[0];
   for (let i = 1; i < prices.length; i++) {
     const price = prices[i];
-    dp[0][i] = Math.max(dp[0][i - 1], -price);
-    dp[1][i] = Math.max(dp[0][i - 1] + price, dp[1][i-1]);
+    // 第i天持有，当天买或之前持有
+    dp[i][1] = Math.max(dp[i - 1][1], -price);
+    // 第i天不持有，当天不持有或者是之前持有
+    dp[i][0] = Math.max(dp[i - 1][1] + price, dp[i - 1][0]);
   }
-  return dp[1][prices.length - 1];
+  return dp[prices.length - 1][0];
 }
 
 /**

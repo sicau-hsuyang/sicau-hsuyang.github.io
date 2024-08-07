@@ -4,19 +4,22 @@ describe("fourSum", () => {
   it("case 1", () => {
     const nums = [1, 0, -1, 0, -2, 2],
       target = 0;
-    fourSum(nums, target);
+    const res = fourSum(nums, target);
+    console.log(res);
   });
 
   it("case 2", () => {
     const nums = [1, 0, -1, 0, -2, 2, -8, 92, 19, 23, 45, -30, -23, 4],
       target = 0;
-    fourSum(nums, target);
+    const res = fourSum(nums, target);
+    console.log(res);
   });
 
   it("case 3", () => {
-    const nums = [2, 2, 2, 2, 2],
+    const nums = [2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
       target = 8;
-    fourSum(nums, target);
+    const res = fourSum(nums, target);
+    console.log(res);
   });
 
   it("case 4", () => {
@@ -30,7 +33,8 @@ describe("fourSum", () => {
         19, 34, 4,
       ],
       target = 3;
-    fourSum(nums, target);
+    const sum = fourSum(nums, target);
+    console.log(sum);
   });
 
   it("case 5", () => {
@@ -44,7 +48,8 @@ describe("fourSum", () => {
         19, 34, 4,
       ],
       target = 12;
-    fourSum(nums, target);
+    const sum = fourSum(nums, target);
+    console.log(sum);
   });
 
   it("case 6", () => {
@@ -58,7 +63,8 @@ describe("fourSum", () => {
         19, 34, 4,
       ],
       target = 67;
-    fourSum(nums, target);
+    const sum = fourSum(nums, target);
+    console.log(sum);
   });
 
   it("case 7", () => {

@@ -1,9 +1,25 @@
 function trySpell(
+  sum: number,
   matchsticks: number[],
   offset: number,
-  collection: number[][]
+  collection: number[]
 ) {
-
+  if (offset >= matchsticks.length) {
+    const set = new Set(collection);
+    return set.size === 1 && set.has(sum);
+  }
+  for (let i = 0; i < 4; i++) {
+    // 剪枝
+    if (collection[i] + matchsticks[offset] <= sum) {
+      collection[i] += matchsticks[offset];
+      const flag = trySpell(sum, matchsticks, offset + 1, collection);
+      if (flag) {
+        return true;
+      }
+      collection[i] -= matchsticks[offset];
+    }
+  }
+  return false;
 }
 
 export function makeSquare(matchsticks: number[]): boolean {
@@ -21,10 +37,18 @@ export function makeSquare(matchsticks: number[]): boolean {
   if (Math.floor(target) !== target) {
     return false;
   }
+
+  if (matchsticks.some((v) => v > target)) {
+    return false;
+  }
+
+  matchsticks.sort((a, b) => {
+    return b - a;
+  });
+
   const collection = Array.from({
     length: 4,
-  }).map((v) => {
-    return [];
-  });
-  trySpell(matchsticks, 0, collection);
+  }).fill(0) as number[];
+
+  return trySpell(target, matchsticks, 0, collection);
 }

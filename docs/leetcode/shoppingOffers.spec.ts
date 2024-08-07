@@ -1,0 +1,1 @@
+import { shoppingOffers } from './shoppingOffers'

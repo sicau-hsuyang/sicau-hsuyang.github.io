@@ -3,46 +3,53 @@ export function insert(
   newInterval: number[]
 ): number[][] {
   const results: number[][] = [];
-  const leftTarget = newInterval[0];
-  let leftInserted = false;
-  const rightTarget = newInterval[1];
-  let rightInserted = false;
-  const temp: number[] = [];
+  let insertStart = false;
+  let insertRight = false;
   for (let i = 0; i < intervals.length; i++) {
-    const curInterval = intervals[i];
-    const left = curInterval[0];
-    const right = curInterval[1];
-    // 两个都插入了
-    if (leftInserted && rightInserted) {
-      temp.push(left);
-      temp.push(right);
-      temp.push(Infinity);
-    } else if (leftInserted && !rightInserted) {
-      // 左值插入，右值没有插入
-      if (rightTarget < left) {
-        rightInserted = true;
-        temp.push(rightTarget);
-        temp.push(right);
-        temp.push(Infinity);
-      } else if (right === rightTarget) {
-        rightInserted = true;
-        temp.push(rightTarget);
-        temp.push(Infinity);
-      } else {
-        temp.push(right);
-        temp.push(Infinity);
+    const inter = intervals[i];
+    // 还没有插入左值
+    if (!insertStart) {
+      // 当前区间的右边的值仍然比左值小，可以直接插入，否则就要开始准备插入了
+      if (inter[1] >= newInterval[0]) {
+        insertStart = true;
       }
-    } else {
-      // 左右值均没有插入
-      if (left < leftTarget) {
-        temp.push(left);
-      } else if (left === leftTarget) {
-        temp.push(left);
-        leftInserted = true;
-      } else if (left > leftTarget) {
-        temp.push(leftTarget);
-        leftInserted = true;
+      results.push(inter);
+    }
+    // 插入了左值，但是还没有插入右值
+    else if (insertStart && !insertRight) {
+      // 右值比较大
+      if (newInterval[1] > inter[1]) {
+        continue;
+      } else if (newInterval[1] < inter[0]) {
+        // TODO: 如果newInterval比最后一个的left还要小
+        // 如果至少存在一个元素
+        if (results[results.length - 1]) {
+          const temp = results.pop()!;
+          const left = Math.min(newInterval[0], temp[0]);
+          results.push([left, newInterval[1]]);
+        } else {
+          results.push(newInterval);
+        }
+        results.push(inter);
       }
+      // 相同的话
+      else if (newInterval[1] === inter[0]) {
+        // TODO: 如果newInterval比最后一个的left还要小
+        // 如果至少存在一个元素
+        if (results[results.length - 1]) {
+          const temp = results.pop()!;
+          const left = Math.min(newInterval[0], temp[0]);
+          results.push([left, inter[1]]);
+        } else {
+          results.push([newInterval[0], inter[1]]);
+        }
+      } else if (newInterval[1] > inter[0] && newInterval[1] <= inter[1]) {
+        //
+      }
+    }
+    // 插入完成了，直接合并
+    else {
+      results.push(inter);
     }
   }
   return results;
