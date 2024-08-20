@@ -1,31 +1,32 @@
-export function isPalindrome(s: string) {
-  let start = 0;
-  let end = s.length - 1;
-  // 检查输入的有效性
-  if (start < 0 || end >= s.length || start > end) {
-    throw new Error("Invalid start or end index");
+function countPalindrome(s: string, l: number, r: number) {
+  let count = 0;
+  while (l >= 0 && r < s.length && s[l] === s[r]) {
+    count++;
+    console.log(s.substring(l, r + 1));
+    l--;
+    r++;
   }
-  // 双指针法，从两端向中间移动
-  while (start < end) {
-    if (s[start] !== s[end]) {
-      return false;
-    }
-    start++;
-    end--;
+  return count;
+}
+
+export function countSubstrings(s: string): number {
+  // const dp: number[] = [1];
+  let t = 0;
+  for (let i = 0; i < s.length; i++) {
+    const count1 = countPalindrome(s, i, i);
+    const count2 = countPalindrome(s, i, i + 1);
+    // dp[i] = count1 + count2 + dp[i - 1];
+    t += count1 + count2;
   }
-  return true;
+  return t;
 }
 
 /**
- * 统计从offset位置到0位置的字符串的所有回文子串
- * @param s
- * @param offset
- * @returns
- */
-function countPalindrome(s: string, offset = 0): string[] {
- 
-}
 
-export function countSubstrings(s: string): string[] {
-  const res = countPalindrome(s, 0);
-}
+a: a 
+
+aa: a aa a
+
+aaa: 
+
+ */

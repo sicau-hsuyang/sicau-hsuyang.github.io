@@ -7,23 +7,21 @@
  */
 
 /**
- * @param {ListNode} head
+ * @param {ListNode} headA
+ * @param {ListNode} headB
  * @return {ListNode}
  */
-export var detectCycle = function (head) {
-  let slow = head;
-  let fast = head;
-  while (slow && fast && fast.next) {
-    if (fast === slow && fast !== head) {
-      break;
-    }
+var getIntersectionNode = function (headA, headB) {
+  let slow = headA;
+  let fast = headB;
+  while (slow && fast && fast.next && slow !== fast) {
     slow = slow.next;
     fast = fast.next.next;
   }
-  if (fast === null || fast.next == null) {
+  if (slow == null || fast == null) {
     return null;
   }
-  fast = head;
+  fast = headB;
   while (slow != fast) {
     slow = slow.next;
     fast = fast.next;

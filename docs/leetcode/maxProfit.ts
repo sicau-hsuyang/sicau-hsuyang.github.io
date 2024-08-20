@@ -48,13 +48,12 @@ export function maxProfit(prices: number[]): number {
   // 第一天持有
   dp[0][1] = -prices[0];
   for (let i = 1; i < prices.length; i++) {
-    const price = prices[i];
-    // 第i天持有，当天买或之前持有
-    dp[i][1] = Math.max(dp[i - 1][1], -price);
-    // 第i天不持有，当天不持有或者是之前持有
-    dp[i][0] = Math.max(dp[i - 1][1] + price, dp[i - 1][0]);
+    // 第i天持有, 当天买，或者之前买
+    dp[i][1] = Math.max(dp[i - 1][0], -prices[i]);
+    // 第i天不持有，之前不持有，或者之前持有
+    dp[i][0] = Math.max(prices[i] + dp[i - 1][1], dp[i - 1][0]);
   }
-  return dp[prices.length - 1][0];
+  return Math.max(dp[prices.length - 1][0]);
 }
 
 /**

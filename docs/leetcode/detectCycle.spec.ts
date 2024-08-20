@@ -14,4 +14,17 @@ describe("detectCycle", () => {
     const tail = detectCycle(list);
     console.log(tail)
   });
+
+  it("case 2", () => {
+    const list = arrToLinkedList([1]) as any;
+    let prev: any = null;
+    let node = list;
+    while (node) {
+      prev = node;
+      node = node.next;
+    }
+    prev.next = list.next;
+    const tail = detectCycle(list);
+    console.log(tail)
+  });
 });

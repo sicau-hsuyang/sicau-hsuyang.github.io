@@ -1,15 +1,20 @@
-import { countSubstrings, isPalindrome } from "./countSubstrings";
+import { countSubstrings } from "./countSubstrings";
 
 describe("countSubstrings", () => {
   it("case 1", () => {
     const s = "aaa";
     const res = countSubstrings(s);
-    console.log(res);
+    expect(res).toBe(6);
   });
 
   it("case 2", () => {
     const s = "aaba";
     const res = countSubstrings(s);
-    console.log(res);
+    expect(res).toBe(6);
   });
+
+  /**
+   * a a b a
+   * aa aba
+   */
 });
