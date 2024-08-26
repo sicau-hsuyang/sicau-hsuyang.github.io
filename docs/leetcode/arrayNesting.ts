@@ -1,8 +1,11 @@
 export function arrayNesting(nums: number[]): number {
   let maxLength = -Infinity;
-  const map: Map<number, number[]> = new Map();
+
   for (let i = 0; i < nums.length; i++) {
-    const size = calc(nums, nums[i], new Set());
+    if (nums[i] < 0) {
+      continue;
+    }
+    const size = calc(nums, nums[i]);
     if (size > maxLength) {
       maxLength = size;
     }
@@ -10,16 +13,18 @@ export function arrayNesting(nums: number[]): number {
   return maxLength;
 }
 
-function calc(
-  nums: number[],
-  idx: number,
-  set: Set<number> = new Set()
-): number {
-  const val = nums[idx];
-  if (set.has(val) || val < 0 || val >= nums.length) {
-    return set.size;
-  } else {
+function calc(nums: number[], idx: number): number {
+  const set: Set<number> = new Set();
+  let count = 0;
+  let preVal = idx;
+  let val = nums[idx];
+  nums[idx] *= -1;
+  while (!set.has(val) && val >= 0 && val < nums.length) {
     set.add(val);
-    return calc(nums, val, set);
+    nums[preVal] *= -1;
+    preVal = val;
+    val = nums[val];
+    count++;
   }
+  return count;
 }

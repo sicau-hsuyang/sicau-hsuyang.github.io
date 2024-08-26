@@ -17,7 +17,12 @@ interface Struct {
   };
 }
 
-export function monoStack(nums: number[]) {
+/**
+ * 单调增栈，用来请1个数字距离其左右最近的最小值
+ * @param nums
+ * @returns
+ */
+function monoIncreaseStack(nums: number[]) {
   const stack: number[] = [];
   // 全部初始化为-1，记录当前元素左侧的小于它的最近的元素，没有则为-1
   const closeSmallRecord: Struct[] = nums.map((v) => {
@@ -82,15 +87,62 @@ export function monoStack(nums: number[]) {
         closeSmallRecord[closeSmallRecord[i].right.pos].right;
     }
   }
-  // 清算
-  closeSmallRecord.forEach((res, idx) => {
-    console.log(
-      `当前数字：${res.num},距离当前数字左边最近最小的数字是:${
-        res.left.pos === -1 ? "不存在" : res.left.num
-      }，距离当前数字右边最近最小的数字是:${
-        res.right.pos === -1 ? "不存在" : res.right.num
-      }`
+  return closeSmallRecord;
+}
+
+export function largestRectangleArea(heights: number[]): number {
+  const res = monoIncreaseStack(heights);
+  let maxArea = 0;
+  res.forEach((config, idx) => {
+    if (config.num === 0) {
+      return;
+    }
+    // 左边界
+    let leftHeight;
+    let left;
+    if (config.left.pos === -1) {
+      leftHeight = config.num;
+      left = 0;
+    } else {
+      leftHeight = config.left.num;
+      left = config.left.pos;
+    }
+    let left1Height = heights[left + 1] || 0;
+    // 右边界
+    let rightHeight;
+    let right;
+    if (config.right.pos === -1) {
+      rightHeight = config.num;
+      right = heights.length - 1;
+    } else {
+      rightHeight = config.right.num;
+      right = config.right.pos;
+    }
+    let right1Height = heights[right - 1] || 0;
+    // 取左右边界一起算
+    let D3 = right - left + 1;
+    // 取左边界到自己
+    let D1 = idx - left + 1;
+    // 取自己到右边界
+    let D2 = right - idx + 1;
+    let D4 = right - left;
+    const area1 = Math.min(leftHeight, config.num) * D1;
+    const area2 = Math.min(rightHeight, config.num) * D2;
+    const area3 = Math.min(leftHeight, rightHeight) * D3;
+    const area4 = config.num;
+    const area5 = Math.min(left1Height, rightHeight) * D4;
+    const area6 = Math.min(leftHeight, right1Height) * D4;
+    const area7 = Math.min(left1Height, right1Height, config.num) * (D3 - 2);
+    maxArea = Math.max(
+      maxArea,
+      area3,
+      area1,
+      area2,
+      area4,
+      area5,
+      area6,
+      area7
     );
   });
-  return closeSmallRecord;
+  return maxArea;
 }

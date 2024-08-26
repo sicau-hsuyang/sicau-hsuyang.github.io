@@ -30,4 +30,10 @@ describe("jump", () => {
     const step = jump(nums);
     expect(step).toBe(2);
   });
+
+  it("case 6", () => {
+    const nums = [0];
+    const step = jump(nums);
+    expect(step).toBe(0);
+  });
 });

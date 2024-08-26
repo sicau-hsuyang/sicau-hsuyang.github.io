@@ -29,7 +29,7 @@
       "ts"
     ],
     "rootDir": "docs",
-    "testRegex": ".*\\.spec\\.ts$",
+    "testRegex": ".*\\.spec\\.(t|j)s$",
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
     },
