@@ -1,54 +1,93 @@
-function calc(
-  candidates: number[][],
-  target: number,
-  offset: number
-): number[][] {
-  if (!candidates[offset]) {
-    return [];
-  }
-  const res: number[][] = [];
-  const group = candidates[offset];
-  for (let S = 1; S <= group.length; S++) {
-    if (target === S * group[0]) {
-      const arr: number[] = [];
-      for (let k = 0; k < S; k++) {
-        arr.push(group[0]);
-      }
-      res.push(arr);
-    } else if (target > S * group[0]) {
-      const sub1 = calc(candidates, target - S * group[0], offset + 1);
-      sub1.forEach((arr) => {
-        for (let k = 0; k < S; k++) {
-          arr.unshift(group[0]);
-        }
-        res.push(arr);
-      });
-    }
-  }
-  const sub2 = calc(candidates, target, offset + 1);
-  sub2.forEach((arr) => {
-    res.push(arr);
-  });
-  return res;
-}
+// function calc(
+//   candidates: number[][],
+//   target: number,
+//   offset: number
+// ): number[][] {
+//   if (!candidates[offset]) {
+//     return [];
+//   }
+//   const res: number[][] = [];
+//   const group = candidates[offset];
+//   for (let S = 1; S <= group.length; S++) {
+//     if (target === S * group[0]) {
+//       const arr: number[] = [];
+//       for (let k = 0; k < S; k++) {
+//         arr.push(group[0]);
+//       }
+//       res.push(arr);
+//     } else if (target > S * group[0]) {
+//       const sub1 = calc(candidates, target - S * group[0], offset + 1);
+//       sub1.forEach((arr) => {
+//         for (let k = 0; k < S; k++) {
+//           arr.unshift(group[0]);
+//         }
+//         res.push(arr);
+//       });
+//     }
+//   }
+//   const sub2 = calc(candidates, target, offset + 1);
+//   sub2.forEach((arr) => {
+//     res.push(arr);
+//   });
+//   return res;
+// }
 
-function groupBy(arr: number[]) {
-  const map: Map<number, number[]> = new Map();
-  for (let i = 0; i < arr.length; i++) {
-    const g = map.get(arr[i]) || [];
-    if (!g.length) {
-      map.set(arr[i], g);
-    }
-    g.push(arr[i]);
-  }
-  return [...map.values()];
-}
+// function groupBy(arr: number[]) {
+//   const map: Map<number, number[]> = new Map();
+//   for (let i = 0; i < arr.length; i++) {
+//     const g = map.get(arr[i]) || [];
+//     if (!g.length) {
+//       map.set(arr[i], g);
+//     }
+//     g.push(arr[i]);
+//   }
+//   return [...map.values()];
+// }
+
+// export function combinationSum2(
+//   candidates: number[],
+//   target: number
+// ): number[][] {
+//   const g = groupBy(candidates);
+//   const res = calc(g, target, 0);
+//   return res;
+// }
 
 export function combinationSum2(
   candidates: number[],
   target: number
 ): number[][] {
-  const g = groupBy(candidates);
-  const res = calc(g, target, 0);
+  candidates.sort((a, b) => {
+    return a - b;
+  });
+
+  const res: number[][] = [];
+
+  function calc(candidates: number[], target: number, prevSum: number[]) {
+    if (candidates.length === 0) {
+      return;
+    } else {
+      let cnt = 1;
+      while (candidates[cnt] === candidates[0] && cnt < candidates.length) {
+        cnt++;
+      }
+      const sub = candidates.slice(0, cnt);
+      // 剩下的内容
+      const next = candidates.slice(cnt);
+      // 选择几个进行处理
+      for (let i = 0; i <= sub.length; i++) {
+        const temp = sub.slice(0, i);
+        const sum = target - candidates[0] * i;
+        const options = [...prevSum, ...temp];
+        if (sum === 0) {
+          res.push(options);
+        } else if (sum > 0) {
+          calc(next, sum, options);
+        }
+      }
+    }
+  }
+  calc(candidates, target, []);
+
   return res;
 }

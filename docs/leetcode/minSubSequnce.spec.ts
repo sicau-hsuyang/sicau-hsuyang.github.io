@@ -7,4 +7,11 @@ describe("minSubArrayLen", () => {
     const res = minSubArrayLen(target, nums);
     expect(res).toEqual(2);
   });
+
+  it("case 2", () => {
+    const nums = [1, 1, 1, 1, 1, 1, 1, 1],
+      target = 11;
+    const res = minSubArrayLen(target, nums);
+    expect(res).toEqual(2);
+  });
 });

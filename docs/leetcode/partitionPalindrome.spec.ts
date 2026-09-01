@@ -1,6 +1,6 @@
 import { partition } from "./partitionPalindrome";
 
-describe("partition", () => {
+describe("partition-xxxx", () => {
   it("case 1", () => {
     const s = "google";
     const res = partition(s);

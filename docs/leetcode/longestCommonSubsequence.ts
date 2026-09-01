@@ -1,31 +1,29 @@
+/**
+ * 求最长公共子序列
+ * 以C[i, j] 表示在字符串1的0-位置，字符串2的0-j位置的最长公共子序列，当text1[i+1]和text2[j+1]想通的时候，则
+ * C[i, j] = C[i-1, j-1] + 1
+ * 当不相同的时候，可以尝试在C[i-1, j]和C[i, j-1]里面，取一个最大值
+ * @param text1
+ * @param text2
+ */
 export function longestCommonSubsequence(text1: string, text2: string): number {
-  if (text1 === "" || text2 === "") {
-    return 0;
-  }
-  const dp: number[][] = Array.from({
-    length: text1.length,
-  }).map((v) => {
+  let dp: number[][] = Array.from({
+    length: text1.length + 1,
+  }).map(() => {
     return Array.from({
-      length: text2.length,
+      length: text2.length + 1,
     }).fill(0);
-  }) as number[][];
-  // 当text2的长度是0时，肯定都是没有公共子序列的
-  for (let i = 0; i < text1.length; i++) {
-    dp[i][0] = text1[i] === text2[0] ? 1 : 0;
-  }
-  // 当text1的长度是0时，肯定都没有公共子序列的
-  for (let j = 0; j < text2.length; j++) {
-    dp[0][j] = text2[j] === text1[0] ? 1 : 0;
-  }
-  for (let i = 1; i < text1.length; i++) {
-    for (let j = 1; j < text2.length; j++) {
-      // 如果相同的话
-      if (text1[i] === text2[j]) {
+  });
+  let max = 0;
+  for (let i = 1; i <= text1.length; i++) {
+    for (let j = 1; j <= text2.length; j++) {
+      if (text1[i - 1] === text2[j - 1]) {
         dp[i][j] = dp[i - 1][j - 1] + 1;
       } else {
-        dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1], dp[i - 1][j - 1]);
+        dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);
       }
+      max = Math.max(max, dp[i][j]);
     }
   }
-  return dp[text1.length - 1][text2.length - 1];
+  return max;
 }

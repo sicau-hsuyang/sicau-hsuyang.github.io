@@ -45,4 +45,11 @@ describe("combinationSum2", () => {
     const results = combinationSum2(candidates, target);
     console.log(results);
   });
+
+  it("case 5", () => {
+    const candidates = [2, 5, 2, 1, 2],
+      target = 5;
+    const results = combinationSum2(candidates, target);
+    console.log(results);
+  });
 });

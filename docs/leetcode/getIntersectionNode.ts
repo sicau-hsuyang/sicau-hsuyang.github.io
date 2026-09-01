@@ -12,19 +12,39 @@
  * @return {ListNode}
  */
 var getIntersectionNode = function (headA, headB) {
-  let slow = headA;
-  let fast = headB;
-  while (slow && fast && fast.next && slow !== fast) {
-    slow = slow.next;
-    fast = fast.next.next;
+  let countA = 0;
+  let node = headA;
+  while (node) {
+    countA++;
+    node = node.next;
   }
-  if (slow == null || fast == null) {
-    return null;
+  let countB = 0;
+  node = headB;
+  while (node) {
+    countB++;
+    node = node.next;
   }
-  fast = headB;
-  while (slow != fast) {
-    slow = slow.next;
-    fast = fast.next;
+  let nodeA = headA;
+  let nodeB = headB;
+  if (countA > countB) {
+    let d = countA - countB;
+    while (d > 0) {
+      d--;
+      nodeA = nodeA.next;
+    }
+  } else if (countB > countA) {
+    let d = countB - countA;
+    while (d > 0) {
+      d--;
+      nodeB = nodeB.next;
+    }
   }
-  return fast;
+  while (nodeA && nodeB && nodeA !== nodeB && nodeA.next !== nodeB.next) {
+    nodeA = nodeA.next;
+    nodeB = nodeB.next;
+  }
+  if (nodeA === nodeB && nodeA) {
+    return nodeA;
+  }
+  return nodeA && nodeB && nodeA.next === nodeB.next ? nodeA.next : null;
 };

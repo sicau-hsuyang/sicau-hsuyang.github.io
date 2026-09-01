@@ -1,14 +1,15 @@
 export function lenLongestFibSubseq(arr: number[]): number {
-  const dp: { num1: number; num2: number; len: number }[] = [];
-  // /
-  for (let i = 1; i < arr.length; i++) {
-    for (let j = 0; j < i; j++) {
-      if (dp[j].num1 + dp[j].num2 === arr[i]) {
-        dp[i].num1 = dp[j].num2;
-        dp[i].num2 = arr[i];
-        dp[i].len = dp[j].len + 1;
+  const map: Map<number, Map<number, number>> = new Map();
+  for (let i = 0; i < arr.length; i++) {
+    for (let j = i + 1; j < arr.length; j++) {
+      let sum = arr[i] + arr[j];
+      let sumMap = map.get(sum);
+      if (!sumMap) {
+        sumMap = new Map();
+        map.set(sum, sumMap);
       }
+      sumMap.set(arr[j], 2);
     }
   }
-  return 0;
+  
 }

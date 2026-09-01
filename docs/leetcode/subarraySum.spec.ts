@@ -10,6 +10,6 @@ describe("subarraySum", () => {
   it("case 1", () => {
     const arr = [1, 1, 1];
     const result = subarraySum(arr, 2);
-    expect(result).toBe(1);
+    expect(result).toBe(2);
   });
 });

@@ -1,43 +1,60 @@
-export function permuteUnique(nums: number[]): number[][] {
+// function basicPermute(nums: number[]): number[][] {
+//   if (nums.length === 0) {
+//     return [];
+//   } else if (nums.length === 1) {
+//     return [[nums[0]]];
+//   } else {
+//     const res: number[][] = [];
+//     const subRes = basicPermute(nums.slice(1));
+//     subRes.forEach((arr) => {
+//       res.push([...arr, nums[0]]);
+//       for (let i = 0; i < arr.length; i++) {
+//         const temp = arr[i];
+//         arr[i] = nums[0];
+//         res.push([...arr, temp]);
+//         arr[i] = temp;
+//       }
+//     });
+//     return res;
+//   }
+// }
+
+// export function permuteUnique(nums: number[]): number[][] {
+//   nums.sort((a, b) => {
+//     return a - b;
+//   });
+//   return basicPermute(nums);
+// }
+
+function basicPermute(nums: number[]): number[][] {
   if (nums.length === 0) {
     return [];
   } else if (nums.length === 1) {
-    return [nums];
+    return [[nums[0]]];
   } else {
-    const results: number[][] = [];
-    const recordLen: number[][][] = [];
-    const subArr = nums.slice(0, nums.length - 1);
-    const prePermuteResults = permuteUnique(subArr);
-    const finalEl = nums[nums.length - 1];
-    for (let i = 0; i < prePermuteResults.length; i++) {
-      const tempArr = prePermuteResults[i];
-      for (let k = 0; k <= subArr.length; k++) {
-        // 拷贝一份
-        const record = tempArr.slice(0);
-        record.push(finalEl);
-        let temp = record[k];
-        record[k] = record[record.length - 1];
-        record[record.length - 1] = temp;
-        const oldRecord = recordLen[record.length] || [];
-        const hasSameResults = oldRecord.some((arr) => {
-          const isSame = arr.every((a, idx) => {
-            return record[idx] === a;
-          });
-          return isSame;
-        });
-        if (!hasSameResults) {
-          if (!Array.isArray(recordLen[record.length])) {
-            recordLen[record.length] = [record];
-          } else {
-            recordLen[record.length].push(record);
-          }
-          results.push(record);
+    const res: number[][] = [];
+    const subRes = basicPermute(nums.slice(1));
+    subRes.forEach((arr) => {
+      for (let i = 0; i <= arr.length; i++) {
+        // 跳过重复情况
+        if (i > 0 && nums[0] === arr[i - 1]) {
+          continue;
         }
+        const newArr = [...arr.slice(0, i), nums[0], ...arr.slice(i)];
+        res.push(newArr);
       }
-    }
-    return results;
+    });
+    return res;
   }
 }
+
+export function permuteUnique(nums: number[]): number[][] {
+  nums.sort((a, b) => {
+    return a - b;
+  });
+  return basicPermute(nums);
+}
+
 
 /**
 
@@ -45,7 +62,7 @@ export function permuteUnique(nums: number[]): number[][] {
 
 [1] -> [1]
 [1, 2] -> [1,2],[2,1]
-[1, 2, 3] -> 
+[1, 2, 3] ->
             [1, 2, 3],
             [1, 3, 2],
             [3, 1, 2],

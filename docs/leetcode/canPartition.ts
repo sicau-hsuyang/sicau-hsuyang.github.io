@@ -1,25 +1,48 @@
 export function canPartition(nums: number[]): boolean {
-  let sum = nums.reduce((accumulate, item) => {
-    return accumulate + item;
+  const sum = nums.reduce((accu, n) => {
+    return accu + n;
   });
-  // 单数，肯定是无论如何都不可能的
   if (sum % 2 !== 0) {
     return false;
   }
-  let target = sum / 2;
-  let dp: number[] = Array.from({
-    length: target + 1,
-  }).fill(0) as number[];
+  const halfVal = sum / 2;
 
-  // 物品
-  for (let i = 0; i < nums.length; i++) {
-    // 重量
-    for (let j = target; j >= nums[i]; j--) {
-      dp[j] = Math.max(dp[j], dp[j - nums[i]] + nums[i]);
-      if (dp[j] === target) {
-        return true;
-      }
+  function calc(
+    nums: number[],
+    memo: number[][],
+    offset: number,
+    accu: number
+  ) {
+    // 超出了最大的边界，超出了比较的意义
+    if (
+      offset >= nums.length ||
+      accu > halfVal ||
+      accu + nums[offset] > halfVal
+    ) {
+      return false;
     }
+    if (memo[offset][accu] !== undefined) {
+      return memo[offset][accu];
+    }
+    // 相等的情况
+    if (accu + nums[offset] === halfVal) {
+      return true;
+    }
+    // 选 or 不选
+    const plan1 = calc(nums, memo, offset + 1, accu + nums[offset]);
+    const plan2 = calc(nums, memo, offset + 1, accu);
+    const res = plan1 || plan2;
+    memo[offset][accu] = res;
+    return res;
   }
-  return false;
+
+  const memo = Array.from({
+    length: nums.length,
+  }).map((v) => {
+    return Array.from({
+      length: halfVal + 1,
+    });
+  }) as number[][];
+
+  return calc(nums, memo, 0, 0);
 }

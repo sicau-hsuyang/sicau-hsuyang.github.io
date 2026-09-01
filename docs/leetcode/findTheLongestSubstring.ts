@@ -1,37 +1,22 @@
 export function findTheLongestSubstring(s: string): number {
-  // 最小的奇数的位置
-  let minOddPos = -1;
-  let counter = 0;
+  const map: Map<string, number> = new Map();
   let maxDistance = 0;
+  let state = [0, 0, 0, 0, 0];
+  map.set(state.join(""), -1);
   for (let i = 0; i < s.length; i++) {
-    let char = s[i];
-    let flag = false;
-    // 当前是元音字符
-    if ("aeiou".indexOf(char) >= 0) {
-      flag = true;
-      counter++;
-      // 如果当前位置是奇数
-      if (counter === 1) {
-        minOddPos = i;
-        continue;
-      }
+    const char = s[i];
+    const idx = "aeiou".indexOf(char);
+    if (idx >= 0) {
+      state[idx] = state[idx] === 0 ? 1 : 0;
     }
-
-    // 偶数个元音字符，包含0个
-    if (counter % 2 === 0) {
-      let D = i + 1;
-      if (D > maxDistance) {
-        maxDistance = D;
-        console.log(s.substring(0, D), D);
-      }
-    }
-    // 当前个数是奇数个，并且第一个奇数个的位置存在
-    else if (counter % 2 !== 0 && counter > 1 && minOddPos !== -1) {
-      let D = i - minOddPos;
-      if (D > maxDistance) {
-        maxDistance = D;
-        console.log(s.substring(minOddPos + 1, minOddPos + 1 + D), D);
-      }
+    const key = state.join("");
+    if (map.has(key)) {
+      let prevPos = map.get(key)!;
+      const D = i - prevPos;
+      maxDistance = Math.max(maxDistance, D);
+    } else {
+      // 更新位置
+      map.set(key, i);
     }
   }
   return maxDistance;

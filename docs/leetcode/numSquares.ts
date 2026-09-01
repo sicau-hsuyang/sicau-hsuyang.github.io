@@ -1,23 +1,19 @@
 export function numSquares(n: number): number {
-  const dp: number[] = [0, 1];
+  const dp: number[] = Array.from({
+    length: n + 1,
+  }).fill(Infinity) as number[];
+  dp[1] = 1;
   for (let i = 2; i <= n; i++) {
-    const val = Math.floor(Math.sqrt(i));
-    // 如果当前数是一个完全平方数，则它肯定是1，就不需要再拆分了
-    if (val ** 2 === i) {
+    let max = Math.ceil(i / 2);
+    if (Math.floor(Math.sqrt(i)) ** 2 === i) {
       dp[i] = 1;
-      continue;
-    }
-    let min = Infinity;
-    for (let k = 1; k < i; k++) {
-      let v1 = k;
-      let v2 = i - k;
-      // 取得两个数的拆分的场景的 acc = p + q 分别取p的最小拆分值和q的最小拆分值
-      let combine = dp[v1] + dp[v2];
-      if (combine < min) {
-        min = combine;
+    } else {
+      let temp = i;
+      for (let j = 1; j <= max; j++) {
+        temp = Math.min(dp[j] + dp[i - j], temp);
       }
+      dp[i] = temp;
     }
-    dp[i] = min;
   }
   return dp[n];
 }

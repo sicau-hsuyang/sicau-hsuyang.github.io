@@ -1,26 +1,35 @@
-function _minDistance(word1: string, word2: string): number {
-  console.log(word1, word2);
-  if (word1 === word2) {
-    return 0;
+export function minDistance(word1: string, word2: string): number {
+  let dp: number[][] = Array.from({
+    length: word1.length + 1,
+  }).map(() => {
+    return Array.from({
+      length: word2.length + 1,
+    }).fill(0);
+  }) as number[][];
+  // 假设word2的长度是0
+  for (let i = 1; i <= word1.length; i++) {
+    dp[i][0] = i;
   }
-  let distance = Number.MAX_VALUE;
-  for (let i = 0; i < word1.length; i++) {
-    const str = word1.slice(0, i) + word1.slice(i + 1);
-    let d = 1 + _minDistance(str, word2);
-    if (d < distance) {
-      distance = d;
+  // 假设word1的长度是0
+  for (let j = 1; j <= word2.length; j++) {
+    dp[0][j] = j;
+  }
+  for (let i = 1; i <= word1.length; i++) {
+    for (let j = 1; j <= word2.length; j++) {
+      // 相同，不用删除
+      if (word1[i - 1] === word2[j - 1]) {
+        dp[i][j] = dp[i - 1][j - 1];
+      } else {
+        // 删除i 或者删除 j
+        dp[i][j] = Math.min(dp[i][j - 1], dp[i - 1][j]) + 1;
+      }
     }
   }
-  for (let i = 0; i < word2.length; i++) {
-    const str = word2.slice(0, i) + word2.slice(i + 1);
-    let d = 1 + _minDistance(word1, str);
-    if (d < distance) {
-      distance = d;
-    }
-  }
-  return distance;
+  return dp[word1.length][word2.length];
 }
 
-export function minDistance(word1: string, word2: string): number {
-  return _minDistance(word1, word2);
-}
+/**
+
+dp[i][j] 表示 word1的长度为i,word2的长度为j时的最小删除步数
+
+*/

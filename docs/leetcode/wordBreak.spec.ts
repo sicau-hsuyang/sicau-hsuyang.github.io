@@ -22,6 +22,13 @@ describe("wordBreak", () => {
     expect(flag).toBe(false);
   });
 
+  it("case 5", () => {
+    const s = "cars",
+      wordDict = ["car", "ca", "rs"];
+    const flag = wordBreak(s, wordDict);
+    expect(flag).toBe(true);
+  });
+
   it("case 4", () => {
     const s =
         "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaab",

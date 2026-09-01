@@ -1,22 +1,20 @@
 export function findRadius(houses: number[], heaters: number[]): number {
   houses.sort((a, b) => a - b);
   heaters.sort((a, b) => a - b);
-  // 供暖气指针
-  let heatPointer = 0;
-  let N = heaters.length;
-  // 最终的距离
-  let disRecord: number[] = [];
+  let headerPointer = 0;
+  let len = heaters.length;
+  let results: number[] = [];
   for (let i = 0; i < houses.length; i++) {
-    let D = Math.abs(heaters[heatPointer] - houses[i]);
-    while (heatPointer + 1 < N) {
-      let d = Math.abs(heaters[heatPointer + 1] - houses[i]);
-      if (d > D) {
+    let d = Math.abs(heaters[headerPointer] - houses[i]);
+    while (headerPointer + 1 < len) {
+      let tempD = Math.abs(heaters[headerPointer + 1] - houses[i]);
+      if (tempD > d) {
         break;
       }
-      heatPointer++;
-      D = d;
+      headerPointer++;
+      d = tempD;
     }
-    disRecord.push(D);
+    results.push(d);
   }
-  return Math.max(...disRecord);
+  return Math.max(...results);
 }

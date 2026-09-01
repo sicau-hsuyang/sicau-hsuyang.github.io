@@ -6,14 +6,19 @@ export function subarraysDivByK(nums: number[], k: number): number {
   for (let i = 0; i < nums.length; i++) {
     const num = nums[i];
     preSum += num;
+    // 取余
     const divideK = preSum % k;
+    // 当前余数的个数
     const size = preSumCountMap.get(divideK) || 0;
     if (size === 0) {
       preSumCountMap.set(divideK, 1);
     } else {
-      counter += size;
       preSumCountMap.set(divideK, size + 1);
+      counter += size;
     }
+    //
+    const size2 = preSumCountMap.get(-1 * (k / 2)) || 0;
+    counter += size2;
   }
   return counter;
 }
